@@ -280,7 +280,7 @@ class CanvasManager {
         item.dataset.objectIndex = index;
         
         const img = document.createElement('img');
-        img.src = `./public/assets/${itemData.image}`;
+        img.src = `/assets/${itemData.image}`;
         img.alt = itemData.name;
         
         const info = document.createElement('div');
