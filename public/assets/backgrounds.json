@@ -1,0 +1,14 @@
+[
+  {
+    "id": "bg1",
+    "name": "배경 1",
+    "image": "backgrounds/bg1.jpeg",
+    "description": "첫 번째 배경"
+  },
+  {
+    "id": "bg2", 
+    "name": "배경 2",
+    "image": "backgrounds/bg2.jpeg",
+    "description": "두 번째 배경"
+  }
+] 
