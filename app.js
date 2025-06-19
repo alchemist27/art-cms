@@ -42,7 +42,7 @@ async function initializeApp() {
 // Data loading functions
 async function loadItemsData() {
     try {
-        const response = await fetch('./public/assets/items.json');
+        const response = await fetch('./assets/items.json');
         itemsData = await response.json();
         console.log('Items data loaded:', itemsData.length, 'items');
     } catch (error) {
@@ -54,7 +54,7 @@ async function loadItemsData() {
 
 async function loadBackgroundsData() {
     try {
-        const response = await fetch('./public/assets/backgrounds.json');
+        const response = await fetch('./assets/backgrounds.json');
         backgroundsData = await response.json();
         console.log('Backgrounds data loaded:', backgroundsData.length, 'backgrounds');
     } catch (error) {
@@ -149,7 +149,7 @@ function createBackgroundCard(bg, isActive = false) {
     card.dataset.bgId = bg.id;
     
     const img = document.createElement('img');
-    img.src = `./public/assets/${bg.image}`;
+    img.src = `./assets/${bg.image}`;
     img.alt = bg.name;
     
     const name = document.createElement('div');
