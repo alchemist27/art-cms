@@ -92,7 +92,7 @@ function initializeEventListeners() {
     
     const captureBtn = document.getElementById('captureBtn');
     if (captureBtn) {
-        captureBtn.addEventListener('click', () => canvasManager.download());
+        captureBtn.addEventListener('click', () => canvasManager.downloadImage());
     }
     
     // Layer controls

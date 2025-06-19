@@ -364,4 +364,18 @@ class CanvasManager {
         if (overlay) overlay.style.display = 'flex'; // 환영 오버레이 다시 표시
         this.saveState();
     }
+
+    downloadImage() {
+        const dataURL = this.canvas.toDataURL({
+            format: 'png',
+            quality: 1,
+            multiplier: 2
+        });
+        const link = document.createElement('a');
+        link.href = dataURL;
+        link.download = 'design.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 } 
