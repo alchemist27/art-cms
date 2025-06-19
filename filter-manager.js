@@ -169,7 +169,7 @@ class FilterManager {
         card.dataset.itemId = item.id;
         
         const img = document.createElement('img');
-        img.src = `./assets/${item.image}`;
+        img.src = `/assets/${item.image}`;
         img.alt = item.name;
         img.draggable = false;
         
