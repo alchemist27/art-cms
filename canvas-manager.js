@@ -360,8 +360,13 @@ class CanvasManager {
     clear() {
         this.canvas.clear();
         this.currentBackground = null;
+        
         const overlay = document.getElementById('canvasOverlay');
-        if (overlay) overlay.style.display = 'flex'; // 환영 오버레이 다시 표시
+        if (overlay) {
+            overlay.classList.remove('hidden');
+            overlay.style.display = 'flex';
+        }
+        
         this.saveState();
     }
 
