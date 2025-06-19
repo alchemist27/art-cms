@@ -122,7 +122,7 @@ class CanvasManager {
     // 아이템을 캔버스에 추가
     addItem(itemData) {
         return new Promise((resolve, reject) => {
-            fabric.Image.fromURL(`./public/assets/${itemData.image}`, (img) => {
+            fabric.Image.fromURL(`/assets/${itemData.image}`, (img) => {
                 if (!img) return reject(new Error('이미지 로드 실패'));
                 
                 const maxSize = 100;
@@ -151,7 +151,7 @@ class CanvasManager {
         return new Promise((resolve, reject) => {
             if (!backgroundData || !backgroundData.image) return reject(new Error('Invalid background data'));
             
-            fabric.Image.fromURL(`./public/assets/${backgroundData.image}`, (img) => {
+            fabric.Image.fromURL(`/assets/${backgroundData.image}`, (img) => {
                 this.canvas.setBackgroundImage(img, this.canvas.renderAll.bind(this.canvas), {
                     scaleX: this.canvas.width / img.width,
                     scaleY: this.canvas.height / img.height
