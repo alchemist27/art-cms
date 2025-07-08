@@ -52,10 +52,18 @@ class CanvasManager {
                 ctx.save();
                 ctx.translate(left, top);
                 ctx.rotate(fabricObject.angle * Math.PI / 180);
+                // 원
                 ctx.beginPath();
                 ctx.arc(0, 0, size / 2, 0, 2 * Math.PI);
                 ctx.fillStyle = '#6366f1';
                 ctx.fill();
+                // 좌우 화살표
+                ctx.font = 'bold 10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#fff';
+                ctx.fillText('←', -6, 0);
+                ctx.fillText('→', 6, 0);
                 ctx.restore();
             },
             cornerSize: 16,

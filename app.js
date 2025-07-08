@@ -121,6 +121,18 @@ function initializeEventListeners() {
     if (addToCartBtn) {
         addToCartBtn.addEventListener('click', handleAddToCart);
     }
+    
+    // Background upload functionality
+    const uploadBackgroundBtn = document.getElementById('uploadBackgroundBtn');
+    const backgroundFileInput = document.getElementById('backgroundFileInput');
+    
+    if (uploadBackgroundBtn && backgroundFileInput) {
+        uploadBackgroundBtn.addEventListener('click', () => {
+            backgroundFileInput.click();
+        });
+        
+        backgroundFileInput.addEventListener('change', handleBackgroundUpload);
+    }
 }
 
 // Item rendering is now handled by FilterManager
@@ -219,6 +231,95 @@ function setActiveBackground(activeCard) {
     
     // Add active class to selected card
     activeCard.classList.add('active');
+}
+
+function handleBackgroundUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Check if file is an image
+    if (!file.type.startsWith('image/')) {
+        showNotification('이미지 파일만 업로드할 수 있습니다.', 'error');
+        return;
+    }
+    
+    // Check file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+        showNotification('파일 크기는 10MB 이하여야 합니다.', 'error');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const imageUrl = e.target.result;
+        
+        // Create a temporary background object
+        const customBackground = {
+            id: 'custom-' + Date.now(),
+            name: file.name.replace(/\.[^/.]+$/, ''), // Remove file extension
+            image: imageUrl,
+            isCustom: true
+        };
+        
+        // Set the custom background
+        setCustomCanvasBackground(customBackground);
+        
+        // Clear the file input
+        event.target.value = '';
+        
+        showNotification('배경 이미지가 성공적으로 업로드되었습니다!', 'success');
+    };
+    
+    reader.onerror = function() {
+        showNotification('파일을 읽는 중 오류가 발생했습니다.', 'error');
+    };
+    
+    reader.readAsDataURL(file);
+}
+
+function setCustomCanvasBackground(customBackground) {
+    if (!canvasManager || !customBackground) {
+        console.error('Canvas manager or background data is missing');
+        return;
+    }
+    
+    console.log('Setting custom canvas background:', customBackground);
+    
+    // 워터마크 숨기기
+    canvasManager.hideWatermark();
+    
+    // 환영 오버레이 숨기기
+    canvasManager.hideWelcomeOverlay();
+    
+    // Use the custom image URL directly
+    fabric.Image.fromURL(customBackground.image, (img) => {
+        if (!img) {
+            console.error('Failed to load custom background image');
+            showNotification('이미지 로드에 실패했습니다.', 'error');
+            return;
+        }
+        
+        canvasManager.canvas.setBackgroundImage(img, canvasManager.canvas.renderAll.bind(canvasManager.canvas), {
+            scaleX: canvasManager.canvas.width / img.width,
+            scaleY: canvasManager.canvas.height / img.height
+        });
+        
+        canvasManager.currentBackground = customBackground;
+        
+        // 오버레이 완전히 숨기기
+        const overlay = document.getElementById('canvasOverlay');
+        if (overlay) {
+            overlay.classList.add('hidden');
+            overlay.style.display = 'none';
+        }
+        
+        // 강제로 캔버스 다시 렌더링
+        setTimeout(() => {
+            canvasManager.canvas.renderAll();
+        }, 100);
+        
+        console.log('Custom background set successfully:', customBackground.name);
+    }, { crossOrigin: 'anonymous' });
 }
 
 // Filter functions are now handled by FilterManager

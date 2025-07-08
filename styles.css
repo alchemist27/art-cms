@@ -42,6 +42,7 @@
     --spacing-md: 1rem;
     --spacing-lg: 1.5rem;
     --spacing-xl: 2rem;
+    --spacing-xxl: 3rem; /* Added for items-header gap */
     
     /* Border Radius - 더 부드러운 곡선 */
     --radius-sm: 0.5rem;
@@ -285,8 +286,65 @@ body::before {
     gap: var(--spacing-xs);
 }
 
+/* Upload Button */
+.upload-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 2px solid rgba(255, 107, 157, 0.2);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+    color: var(--gray-600);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+}
+
+.upload-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.3s;
+}
+
+.upload-btn:hover::before {
+    left: 100%;
+}
+
+.upload-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.upload-btn svg {
+    width: 18px;
+    height: 18px;
+    transition: all var(--transition-fast);
+}
+
+.upload-btn:hover svg {
+    transform: scale(1.1);
+}
+
+.items-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xxl, 3rem); /* 넉넉한 간격, spacing-xxl이 없으면 3rem */
+}
+
 .items-header h3 {
-    margin-right: var(--spacing-xl);
+    white-space: nowrap;
+    /* margin-right 제거 */
 }
 
 .selected-count {
@@ -486,7 +544,6 @@ body::before {
     grid-template-columns: repeat(5, 1fr);
     grid-auto-rows: 80px;
     gap: var(--spacing-md);
-    row-gap: var(--spacing-sm);
     flex: 1;
     overflow-y: auto;
     align-content: start;
@@ -495,7 +552,7 @@ body::before {
 .item-card {
     aspect-ratio: 1;
     border: 2px solid rgba(255, 107, 157, 0.2);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-xl); /* 둥근 사각형 */
     padding: var(--spacing-sm);
     cursor: grab;
     transition: all var(--transition-fast);
