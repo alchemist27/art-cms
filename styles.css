@@ -339,7 +339,7 @@ body::before {
 .items-header {
     display: flex;
     align-items: center;
-    gap: var(--spacing-xxl, 1rem); /* 넉넉한 간격, spacing-xxl이 없으면 3rem */
+    gap: 10px;
 }
 
 .items-header h3 {
@@ -542,7 +542,7 @@ body::before {
     padding: var(--spacing-md);
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: var(--spacing-md);
+    gap: 10px;
     flex: 1;
     overflow-y: auto;
     align-content: start;
@@ -551,7 +551,7 @@ body::before {
 .item-card {
     aspect-ratio: 1.1;
     border: 2px solid rgba(255, 107, 157, 0.2);
-    border-radius: var(--radius-xl); /* 둥근 사각형 */
+    border-radius: 10px;
     padding: var(--spacing-sm);
     cursor: grab;
     transition: all var(--transition-fast);
@@ -708,7 +708,7 @@ body::before {
 }
 
 /* Fabric.js wrapper 요소 중앙 정렬 - 오버레이와 동일한 위치 */
-.canvas-container > div:first-child {
+.canvas-section > div:first-child {
     margin: 0 auto !important;
     width: 800px !important;
     height: 600px !important;
@@ -1335,4 +1335,19 @@ body::before {
         width: 32px;
         height: 32px;
     }
+} 
+
+#backgroundCategoryFilters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px 12px;
+  width: 100%;
+  margin-top: 8px;
+}
+#backgroundCategoryFilters .tag-btn {
+  width: 100%;
+  min-width: 0;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
 } 

@@ -48,7 +48,7 @@ class CanvasManager {
             actionHandler: fabric.controlsUtils.rotationWithSnapping,
             actionName: 'rotate',
             render: (ctx, left, top, styleOverride, fabricObject) => {
-                const size = 24; // 더 크게
+                const size = 24;
                 ctx.save();
                 ctx.translate(left, top);
                 ctx.rotate(fabricObject.angle * Math.PI / 180);
@@ -59,31 +59,45 @@ class CanvasManager {
                 ctx.shadowColor = '#6366f1';
                 ctx.shadowBlur = 4;
                 ctx.fill();
-                // 좌우 곡선 화살표
-                ctx.lineWidth = 4;
+                // 화살표 스타일
+                ctx.lineWidth = 8;
                 ctx.strokeStyle = '#fff';
                 ctx.lineCap = 'round';
                 // 왼쪽 곡선 화살표
+                const arcR = 10;
+                const arcCx = -14;
+                const arcStart = Math.PI * 0.2;
+                const arcEnd = Math.PI * 1.2;
                 ctx.beginPath();
-                ctx.arc(-7, 0, 7, Math.PI * 0.25, Math.PI * 1.25, true); // 곡선
+                ctx.arc(arcCx, 0, arcR, arcStart, arcEnd, true);
                 ctx.stroke();
-                // 왼쪽 화살표 꼬리
+                // 왼쪽 화살촉(삼각형)
+                // arc 끝점 좌표 계산
+                const leftEndX = arcCx + arcR * Math.cos(arcEnd);
+                const leftEndY = 0 + arcR * Math.sin(arcEnd);
+                const leftAngle = arcEnd;
                 ctx.beginPath();
-                ctx.moveTo(-14, 0);
-                ctx.lineTo(-10, -4);
-                ctx.lineTo(-10, 4);
+                ctx.moveTo(leftEndX, leftEndY);
+                ctx.lineTo(leftEndX - 7 * Math.cos(leftAngle - 0.4), leftEndY - 7 * Math.sin(leftAngle - 0.4));
+                ctx.lineTo(leftEndX - 7 * Math.cos(leftAngle + 0.4), leftEndY - 7 * Math.sin(leftAngle + 0.4));
                 ctx.closePath();
                 ctx.fillStyle = '#fff';
                 ctx.fill();
                 // 오른쪽 곡선 화살표
+                const arcCxR = 14;
+                const arcStartR = Math.PI * 0.8;
+                const arcEndR = Math.PI * 1.8;
                 ctx.beginPath();
-                ctx.arc(7, 0, 7, Math.PI * 0.75, Math.PI * 1.75, false); // 곡선
+                ctx.arc(arcCxR, 0, arcR, arcStartR, arcEndR, false);
                 ctx.stroke();
-                // 오른쪽 화살표 꼬리
+                // 오른쪽 화살촉(삼각형)
+                const rightEndX = arcCxR + arcR * Math.cos(arcEndR);
+                const rightEndY = 0 + arcR * Math.sin(arcEndR);
+                const rightAngle = arcEndR;
                 ctx.beginPath();
-                ctx.moveTo(14, 0);
-                ctx.lineTo(10, -4);
-                ctx.lineTo(10, 4);
+                ctx.moveTo(rightEndX, rightEndY);
+                ctx.lineTo(rightEndX + 7 * Math.cos(rightAngle - 0.4), rightEndY + 7 * Math.sin(rightAngle - 0.4));
+                ctx.lineTo(rightEndX + 7 * Math.cos(rightAngle + 0.4), rightEndY + 7 * Math.sin(rightAngle + 0.4));
                 ctx.closePath();
                 ctx.fillStyle = '#fff';
                 ctx.fill();
