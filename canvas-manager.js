@@ -48,62 +48,49 @@ class CanvasManager {
             actionHandler: fabric.controlsUtils.rotationWithSnapping,
             actionName: 'rotate',
             render: (ctx, left, top, styleOverride, fabricObject) => {
-                const size = 24;
+                const size = 32; // 핸들러 크기
                 ctx.save();
                 ctx.translate(left, top);
                 ctx.rotate(fabricObject.angle * Math.PI / 180);
-                // 원
-                ctx.beginPath();
-                ctx.arc(0, 0, size / 2, 0, 2 * Math.PI);
-                ctx.fillStyle = '#6366f1';
-                ctx.shadowColor = '#6366f1';
-                ctx.shadowBlur = 4;
-                ctx.fill();
-                // 화살표 스타일
-                const lineWidth = 8;
-                ctx.lineWidth = lineWidth;
-                ctx.strokeStyle = '#fff';
+                // 보라색 원 배경 제거!
+                // SVG 아이콘 (viewBox 0 0 24 24)
+                ctx.save();
+                // 아이콘을 핸들러 크기에 맞게 scale/translate
+                const iconSize = 24;
+                const scale = size / iconSize * 0.8; // 0.8: 여백
+                ctx.scale(scale, scale);
+                ctx.translate(-iconSize/2, -iconSize/2);
+                ctx.strokeStyle = '#6366f1';
+                ctx.lineWidth = 2.5;
                 ctx.lineCap = 'round';
-                // 왼쪽 곡선 화살표
-                const arcR = 10;
-                const arcCx = -22;
-                const arcStart = Math.PI * 0.2;
-                const arcEnd = Math.PI * 1.2;
+                ctx.lineJoin = 'round';
+                // path 1: M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8
                 ctx.beginPath();
-                ctx.arc(arcCx, 0, arcR, arcStart, arcEnd, true);
+                ctx.moveTo(21, 12);
+                ctx.bezierCurveTo(21, 7.03, 16.97, 3, 12, 3);
+                ctx.bezierCurveTo(9.56, 3, 7.23, 3.93, 5.26, 5.74);
+                ctx.lineTo(3, 8);
                 ctx.stroke();
-                // 왼쪽 화살촉(삼각형) - 외곽 끝점 보정
-                const leftEndX = arcCx + (arcR + lineWidth/2) * Math.cos(arcEnd);
-                const leftEndY = 0 + (arcR + lineWidth/2) * Math.sin(arcEnd);
-                const leftAngle = arcEnd;
-                // 접선 방향(끝점 각도 ± 90도)
-                const tangent1 = leftAngle - Math.PI/2;
-                const tangent2 = leftAngle + Math.PI/2;
+                // path 2: M3 3v5h5
                 ctx.beginPath();
-                ctx.moveTo(leftEndX, leftEndY);
-                ctx.lineTo(leftEndX - 10 * Math.cos(leftAngle - 0.3), leftEndY - 10 * Math.sin(leftAngle - 0.3));
-                ctx.lineTo(leftEndX - 10 * Math.cos(leftAngle + 0.3), leftEndY - 10 * Math.sin(leftAngle + 0.3));
-                ctx.closePath();
-                ctx.fillStyle = '#fff';
-                ctx.fill();
-                // 오른쪽 곡선 화살표
-                const arcCxR = 22;
-                const arcStartR = Math.PI * 0.8;
-                const arcEndR = Math.PI * 1.8;
-                ctx.beginPath();
-                ctx.arc(arcCxR, 0, arcR, arcStartR, arcEndR, false);
+                ctx.moveTo(3, 3);
+                ctx.lineTo(3, 8);
+                ctx.lineTo(8, 8);
                 ctx.stroke();
-                // 오른쪽 화살촉(삼각형) - 외곽 끝점 보정
-                const rightEndX = arcCxR + (arcR + lineWidth/2) * Math.cos(arcEndR);
-                const rightEndY = 0 + (arcR + lineWidth/2) * Math.sin(arcEndR);
-                const rightAngle = arcEndR;
+                // path 3: M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16
                 ctx.beginPath();
-                ctx.moveTo(rightEndX, rightEndY);
-                ctx.lineTo(rightEndX + 10 * Math.cos(rightAngle - 0.3), rightEndY + 10 * Math.sin(rightAngle - 0.3));
-                ctx.lineTo(rightEndX + 10 * Math.cos(rightAngle + 0.3), rightEndY + 10 * Math.sin(rightAngle + 0.3));
-                ctx.closePath();
-                ctx.fillStyle = '#fff';
-                ctx.fill();
+                ctx.moveTo(3, 12);
+                ctx.bezierCurveTo(3, 16.97, 7.03, 21, 12, 21);
+                ctx.bezierCurveTo(14.44, 21, 16.77, 20.07, 18.74, 18.26);
+                ctx.lineTo(21, 16);
+                ctx.stroke();
+                // path 4: M16 16h5v5
+                ctx.beginPath();
+                ctx.moveTo(16, 16);
+                ctx.lineTo(21, 16);
+                ctx.lineTo(21, 21);
+                ctx.stroke();
+                ctx.restore();
                 ctx.restore();
             },
             cornerSize: 16,

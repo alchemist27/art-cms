@@ -1363,7 +1363,7 @@ body::before {
 } 
 
 .category-dropdown {
-  margin: 12px 0 18px 0;
+  margin: 16px;
   padding: 0.5em 1em;
   border-radius: var(--radius-lg);
   border: 2px solid var(--primary-color);
