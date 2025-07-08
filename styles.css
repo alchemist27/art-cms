@@ -401,7 +401,7 @@ body::before {
 
 /* Search Section */
 .search-controls {
-    padding: var(--spacing-lg);
+    padding: 12px;
 }
 
 .search-input-wrapper {
@@ -542,7 +542,7 @@ body::before {
     padding: var(--spacing-md);
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
+    gap: 6px;
     flex: 1;
     overflow-y: auto;
     align-content: start;
@@ -1338,16 +1338,15 @@ body::before {
 } 
 
 #backgroundCategoryFilters {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 10px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
   width: 100%;
-  margin-top: 8px;
+  margin: 10px 0 16px 0;
 }
 #backgroundCategoryFilters .tag-btn {
-  width: 100%;
-  min-width: 0;
-  justify-content: center;
-  text-align: center;
-  box-sizing: border-box;
+  width: auto;
+  min-width: unset;
+  flex: none;
+  padding: 0.5em 1.2em;
 } 
