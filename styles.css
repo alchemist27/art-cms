@@ -285,6 +285,10 @@ body::before {
     gap: var(--spacing-xs);
 }
 
+.items-header h3 {
+    margin-right: var(--spacing-xl);
+}
+
 .selected-count {
     font-size: 0.75rem;
     color: var(--primary-color);
@@ -482,6 +486,7 @@ body::before {
     grid-template-columns: repeat(5, 1fr);
     grid-auto-rows: 80px;
     gap: var(--spacing-md);
+    row-gap: var(--spacing-sm);
     flex: 1;
     overflow-y: auto;
     align-content: start;
