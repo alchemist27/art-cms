@@ -43,7 +43,7 @@ class CanvasManager {
         fabric.Object.prototype.controls.mtr = new fabric.Control({
             x: 0,
             y: -0.5,
-            offsetY: -30,
+            offsetY: -46,
             cursorStyle: 'crosshair',
             actionHandler: fabric.controlsUtils.rotationWithSnapping,
             actionName: 'rotate',

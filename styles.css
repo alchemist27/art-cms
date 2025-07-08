@@ -609,13 +609,14 @@ body::before {
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.6);
     color: var(--white);
-    font-size: 0.625rem;
-    padding: var(--spacing-xs);
+    font-size: 0.5rem;
+    padding: 0.15rem;
     text-align: center;
     opacity: 0;
     transition: opacity var(--transition-fast);
+    line-height: 1.2;
 }
 
 .item-card:hover .item-name {
