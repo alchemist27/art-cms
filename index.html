@@ -207,18 +207,19 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wallpaper-icon lucide-wallpaper"><circle cx="8" cy="9" r="2"/><path d="m9 17 6.1-6.1a2 2 0 0 1 2.81.01L22 15V5a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
                     </button>
                 </div>
-                <div class="tag-buttons" id="backgroundCategoryFilters">
-                    <button class="tag-btn" data-category="키링">키링</button>
-                    <button class="tag-btn" data-category="팔찌/목걸이">팔찌/목걸이</button>
-                    <button class="tag-btn" data-category="반지/귀걸이">반지/귀걸이</button>
-                    <button class="tag-btn" data-category="네일아트">네일아트</button>
-                    <button class="tag-btn" data-category="핸드폰기종">핸드폰기종</button>
-                    <button class="tag-btn" data-category="레진아트">레진아트</button>
-                    <button class="tag-btn" data-category="모루공예">모루공예</button>
-                    <button class="tag-btn" data-category="비녀공예">비녀공예</button>
-                    <button class="tag-btn" data-category="스위츠데코">스위츠데코</button>
-                    <button class="tag-btn" data-category="스마트톡/탑로더">스마트톡/탑로더</button>
-                </div>
+                <select id="backgroundCategoryDropdown" class="category-dropdown">
+                    <option value="all">전체</option>
+                    <option value="키링">키링</option>
+                    <option value="팔찌/목걸이">팔찌/목걸이</option>
+                    <option value="반지/귀걸이">반지/귀걸이</option>
+                    <option value="네일아트">네일아트</option>
+                    <option value="핸드폰기종">핸드폰기종</option>
+                    <option value="레진아트">레진아트</option>
+                    <option value="모루공예">모루공예</option>
+                    <option value="비녀공예">비녀공예</option>
+                    <option value="스위츠데코">스위츠데코</option>
+                    <option value="스마트톡/탑로더">스마트톡/탑로더</option>
+                </select>
                 <input type="file" id="backgroundFileInput" accept="image/*" style="display: none;">
                 <div class="background-grid" id="backgroundGrid">
                     <!-- Backgrounds will be loaded here dynamically -->

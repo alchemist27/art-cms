@@ -1361,3 +1361,14 @@ body::before {
   flex: none;
   padding: 0.4em 0.5em;
 } 
+
+.category-dropdown {
+  margin: 12px 0 18px 0;
+  padding: 0.5em 1em;
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--primary-color);
+  font-size: 1rem;
+  background: #fff;
+  color: var(--gray-700);
+  box-shadow: var(--shadow-sm);
+} 

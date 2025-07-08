@@ -134,21 +134,12 @@ function initializeEventListeners() {
         backgroundFileInput.addEventListener('change', handleBackgroundUpload);
     }
 
-    // 배경 카테고리 필터 이벤트
-    const bgCatFilter = document.getElementById('backgroundCategoryFilters');
-    if (bgCatFilter) {
-        bgCatFilter.addEventListener('click', (e) => {
-            if (e.target && e.target.matches('button[data-category]')) {
-                const cat = e.target.getAttribute('data-category');
-                if (selectedBgCategories.includes(cat)) {
-                    selectedBgCategories = selectedBgCategories.filter(c => c !== cat);
-                    e.target.classList.remove('active');
-                } else {
-                    selectedBgCategories.push(cat);
-                    e.target.classList.add('active');
-                }
-                renderBackgrounds();
-            }
+    // 배경 카테고리 드롭다운 이벤트
+    const bgCatDropdown = document.getElementById('backgroundCategoryDropdown');
+    if (bgCatDropdown) {
+        bgCatDropdown.addEventListener('change', (e) => {
+            selectedBgCategory = e.target.value;
+            renderBackgrounds();
         });
     }
 }
@@ -164,7 +155,8 @@ function getBackgroundCategory(bg) {
     return '기타';
 }
 
-let selectedBgCategories = [];
+// 드롭다운 카테고리 필터링용 전역 변수
+let selectedBgCategory = 'all';
 
 function renderBackgrounds() {
     const backgroundGrid = document.getElementById('backgroundGrid');
@@ -175,8 +167,8 @@ function renderBackgrounds() {
     
     // 필터링
     let filtered = backgroundsData;
-    if (selectedBgCategories.length > 0) {
-        filtered = backgroundsData.filter(bg => selectedBgCategories.includes(getBackgroundCategory(bg)));
+    if (selectedBgCategory && selectedBgCategory !== 'all') {
+        filtered = backgroundsData.filter(bg => getBackgroundCategory(bg) === selectedBgCategory);
     }
     filtered.forEach((bg, index) => {
         const bgCard = createBackgroundCard(bg, false); // 기본 활성화 제거

@@ -60,44 +60,47 @@ class CanvasManager {
                 ctx.shadowBlur = 4;
                 ctx.fill();
                 // 화살표 스타일
-                ctx.lineWidth = 8;
+                const lineWidth = 8;
+                ctx.lineWidth = lineWidth;
                 ctx.strokeStyle = '#fff';
                 ctx.lineCap = 'round';
                 // 왼쪽 곡선 화살표
                 const arcR = 10;
-                const arcCx = -14;
+                const arcCx = -22;
                 const arcStart = Math.PI * 0.2;
                 const arcEnd = Math.PI * 1.2;
                 ctx.beginPath();
                 ctx.arc(arcCx, 0, arcR, arcStart, arcEnd, true);
                 ctx.stroke();
-                // 왼쪽 화살촉(삼각형)
-                // arc 끝점 좌표 계산
-                const leftEndX = arcCx + arcR * Math.cos(arcEnd);
-                const leftEndY = 0 + arcR * Math.sin(arcEnd);
+                // 왼쪽 화살촉(삼각형) - 외곽 끝점 보정
+                const leftEndX = arcCx + (arcR + lineWidth/2) * Math.cos(arcEnd);
+                const leftEndY = 0 + (arcR + lineWidth/2) * Math.sin(arcEnd);
                 const leftAngle = arcEnd;
+                // 접선 방향(끝점 각도 ± 90도)
+                const tangent1 = leftAngle - Math.PI/2;
+                const tangent2 = leftAngle + Math.PI/2;
                 ctx.beginPath();
                 ctx.moveTo(leftEndX, leftEndY);
-                ctx.lineTo(leftEndX - 7 * Math.cos(leftAngle - 0.4), leftEndY - 7 * Math.sin(leftAngle - 0.4));
-                ctx.lineTo(leftEndX - 7 * Math.cos(leftAngle + 0.4), leftEndY - 7 * Math.sin(leftAngle + 0.4));
+                ctx.lineTo(leftEndX - 10 * Math.cos(leftAngle - 0.3), leftEndY - 10 * Math.sin(leftAngle - 0.3));
+                ctx.lineTo(leftEndX - 10 * Math.cos(leftAngle + 0.3), leftEndY - 10 * Math.sin(leftAngle + 0.3));
                 ctx.closePath();
                 ctx.fillStyle = '#fff';
                 ctx.fill();
                 // 오른쪽 곡선 화살표
-                const arcCxR = 14;
+                const arcCxR = 22;
                 const arcStartR = Math.PI * 0.8;
                 const arcEndR = Math.PI * 1.8;
                 ctx.beginPath();
                 ctx.arc(arcCxR, 0, arcR, arcStartR, arcEndR, false);
                 ctx.stroke();
-                // 오른쪽 화살촉(삼각형)
-                const rightEndX = arcCxR + arcR * Math.cos(arcEndR);
-                const rightEndY = 0 + arcR * Math.sin(arcEndR);
+                // 오른쪽 화살촉(삼각형) - 외곽 끝점 보정
+                const rightEndX = arcCxR + (arcR + lineWidth/2) * Math.cos(arcEndR);
+                const rightEndY = 0 + (arcR + lineWidth/2) * Math.sin(arcEndR);
                 const rightAngle = arcEndR;
                 ctx.beginPath();
                 ctx.moveTo(rightEndX, rightEndY);
-                ctx.lineTo(rightEndX + 7 * Math.cos(rightAngle - 0.4), rightEndY + 7 * Math.sin(rightAngle - 0.4));
-                ctx.lineTo(rightEndX + 7 * Math.cos(rightAngle + 0.4), rightEndY + 7 * Math.sin(rightAngle + 0.4));
+                ctx.lineTo(rightEndX + 10 * Math.cos(rightAngle - 0.3), rightEndY + 10 * Math.sin(rightAngle - 0.3));
+                ctx.lineTo(rightEndX + 10 * Math.cos(rightAngle + 0.3), rightEndY + 10 * Math.sin(rightAngle + 0.3));
                 ctx.closePath();
                 ctx.fillStyle = '#fff';
                 ctx.fill();
