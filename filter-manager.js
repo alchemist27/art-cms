@@ -8,8 +8,9 @@ class FilterManager {
         this.activeFilters = {
             search: '',
             type: 'all',
-            color: 'all',
-            direction: 'all'
+            color: ['all'], // 배열로 변경하여 다중 선택 지원
+            direction: 'all',
+            sort: 'popular' // 정렬 옵션 추가
         };
         
         this.init();
@@ -38,6 +39,33 @@ class FilterManager {
                 if (e.target.classList.contains('tag-btn')) {
                     this.setActiveButton(e.target, 'typeFilters');
                     this.setFilter('type', e.target.dataset.filter);
+                    // 비즈 방향 필터 그룹 표시/숨김 처리
+                    const directionGroup = document.getElementById('directionFilterGroup');
+                    if (directionGroup) {
+                        if (e.target.dataset.filter === '비즈') {
+                            directionGroup.style.display = '';
+                        } else {
+                            directionGroup.style.display = 'none';
+                        }
+                    }
+                    // 모루공예 타입 필터 그룹 표시/숨김 처리
+                    const moruGroup = document.getElementById('moruFilterGroup');
+                    if (moruGroup) {
+                        if (e.target.dataset.filter === '모루공예') {
+                            moruGroup.style.display = '';
+                        } else {
+                            moruGroup.style.display = 'none';
+                        }
+                    }
+                    // 부재료 타입 필터 그룹 표시/숨김 처리
+                    const bunjaeGroup = document.getElementById('bunjaeFilterGroup');
+                    if (bunjaeGroup) {
+                        if (e.target.dataset.filter === '부재료') {
+                            bunjaeGroup.style.display = '';
+                        } else {
+                            bunjaeGroup.style.display = 'none';
+                        }
+                    }
                     this.applyFilters();
                 }
             });
@@ -48,8 +76,35 @@ class FilterManager {
         if (colorFilters) {
             colorFilters.addEventListener('click', (e) => {
                 if (e.target.classList.contains('tag-btn')) {
-                    this.setActiveButton(e.target, 'colorFilters');
-                    this.setFilter('color', e.target.dataset.filter);
+                    const color = e.target.dataset.filter;
+                    let selectedColors = [...this.activeFilters.color];
+
+                    if (color === 'all') {
+                        // '전체' 클릭 시 모두 해제하고 'all'만 남김
+                        selectedColors = ['all'];
+                        colorFilters.querySelectorAll('.tag-btn').forEach(btn => btn.classList.remove('active'));
+                        e.target.classList.add('active');
+                    } else {
+                        // 'all'이 선택되어 있으면 해제
+                        selectedColors = selectedColors.filter(c => c !== 'all');
+                        if (selectedColors.includes(color)) {
+                            // 이미 선택된 색상 클릭 시 해제
+                            selectedColors = selectedColors.filter(c => c !== color);
+                            e.target.classList.remove('active');
+                        } else {
+                            // 새 색상 추가
+                            selectedColors.push(color);
+                            e.target.classList.add('active');
+                        }
+                        // 아무것도 선택 안 하면 'all' 활성화
+                        if (selectedColors.length === 0) {
+                            selectedColors = ['all'];
+                            colorFilters.querySelector('[data-filter="all"]').classList.add('active');
+                        } else {
+                            colorFilters.querySelector('[data-filter="all"]').classList.remove('active');
+                        }
+                    }
+                    this.setFilter('color', selectedColors);
                     this.applyFilters();
                 }
             });
@@ -62,6 +117,18 @@ class FilterManager {
                 if (e.target.classList.contains('tag-btn')) {
                     this.setActiveButton(e.target, 'directionFilters');
                     this.setFilter('direction', e.target.dataset.filter);
+                    this.applyFilters();
+                }
+            });
+        }
+        
+        // 정렬 탭
+        const sortTabs = document.getElementById('sortTabs');
+        if (sortTabs) {
+            sortTabs.addEventListener('click', (e) => {
+                if (e.target.classList.contains('sort-tab')) {
+                    this.setActiveSortTab(e.target);
+                    this.setFilter('sort', e.target.dataset.sort);
                     this.applyFilters();
                 }
             });
@@ -87,6 +154,17 @@ class FilterManager {
         activeBtn.classList.add('active');
     }
     
+    setActiveSortTab(activeTab) {
+        const sortTabs = document.getElementById('sortTabs');
+        if (!sortTabs) return;
+        
+        sortTabs.querySelectorAll('.sort-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        activeTab.classList.add('active');
+    }
+    
     applyFilters() {
         this.filteredItems = this.originalItems.filter(item => {
             return this.matchesSearch(item) &&
@@ -94,6 +172,9 @@ class FilterManager {
                    this.matchesColor(item) &&
                    this.matchesDirection(item);
         });
+        
+        // 정렬 적용
+        this.sortItems();
         
         this.updateItemCount();
         this.renderItems();
@@ -117,9 +198,9 @@ class FilterManager {
     
     matchesColor(item) {
         const colorFilter = this.activeFilters.color;
-        if (colorFilter === 'all') return true;
+        if (colorFilter.includes('all')) return true; // 배열에 'all'이 포함되어 있으면 모든 색상 통과
         
-        return item.color === colorFilter || item.tags.includes(colorFilter);
+        return colorFilter.some(color => item.color === color || item.tags.includes(color));
     }
     
     matchesDirection(item) {
@@ -128,6 +209,34 @@ class FilterManager {
         
         // 비즈 방향 필터링 - tags 배열에서 방향 정보 확인
         return item.tags.includes(directionFilter);
+    }
+    
+    sortItems() {
+        const sortType = this.activeFilters.sort;
+        
+        switch (sortType) {
+            case 'popular':
+                // 인기순 - 기본 순서 유지 (items.json의 순서)
+                break;
+            case 'small':
+                // 작은순 - 크기 기준 오름차순
+                this.filteredItems.sort((a, b) => {
+                    const sizeA = (a.width || 0) * (a.height || 0);
+                    const sizeB = (b.width || 0) * (b.height || 0);
+                    return sizeA - sizeB;
+                });
+                break;
+            case 'large':
+                // 큰순 - 크기 기준 내림차순
+                this.filteredItems.sort((a, b) => {
+                    const sizeA = (a.width || 0) * (a.height || 0);
+                    const sizeB = (b.width || 0) * (b.height || 0);
+                    return sizeB - sizeA;
+                });
+                break;
+            default:
+                break;
+        }
     }
     
     renderItems() {
@@ -223,8 +332,9 @@ class FilterManager {
         this.activeFilters = {
             search: '',
             type: 'all',
-            color: 'all',
-            direction: 'all'
+            color: ['all'],
+            direction: 'all',
+            sort: 'popular'
         };
         
         const searchInput = document.getElementById('searchInput');
@@ -239,6 +349,15 @@ class FilterManager {
         document.querySelectorAll('[data-filter="all"]').forEach(btn => {
             btn.classList.add('active');
         });
+        
+        // 정렬 탭 초기화
+        const sortTabs = document.getElementById('sortTabs');
+        if (sortTabs) {
+            sortTabs.querySelectorAll('.sort-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            sortTabs.querySelector('[data-sort="popular"]').classList.add('active');
+        }
         
         this.applyFilters();
     }

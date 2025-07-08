@@ -54,14 +54,14 @@
                                 <button class="tag-btn" data-filter="비즈">비즈</button>
                                 <button class="tag-btn" data-filter="파츠">파츠</button>
                                 <button class="tag-btn" data-filter="팬던트">팬던트</button>
-                                <button class="tag-btn" data-filter="스티커">스티커</button>
-                                <button class="tag-btn" data-filter="리본">리본</button>
+                                <button class="tag-btn" data-filter="모루공예">모루공예</button>
                                 <button class="tag-btn" data-filter="부재료">부재료</button>
+                                <button class="tag-btn" data-filter="끈/줄">끈/줄</button>
                                 <button class="tag-btn" data-filter="도구/정리">도구/정리</button>
                             </div>
                         </div>
                         <div class="filter-group">
-                            <label>색상</label>
+                            <label>색상 (중복 선택 가능)</label>
                             <div class="tag-buttons" id="colorFilters">
                                 <button class="tag-btn active" data-filter="all">전체</button>
                                 <button class="tag-btn color-btn" data-filter="black">
@@ -104,14 +104,40 @@
                                     <span class="color-preview" style="background-color: transparent; border: 1px solid #e2e8f0;"></span>
                                     투명    
                                 </button>
+                                <button class="tag-btn color-btn" data-filter="gold">
+                                    <span class="color-preview" style="background-color: #ffd700;"></span>
+                                    골드
+                                </button>
+                                <button class="tag-btn color-btn" data-filter="silver">
+                                    <span class="color-preview" style="background-color: #c0c0c0;"></span>
+                                    실버
+                                </button>
                             </div>
                         </div>
-                        <div class="filter-group">
+                        <div class="filter-group" id="directionFilterGroup" style="display:none;">
                             <label>비즈 방향</label>
                             <div class="tag-buttons" id="directionFilters">
                                 <button class="tag-btn active" data-filter="all">전체</button>
                                 <button class="tag-btn" data-filter="가로">가로</button>
                                 <button class="tag-btn" data-filter="세로">세로</button>
+                            </div>
+                        </div>
+                        <div class="filter-group" id="moruFilterGroup" style="display:none;">
+                            <label>모루공예 타입</label>
+                            <div class="tag-buttons" id="moruFilters">
+                                <button class="tag-btn active" data-filter="all">전체</button>
+                                <button class="tag-btn" data-filter="옷소품">옷소품</button>
+                                <button class="tag-btn" data-filter="눈코">눈코</button>
+                            </div>
+                        </div>
+                        <div class="filter-group" id="bunjaeFilterGroup" style="display:none;">
+                            <label>부재료 타입</label>
+                            <div class="tag-buttons" id="bunjaeFilters">
+                                <button class="tag-btn active" data-filter="all">전체</button>
+                                <button class="tag-btn" data-filter="키링,군번줄">키링,군번줄</button>
+                                <button class="tag-btn" data-filter="체인,O링,부속">체인,o링,부속</button>
+                                <button class="tag-btn" data-filter="마감,9핀,T핀">마감,9핀,t핀</button>
+                                <button class="tag-btn" data-filter="반지,목걸이,귀걸이">반지,목걸이,귀걸이</button>
                             </div>
                         </div>
                     </div>
@@ -122,7 +148,20 @@
             <section class="items-section">
                 <div class="items-header">
                     <h3><i class="fas fa-th-large"></i> 제품 목록</h3>
-                    <span class="items-count" id="itemsCount">10개 아이템</span>
+                    <div class="sort-tabs" id="sortTabs">
+                        <button class="sort-tab active" data-sort="popular">
+                            <i class="fas fa-fire"></i>
+                            인기순
+                        </button>
+                        <button class="sort-tab" data-sort="small">
+                            <i class="fas fa-sort-amount-down"></i>
+                            작은순
+                        </button>
+                        <button class="sort-tab" data-sort="large">
+                            <i class="fas fa-sort-amount-up"></i>
+                            큰순
+                        </button>
+                    </div>
                 </div>
                 <div class="items-grid" id="itemsGrid">
                     <!-- Items will be loaded here dynamically -->
