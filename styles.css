@@ -339,7 +339,7 @@ body::before {
 .items-header {
     display: flex;
     align-items: center;
-    gap: var(--spacing-xxl, 3rem); /* 넉넉한 간격, spacing-xxl이 없으면 3rem */
+    gap: var(--spacing-xxl, 1rem); /* 넉넉한 간격, spacing-xxl이 없으면 3rem */
 }
 
 .items-header h3 {
@@ -542,7 +542,6 @@ body::before {
     padding: var(--spacing-md);
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    grid-auto-rows: 80px;
     gap: var(--spacing-md);
     flex: 1;
     overflow-y: auto;
@@ -550,7 +549,7 @@ body::before {
 }
 
 .item-card {
-    aspect-ratio: 1;
+    aspect-ratio: 1.1;
     border: 2px solid rgba(255, 107, 157, 0.2);
     border-radius: var(--radius-xl); /* 둥근 사각형 */
     padding: var(--spacing-sm);
@@ -563,6 +562,7 @@ body::before {
     justify-content: center;
     position: relative;
     overflow: hidden;
+    box-shadow: var(--shadow-md);
 }
 
 .item-card::before {
@@ -597,6 +597,7 @@ body::before {
     height: 70%;
     object-fit: contain;
     transition: transform var(--transition-fast);
+    border-radius: 0 !important;
 }
 
 .item-card:hover img {
@@ -665,6 +666,11 @@ body::before {
     color: var(--primary-color);
     transform: translateY(-1px);
     box-shadow: var(--shadow-sm);
+}
+
+.control-btn svg {
+    width: 18px;
+    height: 18px;
 }
 
 .canvas-container {
@@ -843,11 +849,11 @@ body::before {
     padding: var(--spacing-md);
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-sm);
+    gap: var(--spacing-md);
 }
 
 .background-card {
-    aspect-ratio: 4/3;
+    aspect-ratio: 1.1;
     border: 2px solid rgba(255, 107, 157, 0.2);
     border-radius: var(--radius-xl);
     overflow: hidden;
@@ -856,6 +862,7 @@ body::before {
     position: relative;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.8) 100%);
     backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-md);
 }
 
 .background-card::before {
@@ -895,6 +902,7 @@ body::before {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 0 !important;
 }
 
 .background-card .bg-name {

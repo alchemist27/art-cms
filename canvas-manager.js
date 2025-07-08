@@ -48,7 +48,7 @@ class CanvasManager {
             actionHandler: fabric.controlsUtils.rotationWithSnapping,
             actionName: 'rotate',
             render: (ctx, left, top, styleOverride, fabricObject) => {
-                const size = 16;
+                const size = 24; // 더 크게
                 ctx.save();
                 ctx.translate(left, top);
                 ctx.rotate(fabricObject.angle * Math.PI / 180);
@@ -56,14 +56,37 @@ class CanvasManager {
                 ctx.beginPath();
                 ctx.arc(0, 0, size / 2, 0, 2 * Math.PI);
                 ctx.fillStyle = '#6366f1';
+                ctx.shadowColor = '#6366f1';
+                ctx.shadowBlur = 4;
                 ctx.fill();
-                // 좌우 화살표
-                ctx.font = 'bold 10px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
+                // 좌우 곡선 화살표
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = '#fff';
+                ctx.lineCap = 'round';
+                // 왼쪽 곡선 화살표
+                ctx.beginPath();
+                ctx.arc(-7, 0, 7, Math.PI * 0.25, Math.PI * 1.25, true); // 곡선
+                ctx.stroke();
+                // 왼쪽 화살표 꼬리
+                ctx.beginPath();
+                ctx.moveTo(-14, 0);
+                ctx.lineTo(-10, -4);
+                ctx.lineTo(-10, 4);
+                ctx.closePath();
                 ctx.fillStyle = '#fff';
-                ctx.fillText('←', -6, 0);
-                ctx.fillText('→', 6, 0);
+                ctx.fill();
+                // 오른쪽 곡선 화살표
+                ctx.beginPath();
+                ctx.arc(7, 0, 7, Math.PI * 0.75, Math.PI * 1.75, false); // 곡선
+                ctx.stroke();
+                // 오른쪽 화살표 꼬리
+                ctx.beginPath();
+                ctx.moveTo(14, 0);
+                ctx.lineTo(10, -4);
+                ctx.lineTo(10, 4);
+                ctx.closePath();
+                ctx.fillStyle = '#fff';
+                ctx.fill();
                 ctx.restore();
             },
             cornerSize: 16,

@@ -133,9 +133,38 @@ function initializeEventListeners() {
         
         backgroundFileInput.addEventListener('change', handleBackgroundUpload);
     }
+
+    // 배경 카테고리 필터 이벤트
+    const bgCatFilter = document.getElementById('backgroundCategoryFilters');
+    if (bgCatFilter) {
+        bgCatFilter.addEventListener('click', (e) => {
+            if (e.target && e.target.matches('button[data-category]')) {
+                const cat = e.target.getAttribute('data-category');
+                if (selectedBgCategories.includes(cat)) {
+                    selectedBgCategories = selectedBgCategories.filter(c => c !== cat);
+                    e.target.classList.remove('active');
+                } else {
+                    selectedBgCategories.push(cat);
+                    e.target.classList.add('active');
+                }
+                renderBackgrounds();
+            }
+        });
+    }
 }
 
 // Item rendering is now handled by FilterManager
+
+// 임시: 배경 id별 카테고리 매핑 함수
+function getBackgroundCategory(bg) {
+    // 실제로는 bg.category 사용, 여기선 id로 임시 분기
+    if (bg.id === 'bg1') return '키링';
+    if (bg.id === 'bg2') return '팔찌/목걸이';
+    // 필요시 더 추가
+    return '기타';
+}
+
+let selectedBgCategories = [];
 
 function renderBackgrounds() {
     const backgroundGrid = document.getElementById('backgroundGrid');
@@ -144,7 +173,12 @@ function renderBackgrounds() {
     
     backgroundGrid.innerHTML = '';
     
-    backgroundsData.forEach((bg, index) => {
+    // 필터링
+    let filtered = backgroundsData;
+    if (selectedBgCategories.length > 0) {
+        filtered = backgroundsData.filter(bg => selectedBgCategories.includes(getBackgroundCategory(bg)));
+    }
+    filtered.forEach((bg, index) => {
         const bgCard = createBackgroundCard(bg, false); // 기본 활성화 제거
         backgroundGrid.appendChild(bgCard);
     });
