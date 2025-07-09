@@ -963,9 +963,18 @@ body::before {
 /* Layer Controls */
 .layer-controls {
     padding: var(--spacing-md);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
     gap: var(--spacing-xs);
+}
+
+.layer-row {
+    display: flex;
+    gap: var(--spacing-xs);
+}
+
+.layer-row:last-child {
+    justify-content: center;
 }
 
 .layer-btn {
@@ -1102,7 +1111,11 @@ body::before {
     }
     
     .layer-controls {
-        grid-template-columns: 1fr;
+        flex-direction: column;
+    }
+    
+    .layer-row {
+        flex-direction: column;
     }
 }
 

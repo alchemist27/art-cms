@@ -106,6 +106,11 @@ function initializeEventListeners() {
         sendToBackBtn.addEventListener('click', () => canvasManager.sendToBack());
     }
     
+    const flipHorizontalBtn = document.getElementById('flipHorizontalBtn');
+    if (flipHorizontalBtn) {
+        flipHorizontalBtn.addEventListener('click', () => canvasManager.flipHorizontal());
+    }
+    
     const duplicateBtn = document.getElementById('duplicateBtn');
     if (duplicateBtn) {
         duplicateBtn.addEventListener('click', () => canvasManager.duplicate());

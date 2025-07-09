@@ -242,6 +242,14 @@ class CanvasManager {
     sendToBack() { this.canvas.getActiveObject()?.sendToBack(); this.canvas.renderAll(); }
     bringForward() { this.canvas.getActiveObject()?.bringForward(); this.canvas.renderAll(); }
     sendBackwards() { this.canvas.getActiveObject()?.sendBackwards(); this.canvas.renderAll(); }
+    
+    flipHorizontal() {
+        const activeObject = this.canvas.getActiveObject();
+        if (activeObject) {
+            activeObject.set('flipX', !activeObject.flipX);
+            this.canvas.renderAll();
+        }
+    }
 
     deleteSelected() {
         this.canvas.getActiveObjects().forEach(obj => this.canvas.remove(obj));
