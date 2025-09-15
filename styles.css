@@ -706,6 +706,8 @@ body::before {
     max-height: 600px !important;
     width: 800px !important;
     height: 600px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
 }
 
 /* Fabric.js wrapper 요소 중앙 정렬 - 오버레이와 동일한 위치 */
@@ -723,6 +725,8 @@ body::before {
     width: 800px !important;
     position: relative !important;
     display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-lg), 10px 10px 25px rgba(168, 230, 207, 0.2);
 }
