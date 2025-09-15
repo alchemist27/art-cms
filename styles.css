@@ -680,7 +680,6 @@ body::before {
     align-items: center;
     justify-content: center;
     padding: var(--spacing-lg);
-    flex: 1;
     position: relative;
     overflow: hidden;
 }
@@ -706,8 +705,6 @@ body::before {
     max-height: 600px !important;
     width: 800px !important;
     height: 600px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
 }
 
 /* Fabric.js wrapper 요소 중앙 정렬 - 오버레이와 동일한 위치 */
@@ -721,7 +718,7 @@ body::before {
     box-shadow: var(--shadow-lg), 10px 10px 25px rgba(168, 230, 207, 0.2);
 } */
 .canvas-section .canvas-container {
-    margin: 0 auto !important;
+    margin: auto 0 !important;
     width: 800px !important;
     position: relative !important;
     display: flex !important;
@@ -770,7 +767,6 @@ body::before {
     border-radius: var(--radius-xl);
     pointer-events: none;
     z-index: 10;
-    margin-top: 40px;
 }
 
 .canvas-overlay:not(.hidden) {
