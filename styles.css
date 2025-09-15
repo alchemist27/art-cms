@@ -680,7 +680,7 @@ body::before {
     align-items: center;
     justify-content: center;
     padding: var(--spacing-lg);
-    height: 600px;
+    flex: 1;
     position: relative;
     overflow: hidden;
 }
@@ -766,6 +766,7 @@ body::before {
     border-radius: var(--radius-xl);
     pointer-events: none;
     z-index: 10;
+    margin-top: 40px;
 }
 
 .canvas-overlay:not(.hidden) {
