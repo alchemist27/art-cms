@@ -977,7 +977,28 @@ body::before {
 .layer-btn {
     flex: 1;
     max-width: 90px;
+    padding: var(--spacing-sm) var(--spacing-xs);
+    border: 2px solid var(--primary-color);
+    background: white;
+    color: var(--primary-color);
+    border-radius: var(--radius-md);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
     text-align: center;
+}
+
+.layer-btn:hover {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #ff6b9d 100%);
+    border-color: var(--primary-color);
+    color: var(--white);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(255, 107, 157, 0.3);
 }
 
 .layer-row:last-child {
