@@ -123,35 +123,67 @@ class Cafe24ApiService {
         }
 
         const accessToken = await this.getAccessToken();
-        const url = getCafe24ApiUrl(endpoint);
-        const headers = {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-            'X-Cafe24-Api-Version': cafe24Config.apiVersion,
-            ...options.headers
-        };
-
+        
+        // 프로덕션과 로컬 환경 구분
+        const isProduction = window.location.hostname !== 'localhost';
+        
         try {
-            let response = await fetch(url, {
-                ...options,
-                headers
-            });
+            let response;
+            
+            if (isProduction || true) { // 항상 프록시 사용 (CORS 회피)
+                // Vercel API 프록시 사용
+                const proxyUrl = '/api/cafe24/proxy';
+                
+                if (options.method === 'GET' || !options.method) {
+                    // GET 요청
+                    const params = new URLSearchParams({ endpoint });
+                    response = await fetch(`${proxyUrl}?${params.toString()}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                } else {
+                    // POST, PUT, DELETE 요청
+                    response = await fetch(proxyUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            endpoint,
+                            method: options.method,
+                            body: options.body ? JSON.parse(options.body) : undefined
+                        })
+                    });
+                }
+            } else {
+                // 직접 호출 (로컬 테스트용 - 실제로는 CORS 때문에 작동 안함)
+                const url = getCafe24ApiUrl(endpoint);
+                const headers = {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                    'X-Cafe24-Api-Version': cafe24Config.apiVersion,
+                    ...options.headers
+                };
+                
+                response = await fetch(url, {
+                    ...options,
+                    headers
+                });
+            }
 
             if (response.status === 401) {
                 // 토큰이 만료되었으면 갱신 후 재시도
                 await this.refreshAccessToken();
-                const newAccessToken = await this.getAccessToken();
-                response = await fetch(url, {
-                    ...options,
-                    headers: {
-                        ...headers,
-                        'Authorization': `Bearer ${newAccessToken}`
-                    }
-                });
+                return await this.makeApiRequest(endpoint, options);
             }
 
             if (!response.ok) {
-                throw new Error(`API request failed: ${response.statusText}`);
+                const errorData = await response.json();
+                throw new Error(errorData.error || `API request failed: ${response.statusText}`);
             }
 
             return await response.json();
