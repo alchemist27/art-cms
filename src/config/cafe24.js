@@ -3,7 +3,7 @@ export const cafe24Config = {
     clientSecret: import.meta.env.VITE_CAFE24_CLIENT_SECRET || '',
     shopId: import.meta.env.VITE_CAFE24_SHOP_ID || '',
     redirectUri: import.meta.env.VITE_CAFE24_REDIRECT_URI || `${window.location.origin}/products`,
-    apiVersion: '2024-06-01',
+    apiVersion: '2025-06-01',
     baseUrl: 'https://api.cafe24.com',
     scope: 'mall.read_category,mall.write_category,mall.read_product,mall.write_product',
     // Firebase Functions URLs (프로덕션에서는 환경변수로 설정)

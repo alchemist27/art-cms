@@ -54,7 +54,7 @@ export default async function handler(req, res) {
         const headers = {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
-            'X-Cafe24-Api-Version': '2024-06-01'
+            'X-Cafe24-Api-Version': '2025-06-01'
         };
 
         const options = {
