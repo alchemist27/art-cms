@@ -7,9 +7,10 @@ export class ProductsPage {
         this.container = container;
         this.products = [];
         this.currentPage = 1;
-        this.itemsPerPage = 20;
+        this.itemsPerPage = 50;
         this.isLoading = false;
         this.searchKeyword = '';
+        this.searchProductCode = '';
         
         this.render();
         this.checkAuthAndLoadProducts();
@@ -130,6 +131,10 @@ export class ProductsPage {
             if (this.searchKeyword) {
                 params.product_name = this.searchKeyword;
             }
+            
+            if (this.searchProductCode) {
+                params.product_code = this.searchProductCode;
+            }
 
             this.products = await cafe24Api.getProducts(params);
             this.displayProducts();
@@ -159,42 +164,36 @@ export class ProductsPage {
             return;
         }
 
-        const productsHTML = this.products.map(product => `
-            <div class="product-card" data-product-id="${product.product_no}">
-                <div class="product-image">
-                    ${product.detail_image ? 
-                        `<img src="${product.detail_image}" alt="${product.product_name}" onerror="this.src='/placeholder.png'">` :
-                        `<div class="no-image">이미지 없음</div>`
-                    }
-                </div>
-                <div class="product-info">
-                    <h3 class="product-name">${product.product_name}</h3>
-                    <p class="product-code">상품코드: ${product.product_code || 'N/A'}</p>
-                    <p class="product-price">
-                        판매가: ${this.formatPrice(product.price)} 원
-                        ${product.retail_price ? `<br>소비자가: ${this.formatPrice(product.retail_price)} 원` : ''}
-                    </p>
-                    <p class="product-stock">재고: ${product.stock_quantity || 0}개</p>
-                    <div class="product-status">
-                        <span class="status-badge ${product.display === 'T' ? 'active' : 'inactive'}">
-                            ${product.display === 'T' ? '진열중' : '진열안함'}
-                        </span>
-                        <span class="status-badge ${product.selling === 'T' ? 'active' : 'inactive'}">
-                            ${product.selling === 'T' ? '판매중' : '판매중지'}
-                        </span>
-                    </div>
-                </div>
-                <div class="product-actions">
-                    <button class="btn btn-sm" onclick="window.productsPage.viewProductDetail('${product.product_no}')">
-                        상세보기
-                    </button>
-                </div>
-            </div>
+        const productsHTML = this.products.map((product, index) => `
+            <tr class="product-row" data-product-id="${product.product_no}">
+                <td class="product-code">${product.product_code || 'N/A'}</td>
+                <td class="product-name">
+                    <span class="name-text">${product.product_name}</span>
+                </td>
+                <td class="product-category">${product.category_name || 'N/A'}</td>
+                <td class="product-selling">
+                    <span class="status-badge ${product.selling === 'T' ? 'selling' : 'not-selling'}">
+                        ${product.selling === 'T' ? '판매중' : '판매중지'}
+                    </span>
+                </td>
+            </tr>
         `).join('');
 
         productsContainer.innerHTML = `
-            <div class="products-grid">
-                ${productsHTML}
+            <div class="products-table-container">
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>상품코드</th>
+                            <th>상품명</th>
+                            <th>상품분류</th>
+                            <th>판매상태</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${productsHTML}
+                    </tbody>
+                </table>
             </div>
         `;
     }
@@ -295,8 +294,9 @@ export class ProductsPage {
         }
     }
 
-    async handleSearch(keyword) {
-        this.searchKeyword = keyword;
+    async handleSearch(keyword, productCode) {
+        this.searchKeyword = keyword || '';
+        this.searchProductCode = productCode || '';
         this.currentPage = 1;
         await this.loadProducts();
     }
@@ -324,22 +324,41 @@ export class ProductsPage {
                         <p class="page-subtitle">Cafe24 쇼핑몰에 등록된 상품 정보</p>
                     </div>
                     
-                    <div class="controls-section">
-                        <div class="search-bar">
-                            <input 
-                                type="text" 
-                                id="searchInput" 
-                                placeholder="상품명으로 검색..."
-                                class="search-input"
-                            >
-                            <button class="btn btn-primary" id="searchBtn">검색</button>
+                    <div class="filter-section">
+                        <div class="filter-row">
+                            <div class="filter-group">
+                                <label class="filter-label">상품코드</label>
+                                <input 
+                                    type="text" 
+                                    id="productCodeInput" 
+                                    placeholder="상품코드로 검색..."
+                                    class="filter-input"
+                                >
+                            </div>
+                            <div class="filter-group">
+                                <label class="filter-label">상품명</label>
+                                <input 
+                                    type="text" 
+                                    id="productNameInput" 
+                                    placeholder="상품명으로 검색..."
+                                    class="filter-input"
+                                >
+                            </div>
+                            <div class="filter-actions">
+                                <button class="btn btn-primary" id="searchBtn">검색</button>
+                                <button class="btn btn-secondary" id="resetBtn">초기화</button>
+                            </div>
                         </div>
-                        
+                    </div>
+                    
+                    <div class="pagination-section">
+                        <div class="pagination-info">
+                            <span>페이지 ${this.currentPage} (50개씩 표시)</span>
+                        </div>
                         <div class="pagination-controls">
                             <button class="btn btn-secondary" id="prevBtn" ${this.currentPage === 1 ? 'disabled' : ''}>
                                 이전
                             </button>
-                            <span class="page-info">페이지 ${this.currentPage}</span>
                             <button class="btn btn-secondary" id="nextBtn">
                                 다음
                             </button>
@@ -363,13 +382,30 @@ export class ProductsPage {
         window.productsPage = this;
         
         document.getElementById('searchBtn')?.addEventListener('click', () => {
-            const keyword = document.getElementById('searchInput').value;
-            this.handleSearch(keyword);
+            const productName = document.getElementById('productNameInput').value;
+            const productCode = document.getElementById('productCodeInput').value;
+            this.handleSearch(productName, productCode);
         });
         
-        document.getElementById('searchInput')?.addEventListener('keypress', (e) => {
+        document.getElementById('resetBtn')?.addEventListener('click', () => {
+            document.getElementById('productNameInput').value = '';
+            document.getElementById('productCodeInput').value = '';
+            this.handleSearch('', '');
+        });
+        
+        document.getElementById('productNameInput')?.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                this.handleSearch(e.target.value);
+                const productName = e.target.value;
+                const productCode = document.getElementById('productCodeInput').value;
+                this.handleSearch(productName, productCode);
+            }
+        });
+        
+        document.getElementById('productCodeInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const productCode = e.target.value;
+                const productName = document.getElementById('productNameInput').value;
+                this.handleSearch(productName, productCode);
             }
         });
         
