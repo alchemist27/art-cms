@@ -18,20 +18,82 @@ export class ProductsPage {
     async checkAuthAndLoadProducts() {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
+        const error = urlParams.get('error');
+        const state = urlParams.get('state');
+        const error_description = urlParams.get('error_description');
 
+        console.log('OAuth callback params:', {
+            code: code ? 'present' : 'none',
+            error,
+            state,
+            error_description
+        });
+
+        // 에러가 있으면 표시
+        if (error) {
+            console.error('OAuth error:', error, error_description);
+            this.showError(`카페24 인증에 실패했습니다: ${error_description || error}`);
+            this.showAuthButton();
+            return;
+        }
+
+        // OAuth 콜백으로 code를 받았을 때
         if (code) {
+            // state 확인 (CSRF 보호)
+            if (state !== 'cafe24_auth') {
+                console.error('Invalid state parameter');
+                this.showError('보안 검증에 실패했습니다. 다시 시도해주세요.');
+                this.showAuthButton();
+                return;
+            }
+
             try {
+                console.log('Exchanging code for token...');
+                this.showLoadingMessage('Cafe24 연동 중...');
+                
                 await cafe24Api.exchangeCodeForToken(code);
-                window.history.replaceState({}, '', '/cms/products');
+                
+                // URL에서 OAuth 파라미터 제거
+                const cleanUrl = window.location.pathname;
+                window.history.replaceState({}, '', cleanUrl);
+                
+                console.log('Token exchange successful, loading products...');
+                // 토큰 교환 성공 후 상품 로드
                 await this.loadProducts();
             } catch (error) {
                 console.error('Token exchange failed:', error);
+                this.showError(`토큰 교환에 실패했습니다: ${error.message}`);
                 this.showAuthButton();
             }
-        } else if (cafe24Api.isAuthenticated()) {
-            await this.loadProducts();
-        } else {
+            return;
+        }
+
+        // 이미 인증되어 있는지 확인
+        try {
+            console.log('Checking authentication status...');
+            const isAuthenticated = await cafe24Api.isAuthenticated();
+            console.log('Is authenticated:', isAuthenticated);
+            
+            if (isAuthenticated) {
+                await this.loadProducts();
+            } else {
+                this.showAuthButton();
+            }
+        } catch (error) {
+            console.error('Auth check failed:', error);
             this.showAuthButton();
+        }
+    }
+
+    showLoadingMessage(message) {
+        const productsContainer = document.getElementById('productsContainer');
+        if (productsContainer) {
+            productsContainer.innerHTML = `
+                <div class="loading-container">
+                    <div class="spinner"></div>
+                    <p>${message}</p>
+                </div>
+            `;
         }
     }
 

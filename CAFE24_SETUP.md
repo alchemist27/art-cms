@@ -15,7 +15,10 @@
 4. OAuth 설정:
    - **Redirect URI**: `https://your-domain.vercel.app/api/auth/cafe24/callback`
    - **Scope 설정**: 
+     - `mall.read_category` (카테고리 조회 권한) - 필수
+     - `mall.write_category` (카테고리 수정 권한) - 필수
      - `mall.read_product` (상품 조회 권한) - 필수
+     - `mall.write_product` (상품 수정 권한) - 필수
 
 5. 앱 등록 완료 후 다음 정보를 확인:
    - Client ID
@@ -59,6 +62,7 @@ VITE_CAFE24_REDIRECT_URI=http://localhost:5173/api/auth/cafe24/callback
 
 ## 5. 주요 기능
 
+### 상품 관리 (읽기)
 - **상품 목록 조회**: 페이지당 20개씩 상품 표시
 - **상품 검색**: 상품명으로 검색 가능
 - **상품 상세 보기**: 상품 클릭 시 상세 정보 모달 표시
@@ -66,7 +70,24 @@ VITE_CAFE24_REDIRECT_URI=http://localhost:5173/api/auth/cafe24/callback
   - 가격 정보 (판매가, 소비자가, 공급가)
   - 재고 정보
   - 판매/진열 상태
+- **카테고리별 필터링**: 특정 카테고리의 상품만 조회
 - **페이지네이션**: 이전/다음 버튼으로 페이지 이동
+
+### 상품 관리 (쓰기)
+- **상품 생성**: 새로운 상품 등록
+- **상품 수정**: 기존 상품 정보 수정
+- **상품 삭제**: 상품 삭제
+- **가격 수정**: 판매가, 소비자가, 공급가 수정
+- **진열 상태 변경**: 상품 진열/미진열 설정
+- **판매 상태 변경**: 판매중/판매중지 설정
+- **재고 수정**: 상품 재고 수량 업데이트
+
+### 카테고리 관리
+- **카테고리 목록 조회**: 전체 카테고리 조회
+- **카테고리 상세 조회**: 특정 카테고리 정보 조회
+- **카테고리 생성**: 새로운 카테고리 추가
+- **카테고리 수정**: 기존 카테고리 정보 수정
+- **카테고리 삭제**: 카테고리 삭제
 
 ## 6. API 엔드포인트
 
@@ -99,15 +120,39 @@ VITE_CAFE24_REDIRECT_URI=http://localhost:5173/api/auth/cafe24/callback
 - Vercel의 API Routes를 통해 프록시 처리되므로 일반적으로 발생하지 않음
 - 로컬 개발 시 Vite 프록시 설정 확인
 
-## 9. 추가 개발 가능 기능
+## 9. 사용 가능한 API 메서드
 
-현재 구현된 기능은 상품 조회만 가능합니다. 추가로 다음 기능들을 구현할 수 있습니다:
+### 상품 관련
+```javascript
+// 상품 조회
+cafe24Api.getProducts(params)           // 상품 목록 조회
+cafe24Api.getProduct(productNo)         // 특정 상품 조회
+cafe24Api.getProductInventory(productNo) // 재고 정보 조회
+cafe24Api.getProductImages(productNo)    // 상품 이미지 조회
+cafe24Api.searchProducts(keyword)        // 상품 검색
+cafe24Api.getProductsByCategory(categoryNo) // 카테고리별 상품 조회
 
-- 상품 정보 수정 (`mall.write_product` 권한 필요)
-- 카테고리별 상품 필터링
-- 상품 이미지 갤러리
-- 엑셀 내보내기
-- 재고 알림 설정
+// 상품 수정
+cafe24Api.createProduct(productData)     // 상품 생성
+cafe24Api.updateProduct(productNo, data) // 상품 수정
+cafe24Api.deleteProduct(productNo)       // 상품 삭제
+cafe24Api.updateProductPrice(productNo, priceData) // 가격 수정
+cafe24Api.updateProductDisplay(productNo, display) // 진열 상태 변경
+cafe24Api.updateProductSelling(productNo, selling) // 판매 상태 변경
+cafe24Api.updateProductStock(productNo, variantCode, quantity) // 재고 수정
+```
+
+### 카테고리 관련
+```javascript
+// 카테고리 조회
+cafe24Api.getCategories()               // 카테고리 목록 조회
+cafe24Api.getCategory(categoryNo)       // 특정 카테고리 조회
+
+// 카테고리 수정
+cafe24Api.createCategory(categoryData)  // 카테고리 생성
+cafe24Api.updateCategory(categoryNo, data) // 카테고리 수정
+cafe24Api.deleteCategory(categoryNo)    // 카테고리 삭제
+```
 
 ## 10. 참고 자료
 
