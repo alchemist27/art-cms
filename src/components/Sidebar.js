@@ -23,6 +23,12 @@ export class Sidebar {
                                 이미지 관리
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="/products" class="nav-link ${activePage === 'products' ? 'active' : ''}" data-route="/products">
+                                <span class="nav-icon">🛍️</span>
+                                Cafe24 상품
+                            </a>
+                        </li>
                         <li class="nav-item" style="margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-color);">
                             <a href="#" class="nav-link" id="logoutBtn">
                                 <span class="nav-icon">🚪</span>

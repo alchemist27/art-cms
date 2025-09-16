@@ -54,7 +54,6 @@ export class DashboardPage {
                         <div class="stat-card">
                             <div class="stat-header">
                                 <span class="stat-title">제품 이미지</span>
-                                <div class="stat-icon products">📦</div>
                             </div>
                             <div class="stat-value" id="productCount">0</div>
                         </div>
@@ -62,7 +61,6 @@ export class DashboardPage {
                         <div class="stat-card">
                             <div class="stat-header">
                                 <span class="stat-title">배경 이미지</span>
-                                <div class="stat-icon backgrounds">🖼️</div>
                             </div>
                             <div class="stat-value" id="backgroundCount">0</div>
                         </div>
@@ -70,7 +68,6 @@ export class DashboardPage {
                         <div class="stat-card">
                             <div class="stat-header">
                                 <span class="stat-title">전체 업로드</span>
-                                <div class="stat-icon uploads">📊</div>
                             </div>
                             <div class="stat-value" id="totalCount">0</div>
                         </div>

@@ -32,7 +32,6 @@ export class ImageManagementPage {
                         </div>
                         
                         <div class="upload-section" id="uploadSection">
-                            <div class="upload-icon">📤</div>
                             <p class="upload-text">이미지를 드래그하거나 클릭하여 업로드</p>
                             <input type="file" class="file-input" id="fileInput" accept="image/*" multiple>
                             <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
@@ -86,7 +85,6 @@ export class ImageManagementPage {
                         
                         <div class="filter-section">
                             <div class="search-box">
-                                <span class="search-icon">🔍</span>
                                 <input type="text" class="search-input" id="searchInput" placeholder="이미지 검색...">
                             </div>
                             <select class="filter-dropdown" id="typeFilter">
