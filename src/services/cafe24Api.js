@@ -182,8 +182,20 @@ class Cafe24ApiService {
             }
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || `API request failed: ${response.statusText}`);
+                let errorData;
+                try {
+                    errorData = await response.json();
+                } catch (e) {
+                    errorData = { error: response.statusText };
+                }
+                
+                console.error('API request failed:', {
+                    status: response.status,
+                    error: errorData
+                });
+                
+                const errorMessage = errorData.message || errorData.error_description || errorData.error || `API request failed: ${response.statusText}`;
+                throw new Error(errorMessage);
             }
 
             return await response.json();
