@@ -58,14 +58,16 @@ async function loadBackgroundsFromFirebase() {
         
         backgroundsSnapshot.forEach(doc => {
             const data = doc.data();
-            // CORS 설정 완료 - 원본 URL 사용
-            const imageUrl = data.imageUrl;
+            // CMS에서 저장한 필드명에 맞게 수정
+            const imageUrl = data.url || data.imageUrl;
+            const displayName = data.displayName || data.name;
+            const category = data.category || data.type;
             
             backgrounds.push({
                 id: doc.id,
-                name: data.name,
+                name: displayName,
                 src: imageUrl,
-                category: data.type
+                category: category
             });
         });
         
