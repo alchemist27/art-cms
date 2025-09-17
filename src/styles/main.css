@@ -649,15 +649,16 @@ body {
 }
 
 .products-table th {
-    padding: 16px 20px;
+    padding: 12px 6px;
     text-align: left;
     font-weight: 600;
+    font-size: 13px;
     color: var(--text-primary);
     border-bottom: 1px solid var(--border-color);
 }
 
 .products-table td {
-    padding: 16px 20px;
+    padding: 8px 6px;
     border-bottom: 1px solid var(--border-color);
     color: var(--text-primary);
 }
@@ -670,15 +671,32 @@ body {
     border-bottom: none;
 }
 
-.product-code {
+/* Compact product info styling */
+.product-info {
+    padding: 8px !important;
+    vertical-align: middle;
+}
+
+.product-info .product-no {
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 12px;
+    line-height: 1.3;
+    margin-bottom: 2px;
+}
+
+.product-info .product-code {
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    font-size: 13px;
+    font-size: 11px;
     color: var(--text-secondary);
-    font-weight: 500;
+    line-height: 1.3;
 }
 
 .product-name {
-    max-width: 300px;
+    padding: 8px !important;
+    vertical-align: middle;
+    max-width: 120px;
+    position: relative;
 }
 
 .name-text {
@@ -686,7 +704,43 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-size: 13px;
     font-weight: 500;
+    max-width: 100px;
+    cursor: help;
+}
+
+/* Hover tooltip for full product name */
+.name-text:hover {
+    position: relative;
+}
+
+.name-text:hover::after {
+    content: attr(title);
+    position: absolute;
+    left: 0;
+    top: 100%;
+    margin-top: 4px;
+    background: var(--primary-color);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    white-space: normal;
+    min-width: 200px;
+    max-width: 300px;
+    font-size: 12px;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.name-text:hover::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: calc(100% - 2px);
+    border: 6px solid transparent;
+    border-bottom-color: var(--primary-color);
+    z-index: 1001;
 }
 
 .product-category {
@@ -713,6 +767,173 @@ body {
     border-radius: 6px;
     font-size: 12px;
     font-weight: 500;
+}
+
+/* Product Input Styles */
+.product-input {
+    padding: 4px 6px !important;
+    vertical-align: middle;
+}
+
+.input-select, 
+.input-text {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 12px;
+    background: white;
+    transition: all 0.2s ease;
+}
+
+.input-select:focus,
+.input-text:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(45, 52, 54, 0.1);
+}
+
+.input-select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    background-size: 14px;
+    padding-right: 24px;
+}
+
+.file-upload-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.file-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    background: var(--background);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.file-upload-btn:hover {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.file-name {
+    font-size: 10px;
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 60px;
+}
+
+.product-action {
+    text-align: center;
+    padding: 4px 6px !important;
+    vertical-align: middle;
+}
+
+.btn-save {
+    padding: 6px 12px;
+    background: linear-gradient(135deg, #00b894, #00cec9);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-save:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 184, 148, 0.3);
+}
+
+.btn-save:disabled {
+    background: var(--background);
+    color: var(--text-secondary);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-save.saving {
+    position: relative;
+    color: transparent;
+}
+
+.btn-save.saving::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border: 2px solid white;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 0.6s linear infinite;
+}
+
+/* Color preview in dropdown */
+.product-color option[value="black"] { background-color: #2d2d2d; color: white; }
+.product-color option[value="blue"] { background-color: #3b82f6; color: white; }
+.product-color option[value="green"] { background-color: #10b981; color: white; }
+.product-color option[value="red"] { background-color: #ef4444; color: white; }
+.product-color option[value="yellow"] { background-color: #f59e0b; color: black; }
+.product-color option[value="orange"] { background-color: #f97316; color: white; }
+.product-color option[value="pink"] { background-color: #ec4899; color: white; }
+.product-color option[value="purple"] { background-color: #8b5cf6; color: white; }
+.product-color option[value="white"] { background-color: #f8fafc; color: black; }
+.product-color option[value="transparent"] { background-color: transparent; color: black; }
+.product-color option[value="gold"] { background-color: #ffd700; color: black; }
+.product-color option[value="silver"] { background-color: #c0c0c0; color: black; }
+
+/* Success indicator */
+.product-row.saved {
+    animation: successFlash 0.5s ease;
+}
+
+@keyframes successFlash {
+    0%, 100% { background-color: transparent; }
+    50% { background-color: rgba(0, 184, 148, 0.1); }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
 }
 
 /* Responsive Table */

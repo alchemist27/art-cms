@@ -210,9 +210,19 @@ class Cafe24ApiService {
             display: params.display || 'T',
             selling: params.selling || 'T',
             limit: params.limit || 100,
-            offset: params.offset || 0,
-            ...params
+            offset: params.offset || 0
         });
+        
+        // 추가 파라미터 처리
+        if (params.product_name) {
+            queryParams.append('product_name', params.product_name);
+        }
+        if (params.product_code) {
+            queryParams.append('product_code', params.product_code);
+        }
+        if (params.product_no) {
+            queryParams.append('product_no', params.product_no);
+        }
 
         const endpoint = `/admin/products?${queryParams.toString()}`;
         const response = await this.makeApiRequest(endpoint);
