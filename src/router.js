@@ -1,7 +1,7 @@
 import { LoginPage } from './pages/LoginPage.js';
 import { DashboardPage } from './pages/DashboardPage.js';
-import { ImageManagementPage } from './pages/ImageManagementPage.js';
 import { ProductsPage } from './pages/ProductsPage.js';
+import { BackgroundsPage } from './pages/BackgroundsPage.js';
 import { isAuthenticated } from './utils/auth.js';
 
 class Router {
@@ -9,16 +9,16 @@ class Router {
         this.routes = {
             '/login': LoginPage,
             '/dashboard': DashboardPage,
-            '/images': ImageManagementPage,
             '/products': ProductsPage,
+            '/backgrounds': BackgroundsPage,
             '/cms/login': LoginPage,
             '/cms/dashboard': DashboardPage,
-            '/cms/images': ImageManagementPage,
-            '/cms/products': ProductsPage
+            '/cms/products': ProductsPage,
+            '/cms/backgrounds': BackgroundsPage
         };
         
         // 보호된 라우트 목록
-        this.protectedRoutes = ['/dashboard', '/images', '/products', '/cms/dashboard', '/cms/images', '/cms/products'];
+        this.protectedRoutes = ['/dashboard', '/products', '/backgrounds', '/cms/dashboard', '/cms/products', '/cms/backgrounds'];
     }
     
     init() {

@@ -183,7 +183,8 @@ export class ProductsPage {
                     <div class="product-code">${product.product_code || '-'}</div>
                 </td>
                 <td class="product-name">
-                    <span class="name-text" title="${product.product_name}">${product.product_name}</span>
+                    <span class="name-text" data-fullname="${product.product_name}">${product.product_name}</span>
+                    <div class="name-tooltip">${product.product_name}</div>
                 </td>
                 <td class="product-input">
                     <select class="input-select product-type" data-product-no="${product.product_no}">
@@ -191,8 +192,16 @@ export class ProductsPage {
                         <option value="비즈" ${metadata.type === '비즈' ? 'selected' : ''}>비즈</option>
                         <option value="파츠" ${metadata.type === '파츠' ? 'selected' : ''}>파츠</option>
                         <option value="팬던트" ${metadata.type === '팬던트' ? 'selected' : ''}>팬던트</option>
-                        <option value="모루공예" ${metadata.type === '모루공예' ? 'selected' : ''}>모루공예</option>
-                        <option value="부재료" ${metadata.type === '부재료' ? 'selected' : ''}>부재료</option>
+                        <optgroup label="모루공예">
+                            <option value="모루공예-옷소품" ${metadata.type === '모루공예-옷소품' ? 'selected' : ''}>모루공예-옷소품</option>
+                            <option value="모루공예-눈코" ${metadata.type === '모루공예-눈코' ? 'selected' : ''}>모루공예-눈코</option>
+                        </optgroup>
+                        <optgroup label="부재료">
+                            <option value="부재료-키링,군번줄" ${metadata.type === '부재료-키링,군번줄' ? 'selected' : ''}>부재료-키링,군번줄</option>
+                            <option value="부재료-체인,O링,부속" ${metadata.type === '부재료-체인,O링,부속' ? 'selected' : ''}>부재료-체인,O링,부속</option>
+                            <option value="부재료-마감,9핀,T핀" ${metadata.type === '부재료-마감,9핀,T핀' ? 'selected' : ''}>부재료-마감,9핀,T핀</option>
+                            <option value="부재료-반지,목걸이,귀걸이" ${metadata.type === '부재료-반지,목걸이,귀걸이' ? 'selected' : ''}>부재료-반지,목걸이,귀걸이</option>
+                        </optgroup>
                         <option value="끈/줄" ${metadata.type === '끈/줄' ? 'selected' : ''}>끈/줄</option>
                         <option value="도구/정리" ${metadata.type === '도구/정리' ? 'selected' : ''}>도구/정리</option>
                     </select>
@@ -208,24 +217,47 @@ export class ProductsPage {
                     <input type="text" class="input-text product-size" data-product-no="${product.product_no}" value="${metadata.size || ''}" placeholder="예: 10mm">
                 </td>
                 <td class="product-input">
-                    <select class="input-select product-color" data-product-no="${product.product_no}">
-                        <option value="">색상 선택</option>
-                        <option value="black" ${metadata.color === 'black' ? 'selected' : ''}>블랙</option>
-                        <option value="blue" ${metadata.color === 'blue' ? 'selected' : ''}>블루</option>
-                        <option value="green" ${metadata.color === 'green' ? 'selected' : ''}>그린</option>
-                        <option value="red" ${metadata.color === 'red' ? 'selected' : ''}>레드</option>
-                        <option value="yellow" ${metadata.color === 'yellow' ? 'selected' : ''}>옐로우</option>
-                        <option value="orange" ${metadata.color === 'orange' ? 'selected' : ''}>오렌지</option>
-                        <option value="pink" ${metadata.color === 'pink' ? 'selected' : ''}>핑크</option>
-                        <option value="purple" ${metadata.color === 'purple' ? 'selected' : ''}>퍼플</option>
-                        <option value="white" ${metadata.color === 'white' ? 'selected' : ''}>화이트</option>
-                        <option value="transparent" ${metadata.color === 'transparent' ? 'selected' : ''}>투명</option>
-                        <option value="gold" ${metadata.color === 'gold' ? 'selected' : ''}>골드</option>
-                        <option value="silver" ${metadata.color === 'silver' ? 'selected' : ''}>실버</option>
-                    </select>
+                    <div class="color-selector" data-product-no="${product.product_no}">
+                        <select class="input-select color-dropdown" data-product-no="${product.product_no}">
+                            <option value="">색상 추가</option>
+                            <option value="black">블랙</option>
+                            <option value="blue">블루</option>
+                            <option value="green">그린</option>
+                            <option value="red">레드</option>
+                            <option value="yellow">옐로우</option>
+                            <option value="orange">오렌지</option>
+                            <option value="pink">핑크</option>
+                            <option value="purple">퍼플</option>
+                            <option value="white">화이트</option>
+                            <option value="transparent">투명</option>
+                            <option value="gold">골드</option>
+                            <option value="silver">실버</option>
+                        </select>
+                        <div class="color-tags" id="color-tags-${product.product_no}">
+                            ${metadata.colors ? metadata.colors.split(',').map(color => color.trim()).filter(c => c).map(color => `
+                                <span class="color-tag" data-color="${color}">
+                                    <span class="color-dot" style="background-color: ${this.getColorHex(color)}"></span>
+                                    ${this.getColorName(color)}
+                                    <span class="remove-color" data-product-no="${product.product_no}" data-color="${color}">×</span>
+                                </span>
+                            `).join('') : ''}
+                        </div>
+                        <input type="hidden" class="product-colors" data-product-no="${product.product_no}" value="${metadata.colors || ''}">
+                    </div>
                 </td>
                 <td class="product-input">
-                    <input type="text" class="input-text product-keyword" data-product-no="${product.product_no}" value="${metadata.keywords || ''}" placeholder="키워드 입력">
+                    <div class="keyword-selector" data-product-no="${product.product_no}">
+                        <input type="text" class="input-text keyword-input" data-product-no="${product.product_no}" placeholder="키워드 입력 후 엔터">
+                        <div class="keyword-tags" id="keyword-tags-${product.product_no}">
+                            ${metadata.keywords ? metadata.keywords.split(',').map(keyword => keyword.trim()).filter(k => k).map(keyword => `
+                                <span class="keyword-tag" data-keyword="${keyword}">
+                                    ${keyword}
+                                    <span class="remove-keyword" data-product-no="${product.product_no}" data-keyword="${keyword}">×</span>
+                                </span>
+                            `).join('') : ''}
+                        </div>
+                        <input type="hidden" class="product-keywords" data-product-no="${product.product_no}" value="${metadata.keywords || ''}">
+                    </div>
                 </td>
                 <td class="product-input">
                     <div class="file-upload-wrapper">
@@ -270,7 +302,104 @@ export class ProductsPage {
         this.attachProductEventListeners();
     }
 
+    getColorHex(colorValue) {
+        const colorMap = {
+            'black': '#2d2d2d',
+            'blue': '#3b82f6',
+            'green': '#10b981',
+            'red': '#ef4444',
+            'yellow': '#f59e0b',
+            'orange': '#f97316',
+            'pink': '#ec4899',
+            'purple': '#8b5cf6',
+            'white': '#f8fafc',
+            'transparent': 'transparent',
+            'gold': '#ffd700',
+            'silver': '#c0c0c0'
+        };
+        return colorMap[colorValue] || '#ccc';
+    }
+
+    getColorName(colorValue) {
+        const colorNames = {
+            'black': '블랙',
+            'blue': '블루',
+            'green': '그린',
+            'red': '레드',
+            'yellow': '옐로우',
+            'orange': '오렌지',
+            'pink': '핑크',
+            'purple': '퍼플',
+            'white': '화이트',
+            'transparent': '투명',
+            'gold': '골드',
+            'silver': '실버'
+        };
+        return colorNames[colorValue] || colorValue;
+    }
+
     attachProductEventListeners() {
+        // Product name hover handlers
+        document.querySelectorAll('.name-text').forEach(nameElement => {
+            const tooltip = nameElement.nextElementSibling;
+            
+            nameElement.addEventListener('mouseenter', () => {
+                if (tooltip && tooltip.classList.contains('name-tooltip')) {
+                    tooltip.style.display = 'block';
+                }
+            });
+            
+            nameElement.addEventListener('mouseleave', () => {
+                if (tooltip && tooltip.classList.contains('name-tooltip')) {
+                    tooltip.style.display = 'none';
+                }
+            });
+        });
+
+        // Color selector handlers
+        document.querySelectorAll('.color-dropdown').forEach(select => {
+            select.addEventListener('change', (e) => {
+                const productNo = e.target.dataset.productNo;
+                const selectedColor = e.target.value;
+                
+                if (selectedColor) {
+                    this.addColor(productNo, selectedColor);
+                    e.target.value = ''; // Reset dropdown
+                }
+            });
+        });
+
+        // Keyword input handlers
+        document.querySelectorAll('.keyword-input').forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const productNo = e.target.dataset.productNo;
+                    const keyword = e.target.value.trim();
+                    
+                    if (keyword) {
+                        this.addKeyword(productNo, keyword);
+                        e.target.value = ''; // Clear input
+                    }
+                }
+            });
+        });
+
+        // Color tag remove handlers
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-color')) {
+                const productNo = e.target.dataset.productNo;
+                const color = e.target.dataset.color;
+                this.removeColor(productNo, color);
+            }
+            
+            if (e.target.classList.contains('remove-keyword')) {
+                const productNo = e.target.dataset.productNo;
+                const keyword = e.target.dataset.keyword;
+                this.removeKeyword(productNo, keyword);
+            }
+        });
+
         // File upload handlers
         document.querySelectorAll('.product-image').forEach(input => {
             input.addEventListener('change', (e) => {
@@ -294,6 +423,97 @@ export class ProductsPage {
         });
     }
 
+    addColor(productNo, color) {
+        const hiddenInput = document.querySelector(`.product-colors[data-product-no="${productNo}"]`);
+        const colorTagsContainer = document.getElementById(`color-tags-${productNo}`);
+        
+        if (!hiddenInput || !colorTagsContainer) return;
+        
+        // Get current colors
+        const currentColors = hiddenInput.value ? hiddenInput.value.split(',').map(c => c.trim()) : [];
+        
+        // Check if color already exists
+        if (currentColors.includes(color)) {
+            return;
+        }
+        
+        // Add new color
+        currentColors.push(color);
+        hiddenInput.value = currentColors.join(',');
+        
+        // Add visual tag
+        const tagHTML = `
+            <span class="color-tag" data-color="${color}">
+                <span class="color-dot" style="background-color: ${this.getColorHex(color)}"></span>
+                ${this.getColorName(color)}
+                <span class="remove-color" data-product-no="${productNo}" data-color="${color}">×</span>
+            </span>
+        `;
+        colorTagsContainer.insertAdjacentHTML('beforeend', tagHTML);
+    }
+
+    removeColor(productNo, color) {
+        const hiddenInput = document.querySelector(`.product-colors[data-product-no="${productNo}"]`);
+        const colorTag = document.querySelector(`#color-tags-${productNo} .color-tag[data-color="${color}"]`);
+        
+        if (!hiddenInput) return;
+        
+        // Remove from hidden input
+        const currentColors = hiddenInput.value ? hiddenInput.value.split(',').map(c => c.trim()) : [];
+        const newColors = currentColors.filter(c => c !== color);
+        hiddenInput.value = newColors.join(',');
+        
+        // Remove visual tag
+        if (colorTag) {
+            colorTag.remove();
+        }
+    }
+
+    addKeyword(productNo, keyword) {
+        const hiddenInput = document.querySelector(`.product-keywords[data-product-no="${productNo}"]`);
+        const keywordTagsContainer = document.getElementById(`keyword-tags-${productNo}`);
+        
+        if (!hiddenInput || !keywordTagsContainer) return;
+        
+        // Get current keywords
+        const currentKeywords = hiddenInput.value ? hiddenInput.value.split(',').map(k => k.trim()) : [];
+        
+        // Check if keyword already exists
+        if (currentKeywords.includes(keyword)) {
+            return;
+        }
+        
+        // Add new keyword
+        currentKeywords.push(keyword);
+        hiddenInput.value = currentKeywords.join(',');
+        
+        // Add visual tag
+        const tagHTML = `
+            <span class="keyword-tag" data-keyword="${keyword}">
+                ${keyword}
+                <span class="remove-keyword" data-product-no="${productNo}" data-keyword="${keyword}">×</span>
+            </span>
+        `;
+        keywordTagsContainer.insertAdjacentHTML('beforeend', tagHTML);
+    }
+
+    removeKeyword(productNo, keyword) {
+        const hiddenInput = document.querySelector(`.product-keywords[data-product-no="${productNo}"]`);
+        const keywordTag = document.querySelector(`#keyword-tags-${productNo} .keyword-tag[data-keyword="${keyword}"]`);
+        
+        if (!hiddenInput) return;
+        
+        // Remove from hidden input
+        const currentKeywords = hiddenInput.value ? hiddenInput.value.split(',').map(k => k.trim()) : [];
+        const newKeywords = currentKeywords.filter(k => k !== keyword);
+        hiddenInput.value = newKeywords.join(',');
+        
+        // Remove visual tag
+        if (keywordTag) {
+            keywordTag.remove();
+        }
+    }
+
     async saveProductMetadata(productNo) {
         const saveBtn = document.querySelector(`.btn-save[data-product-no="${productNo}"]`);
         const productRow = document.querySelector(`.product-row[data-product-id="${productNo}"]`);
@@ -304,8 +524,8 @@ export class ProductsPage {
         const productType = productRow.querySelector('.product-type').value;
         const beadDirection = productRow.querySelector('.bead-direction').value;
         const productSize = productRow.querySelector('.product-size').value;
-        const productColor = productRow.querySelector('.product-color').value;
-        const productKeyword = productRow.querySelector('.product-keyword').value;
+        const productColors = productRow.querySelector('.product-colors').value;
+        const productKeywords = productRow.querySelector('.product-keywords').value;
         const imageFile = productRow.querySelector('.product-image').files[0];
 
         // Show loading state
@@ -326,8 +546,8 @@ export class ProductsPage {
                 type: productType,
                 direction: beadDirection,
                 size: productSize,
-                color: productColor,
-                keywords: productKeyword,
+                colors: productColors,
+                keywords: productKeywords,
                 imageUrl: imageInfo ? imageInfo.url : null,
                 imagePath: imageInfo ? imageInfo.path : null,
                 imageFileName: imageInfo ? imageInfo.fileName : null,
@@ -566,7 +786,6 @@ export class ProductsPage {
                             </div>
                             <div class="filter-actions">
                                 <button class="btn btn-primary" id="searchBtn">검색</button>
-                                <button class="btn btn-secondary" id="resetBtn">초기화</button>
                             </div>
                         </div>
                     </div>
@@ -606,13 +825,6 @@ export class ProductsPage {
             const productCode = document.getElementById('productCodeInput').value;
             const productNo = document.getElementById('productNoInput').value;
             this.handleSearch(productName, productCode, productNo);
-        });
-        
-        document.getElementById('resetBtn')?.addEventListener('click', () => {
-            document.getElementById('productNameInput').value = '';
-            document.getElementById('productCodeInput').value = '';
-            document.getElementById('productNoInput').value = '';
-            this.handleSearch('', '', '');
         });
         
         document.getElementById('productNameInput')?.addEventListener('keypress', (e) => {

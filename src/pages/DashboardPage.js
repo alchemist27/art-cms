@@ -72,18 +72,6 @@ export class DashboardPage {
                             <div class="stat-value" id="totalCount">0</div>
                         </div>
                     </div>
-                    
-                    <div class="recent-activity">
-                        <h2 style="font-size: 18px; margin-bottom: 20px;">빠른 작업</h2>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
-                            <button class="btn btn-primary" onclick="window.router.navigate('/images')">
-                                이미지 관리
-                            </button>
-                            <button class="btn btn-secondary" onclick="window.open('/', '_blank')">
-                                메인 사이트 보기
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </div>
         `;
