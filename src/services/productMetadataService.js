@@ -1,6 +1,5 @@
-import { firebaseApp } from '../config/firebase.js';
+import { db, storage } from '../config/firebase.js';
 import { 
-    getFirestore, 
     doc, 
     setDoc, 
     getDoc, 
@@ -11,7 +10,6 @@ import {
     where
 } from 'firebase/firestore';
 import { 
-    getStorage, 
     ref, 
     uploadBytes, 
     getDownloadURL,
@@ -20,8 +18,8 @@ import {
 
 class ProductMetadataService {
     constructor() {
-        this.db = getFirestore(firebaseApp);
-        this.storage = getStorage(firebaseApp);
+        this.db = db;
+        this.storage = storage;
         this.collectionName = 'product_metadata';
     }
 
