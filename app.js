@@ -42,9 +42,20 @@ async function initializeApp() {
 // Data loading functions
 async function loadItemsData() {
     try {
+        // 먼저 Firebase에서 데이터 로드 시도
+        if (window.loadProductsFromFirebase) {
+            const firebaseItems = await window.loadProductsFromFirebase();
+            if (firebaseItems.length > 0) {
+                itemsData = firebaseItems;
+                console.log('Firebase에서 items 로드 완료:', itemsData.length, 'items');
+                return;
+            }
+        }
+        
+        // Firebase 데이터가 없으면 로컬 JSON 파일 사용
         const response = await fetch('/assets/items.json');
         itemsData = await response.json();
-        console.log('Items data loaded:', itemsData.length, 'items');
+        console.log('로컬 JSON에서 items 로드:', itemsData.length, 'items');
     } catch (error) {
         console.error('Failed to load items data:', error);
         // Fallback to empty array
@@ -54,9 +65,20 @@ async function loadItemsData() {
 
 async function loadBackgroundsData() {
     try {
+        // 먼저 Firebase에서 데이터 로드 시도
+        if (window.loadBackgroundsFromFirebase) {
+            const firebaseBackgrounds = await window.loadBackgroundsFromFirebase();
+            if (firebaseBackgrounds.length > 0) {
+                backgroundsData = firebaseBackgrounds;
+                console.log('Firebase에서 backgrounds 로드 완료:', backgroundsData.length, 'backgrounds');
+                return;
+            }
+        }
+        
+        // Firebase 데이터가 없으면 로컬 JSON 파일 사용
         const response = await fetch('/assets/backgrounds.json');
         backgroundsData = await response.json();
-        console.log('Backgrounds data loaded:', backgroundsData.length, 'backgrounds');
+        console.log('로컬 JSON에서 backgrounds 로드:', backgroundsData.length, 'backgrounds');
     } catch (error) {
         console.error('Failed to load backgrounds data:', error);
         // Fallback to empty array
@@ -192,7 +214,8 @@ function createBackgroundCard(bg, isActive = false) {
     card.dataset.bgId = bg.id;
     
     const img = document.createElement('img');
-    img.src = `/assets/${bg.image}`;
+    // Firebase에서 온 데이터는 src 필드, 로컬은 image 필드 사용
+    img.src = bg.src || `/assets/${bg.image}`;
     img.alt = bg.name;
     
     const name = document.createElement('div');

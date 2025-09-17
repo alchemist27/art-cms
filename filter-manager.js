@@ -278,7 +278,8 @@ class FilterManager {
         card.dataset.itemId = item.id;
         
         const img = document.createElement('img');
-        img.src = `/assets/${item.image}`;
+        // Firebase에서 온 데이터는 src 필드, 로컬은 image 필드 사용
+        img.src = item.src || `/assets/${item.image}`;
         img.alt = item.name;
         img.draggable = false;
         
