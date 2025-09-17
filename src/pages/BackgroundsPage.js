@@ -118,26 +118,6 @@ export class BackgroundsPage {
                 }
             });
         });
-
-        // Category filter
-        document.getElementById('categoryFilter')?.addEventListener('change', (e) => {
-            this.selectedCategory = e.target.value;
-            this.loadBackgrounds();
-        });
-
-        // Upload button
-        document.getElementById('uploadBtn')?.addEventListener('click', () => {
-            document.getElementById('fileInput')?.click();
-        });
-
-        // File input change
-        document.getElementById('fileInput')?.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                await this.uploadBackground(file);
-                e.target.value = ''; // Reset input
-            }
-        });
     }
 
     async uploadBackground(file) {
@@ -352,5 +332,32 @@ export class BackgroundsPage {
         
         Sidebar.attachEvents();
         window.backgroundsPage = this;
+        
+        // Attach initial event listeners after render
+        this.attachInitialEventListeners();
+    }
+    
+    attachInitialEventListeners() {
+        // Category filter
+        document.getElementById('categoryFilter')?.addEventListener('change', (e) => {
+            this.selectedCategory = e.target.value;
+            this.loadBackgrounds();
+        });
+
+        // Upload button
+        document.getElementById('uploadBtn')?.addEventListener('click', () => {
+            console.log('Upload button clicked');
+            document.getElementById('fileInput')?.click();
+        });
+
+        // File input change
+        document.getElementById('fileInput')?.addEventListener('change', async (e) => {
+            console.log('File selected');
+            const file = e.target.files[0];
+            if (file) {
+                await this.uploadBackground(file);
+                e.target.value = ''; // Reset input
+            }
+        });
     }
 }

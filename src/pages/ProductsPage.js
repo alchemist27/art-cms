@@ -10,6 +10,7 @@ export class ProductsPage {
         this.currentPage = 1;
         this.itemsPerPage = 100;
         this.isLoading = false;
+        this.searchCategory = '';
         this.searchKeyword = '';
         this.searchProductCode = '';
         this.searchProductNo = '';
@@ -142,7 +143,31 @@ export class ProductsPage {
                 params.product_no = this.searchProductNo;
             }
 
-            this.products = await cafe24Api.getProducts(params);
+            let products = await cafe24Api.getProducts(params);
+            
+            // Filter by category if selected (client-side filtering since API might not support it)
+            if (this.searchCategory) {
+                // We'll need to load metadata for filtering
+                const productNumbers = products.map(p => p.product_no);
+                const existingMetadata = await productMetadataService.loadMetadataForProducts(productNumbers);
+                
+                products = products.filter(product => {
+                    const metadata = existingMetadata[product.product_no];
+                    if (!metadata || !metadata.type) return false;
+                    
+                    // Check if the type matches or starts with the category
+                    const productType = metadata.type;
+                    if (this.searchCategory === '모루공예') {
+                        return productType === '모루공예-옷소품' || productType === '모루공예-눈코';
+                    } else if (this.searchCategory === '부재료') {
+                        return productType.startsWith('부재료-');
+                    } else {
+                        return productType === this.searchCategory;
+                    }
+                });
+            }
+            
+            this.products = products;
             this.displayProducts();
         } catch (error) {
             console.error('Failed to load products:', error);
@@ -207,32 +232,60 @@ export class ProductsPage {
                     </select>
                 </td>
                 <td class="product-input">
-                    <select class="input-select bead-direction" data-product-no="${product.product_no}">
-                        <option value="">방향 선택</option>
-                        <option value="가로" ${metadata.direction === '가로' ? 'selected' : ''}>가로</option>
-                        <option value="세로" ${metadata.direction === '세로' ? 'selected' : ''}>세로</option>
-                    </select>
+                    <div class="direction-toggle" data-product-no="${product.product_no}">
+                        <label class="radio-option ${metadata.direction === '가로' ? 'active' : ''}">
+                            <input type="radio" name="direction-${product.product_no}" value="가로" ${metadata.direction === '가로' ? 'checked' : ''}>
+                            <span>가로</span>
+                        </label>
+                        <label class="radio-option ${metadata.direction === '세로' ? 'active' : ''}">
+                            <input type="radio" name="direction-${product.product_no}" value="세로" ${metadata.direction === '세로' ? 'checked' : ''}>
+                            <span>세로</span>
+                        </label>
+                    </div>
                 </td>
                 <td class="product-input">
                     <input type="text" class="input-text product-size" data-product-no="${product.product_no}" value="${metadata.size || ''}" placeholder="예: 10mm">
                 </td>
                 <td class="product-input">
                     <div class="color-selector" data-product-no="${product.product_no}">
-                        <select class="input-select color-dropdown" data-product-no="${product.product_no}">
-                            <option value="">색상 추가</option>
-                            <option value="black">블랙</option>
-                            <option value="blue">블루</option>
-                            <option value="green">그린</option>
-                            <option value="red">레드</option>
-                            <option value="yellow">옐로우</option>
-                            <option value="orange">오렌지</option>
-                            <option value="pink">핑크</option>
-                            <option value="purple">퍼플</option>
-                            <option value="white">화이트</option>
-                            <option value="transparent">투명</option>
-                            <option value="gold">골드</option>
-                            <option value="silver">실버</option>
-                        </select>
+                        <div class="color-palette">
+                            <button type="button" class="color-btn" data-color="black" data-product-no="${product.product_no}" title="블랙">
+                                <span class="color-swatch" style="background-color: #2d2d2d"></span>
+                            </button>
+                            <button type="button" class="color-btn" data-color="blue" data-product-no="${product.product_no}" title="블루">
+                                <span class="color-swatch" style="background-color: #3b82f6"></span>
+                            </button>
+                            <button type="button" class="color-btn" data-color="green" data-product-no="${product.product_no}" title="그린">
+                                <span class="color-swatch" style="background-color: #10b981"></span>
+                            </button>
+                            <button type="button" class="color-btn" data-color="red" data-product-no="${product.product_no}" title="레드">
+                                <span class="color-swatch" style="background-color: #ef4444"></span>
+                            </button>
+                            <button type="button" class="color-btn" data-color="yellow" data-product-no="${product.product_no}" title="옐로우">
+                                <span class="color-swatch" style="background-color: #f59e0b"></span>
+                            </button>
+                            <button type="button" class="color-btn" data-color="orange" data-product-no="${product.product_no}" title="오렌지">
+                                <span class="color-swatch" style="background-color: #f97316"></span>
+                            </button>
+                            <button type="button" class="color-btn" data-color="pink" data-product-no="${product.product_no}" title="핑크">
+                                <span class="color-swatch" style="background-color: #ec4899"></span>
+                            </button>
+                            <button type="button" class="color-btn" data-color="purple" data-product-no="${product.product_no}" title="퍼플">
+                                <span class="color-swatch" style="background-color: #8b5cf6"></span>
+                            </button>
+                            <button type="button" class="color-btn" data-color="white" data-product-no="${product.product_no}" title="화이트">
+                                <span class="color-swatch" style="background-color: #f8fafc; border: 1px solid #e2e8f0;"></span>
+                            </button>
+                            <button type="button" class="color-btn" data-color="transparent" data-product-no="${product.product_no}" title="투명">
+                                <span class="color-swatch transparent-pattern"></span>
+                            </button>
+                            <button type="button" class="color-btn" data-color="gold" data-product-no="${product.product_no}" title="골드">
+                                <span class="color-swatch" style="background-color: #ffd700"></span>
+                            </button>
+                            <button type="button" class="color-btn" data-color="silver" data-product-no="${product.product_no}" title="실버">
+                                <span class="color-swatch" style="background-color: #c0c0c0"></span>
+                            </button>
+                        </div>
                         <div class="color-tags" id="color-tags-${product.product_no}">
                             ${metadata.colors ? metadata.colors.split(',').map(color => color.trim()).filter(c => c).map(color => `
                                 <span class="color-tag" data-color="${color}">
@@ -281,14 +334,14 @@ export class ProductsPage {
                     <thead>
                         <tr>
                             <th width="8%">상품정보</th>
-                            <th width="10%">상품명</th>
-                            <th width="11%">타입</th>
-                            <th width="9%">방향</th>
-                            <th width="10%">사이즈</th>
+                            <th width="17%">상품명</th>
+                            <th width="10%">타입</th>
+                            <th width="7%">방향</th>
+                            <th width="8%">사이즈</th>
                             <th width="11%">색상</th>
-                            <th width="15%">키워드</th>
-                            <th width="15%">이미지</th>
-                            <th width="11%">저장</th>
+                            <th width="20%">키워드</th>
+                            <th width="9%">이미지</th>
+                            <th width="10%">저장</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -356,15 +409,19 @@ export class ProductsPage {
             });
         });
 
-        // Color selector handlers
-        document.querySelectorAll('.color-dropdown').forEach(select => {
-            select.addEventListener('change', (e) => {
-                const productNo = e.target.dataset.productNo;
-                const selectedColor = e.target.value;
+        // Color button handlers
+        document.querySelectorAll('.color-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const productNo = e.currentTarget.dataset.productNo;
+                const selectedColor = e.currentTarget.dataset.color;
                 
                 if (selectedColor) {
                     this.addColor(productNo, selectedColor);
-                    e.target.value = ''; // Reset dropdown
+                    // Visual feedback - briefly highlight the button
+                    btn.classList.add('selected');
+                    setTimeout(() => {
+                        btn.classList.remove('selected');
+                    }, 200);
                 }
             });
         });
@@ -398,6 +455,28 @@ export class ProductsPage {
                 const keyword = e.target.dataset.keyword;
                 this.removeKeyword(productNo, keyword);
             }
+        });
+
+        // Direction toggle handlers
+        document.querySelectorAll('.direction-toggle .radio-option').forEach(label => {
+            label.addEventListener('click', (e) => {
+                const toggle = label.parentElement;
+                const productNo = toggle.dataset.productNo;
+                const input = label.querySelector('input[type="radio"]');
+                
+                // Remove active class from all options in this toggle
+                toggle.querySelectorAll('.radio-option').forEach(opt => {
+                    opt.classList.remove('active');
+                });
+                
+                // Add active class to clicked option
+                label.classList.add('active');
+                
+                // Check the radio input
+                if (input) {
+                    input.checked = true;
+                }
+            });
         });
 
         // File upload handlers
@@ -522,7 +601,7 @@ export class ProductsPage {
 
         // Get all input values
         const productType = productRow.querySelector('.product-type').value;
-        const beadDirection = productRow.querySelector('.bead-direction').value;
+        const beadDirection = productRow.querySelector(`input[name="direction-${productNo}"]:checked`)?.value || '';
         const productSize = productRow.querySelector('.product-size').value;
         const productColors = productRow.querySelector('.product-colors').value;
         const productKeywords = productRow.querySelector('.product-keywords').value;
@@ -724,7 +803,8 @@ export class ProductsPage {
         }
     }
 
-    async handleSearch(keyword, productCode, productNo) {
+    async handleSearch(category, keyword, productCode, productNo) {
+        this.searchCategory = category || '';
         this.searchKeyword = keyword || '';
         this.searchProductCode = productCode || '';
         this.searchProductNo = productNo || '';
@@ -757,6 +837,19 @@ export class ProductsPage {
                     
                     <div class="filter-section">
                         <div class="filter-row">
+                            <div class="filter-group">
+                                <label class="filter-label">카테고리</label>
+                                <select id="categorySelect" class="filter-input">
+                                    <option value="">전체</option>
+                                    <option value="비즈">비즈</option>
+                                    <option value="파츠">파츠</option>
+                                    <option value="팬던트">팬던트</option>
+                                    <option value="모루공예">모루공예</option>
+                                    <option value="부재료">부재료</option>
+                                    <option value="끈/줄">끈/줄</option>
+                                    <option value="도구/정리">도구/정리</option>
+                                </select>
+                            </div>
                             <div class="filter-group">
                                 <label class="filter-label">상품번호</label>
                                 <input 
@@ -821,36 +914,48 @@ export class ProductsPage {
         window.productsPage = this;
         
         document.getElementById('searchBtn')?.addEventListener('click', () => {
+            const category = document.getElementById('categorySelect').value;
             const productName = document.getElementById('productNameInput').value;
             const productCode = document.getElementById('productCodeInput').value;
             const productNo = document.getElementById('productNoInput').value;
-            this.handleSearch(productName, productCode, productNo);
+            this.handleSearch(category, productName, productCode, productNo);
+        });
+        
+        document.getElementById('categorySelect')?.addEventListener('change', () => {
+            const category = document.getElementById('categorySelect').value;
+            const productName = document.getElementById('productNameInput').value;
+            const productCode = document.getElementById('productCodeInput').value;
+            const productNo = document.getElementById('productNoInput').value;
+            this.handleSearch(category, productName, productCode, productNo);
         });
         
         document.getElementById('productNameInput')?.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
+                const category = document.getElementById('categorySelect').value;
                 const productName = e.target.value;
                 const productCode = document.getElementById('productCodeInput').value;
                 const productNo = document.getElementById('productNoInput').value;
-                this.handleSearch(productName, productCode, productNo);
+                this.handleSearch(category, productName, productCode, productNo);
             }
         });
         
         document.getElementById('productCodeInput')?.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
+                const category = document.getElementById('categorySelect').value;
                 const productCode = e.target.value;
                 const productName = document.getElementById('productNameInput').value;
                 const productNo = document.getElementById('productNoInput').value;
-                this.handleSearch(productName, productCode, productNo);
+                this.handleSearch(category, productName, productCode, productNo);
             }
         });
         
         document.getElementById('productNoInput')?.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
+                const category = document.getElementById('categorySelect').value;
                 const productNo = e.target.value;
                 const productName = document.getElementById('productNameInput').value;
                 const productCode = document.getElementById('productCodeInput').value;
-                this.handleSearch(productName, productCode, productNo);
+                this.handleSearch(category, productName, productCode, productNo);
             }
         });
         

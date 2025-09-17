@@ -672,6 +672,10 @@ body {
     vertical-align: middle;
 }
 
+.product-row {
+    height: 48px;
+}
+
 .product-row:hover {
     background: rgba(45, 52, 54, 0.02);
 }
@@ -683,13 +687,16 @@ body {
 /* Compact product info styling */
 .product-info {
     vertical-align: middle;
+    height: 48px;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
 }
 
 .product-info .product-no {
     font-weight: 700;
     color: var(--primary-color);
     font-size: 12px;
-    line-height: 1.3;
+    line-height: 1.2;
     margin-bottom: 2px;
 }
 
@@ -697,12 +704,15 @@ body {
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     font-size: 11px;
     color: var(--text-secondary);
-    line-height: 1.3;
+    line-height: 1.2;
 }
 
 .product-name {
     vertical-align: middle;
     position: relative;
+    height: 48px;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
 }
 
 .name-text {
@@ -712,9 +722,10 @@ body {
     white-space: nowrap;
     font-size: 13px;
     font-weight: 500;
-    max-width: 100px;
+    max-width: 180px;
     cursor: default;
     position: relative;
+    line-height: 32px;
 }
 
 /* Native tooltip alternative - using a wrapper div */
@@ -780,6 +791,55 @@ body {
 /* Product Input Styles */
 .product-input {
     vertical-align: middle;
+    height: 48px;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+}
+
+/* Direction Toggle Radio Buttons */
+.direction-toggle {
+    display: flex;
+    gap: 4px;
+    height: 32px;
+}
+
+.direction-toggle .radio-option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    border: 1px solid var(--border-color);
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 12px;
+    border-radius: 4px;
+}
+
+.direction-toggle .radio-option:first-child {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.direction-toggle .radio-option:last-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: none;
+}
+
+.direction-toggle .radio-option input[type="radio"] {
+    display: none;
+}
+
+.direction-toggle .radio-option.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.direction-toggle .radio-option:hover:not(.active) {
+    background: var(--background);
 }
 
 .input-select, 
@@ -862,6 +922,9 @@ body {
 .product-action {
     text-align: center;
     vertical-align: middle;
+    height: 48px;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
 }
 
 .btn-save {
@@ -915,11 +978,53 @@ body {
 .color-selector {
     display: flex;
     flex-direction: column;
+    gap: 6px;
+}
+
+.color-palette {
+    display: flex;
+    flex-wrap: wrap;
     gap: 4px;
 }
 
-.color-dropdown {
-    width: 100%;
+.color-btn {
+    padding: 0;
+    border: 1px solid var(--border-color);
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.color-btn:hover {
+    transform: scale(1.2);
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.color-btn.selected {
+    border-color: var(--primary-color);
+    border-width: 2px;
+    box-shadow: 0 0 0 2px rgba(45, 52, 54, 0.2);
+}
+
+.color-swatch {
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+    display: block;
+}
+
+.transparent-pattern {
+    background-image: linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc),
+                      linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc);
+    background-size: 8px 8px;
+    background-position: 0 0, 4px 4px;
 }
 
 .color-tags {
