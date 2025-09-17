@@ -62,7 +62,7 @@ export class BackgroundsPage {
                 <td>${this.formatFileSize(bg.size)}</td>
                 <td class="action-cell">
                     <button class="btn-delete" data-id="${bg.id}">
-                        <i class="fas fa-trash"></i>
+                        <i class="fas fa-trash"></i> 삭제
                     </button>
                 </td>
             </tr>

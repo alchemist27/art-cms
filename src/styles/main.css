@@ -882,6 +882,7 @@ body {
 .file-upload-wrapper {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 4px;
 }
 
@@ -1149,8 +1150,9 @@ body {
 .backgrounds-table-container {
     background: var(--card-bg);
     border-radius: 12px;
-    overflow: hidden;
+    overflow: visible;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    position: relative;
 }
 
 .backgrounds-table {
@@ -1186,6 +1188,7 @@ body {
 
 .thumbnail-cell {
     position: relative;
+    overflow: visible;
 }
 
 .thumbnail-img {

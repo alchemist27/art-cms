@@ -208,8 +208,7 @@ export class ProductsPage {
                     <div class="product-code">${product.product_code || '-'}</div>
                 </td>
                 <td class="product-name">
-                    <span class="name-text" data-fullname="${product.product_name}">${product.product_name}</span>
-                    <div class="name-tooltip">${product.product_name}</div>
+                    <span class="name-text" title="${product.product_name}">${product.product_name}</span>
                 </td>
                 <td class="product-input">
                     <select class="input-select product-type" data-product-no="${product.product_no}">
@@ -379,22 +378,6 @@ export class ProductsPage {
     }
 
     attachProductEventListeners() {
-        // Product name hover handlers
-        document.querySelectorAll('.name-text').forEach(nameElement => {
-            const tooltip = nameElement.nextElementSibling;
-            
-            nameElement.addEventListener('mouseenter', () => {
-                if (tooltip && tooltip.classList.contains('name-tooltip')) {
-                    tooltip.style.display = 'block';
-                }
-            });
-            
-            nameElement.addEventListener('mouseleave', () => {
-                if (tooltip && tooltip.classList.contains('name-tooltip')) {
-                    tooltip.style.display = 'none';
-                }
-            });
-        });
 
         // Color button handlers - toggle selection
         document.querySelectorAll('.color-btn').forEach(btn => {
