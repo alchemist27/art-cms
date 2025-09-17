@@ -244,56 +244,44 @@ export class ProductsPage {
                     </div>
                 </td>
                 <td class="product-input">
-                    <input type="text" class="input-text product-size" data-product-no="${product.product_no}" value="${metadata.size || ''}" placeholder="예: 10mm">
-                </td>
-                <td class="product-input">
                     <div class="color-selector" data-product-no="${product.product_no}">
                         <div class="color-palette">
-                            <button type="button" class="color-btn" data-color="black" data-product-no="${product.product_no}" title="블랙">
+                            <button type="button" class="color-btn ${metadata.colors && metadata.colors.includes('black') ? 'selected' : ''}" data-color="black" data-product-no="${product.product_no}" title="블랙">
                                 <span class="color-swatch" style="background-color: #2d2d2d"></span>
                             </button>
-                            <button type="button" class="color-btn" data-color="blue" data-product-no="${product.product_no}" title="블루">
+                            <button type="button" class="color-btn ${metadata.colors && metadata.colors.includes('blue') ? 'selected' : ''}" data-color="blue" data-product-no="${product.product_no}" title="블루">
                                 <span class="color-swatch" style="background-color: #3b82f6"></span>
                             </button>
-                            <button type="button" class="color-btn" data-color="green" data-product-no="${product.product_no}" title="그린">
+                            <button type="button" class="color-btn ${metadata.colors && metadata.colors.includes('green') ? 'selected' : ''}" data-color="green" data-product-no="${product.product_no}" title="그린">
                                 <span class="color-swatch" style="background-color: #10b981"></span>
                             </button>
-                            <button type="button" class="color-btn" data-color="red" data-product-no="${product.product_no}" title="레드">
+                            <button type="button" class="color-btn ${metadata.colors && metadata.colors.includes('red') ? 'selected' : ''}" data-color="red" data-product-no="${product.product_no}" title="레드">
                                 <span class="color-swatch" style="background-color: #ef4444"></span>
                             </button>
-                            <button type="button" class="color-btn" data-color="yellow" data-product-no="${product.product_no}" title="옐로우">
+                            <button type="button" class="color-btn ${metadata.colors && metadata.colors.includes('yellow') ? 'selected' : ''}" data-color="yellow" data-product-no="${product.product_no}" title="옐로우">
                                 <span class="color-swatch" style="background-color: #f59e0b"></span>
                             </button>
-                            <button type="button" class="color-btn" data-color="orange" data-product-no="${product.product_no}" title="오렌지">
+                            <button type="button" class="color-btn ${metadata.colors && metadata.colors.includes('orange') ? 'selected' : ''}" data-color="orange" data-product-no="${product.product_no}" title="오렌지">
                                 <span class="color-swatch" style="background-color: #f97316"></span>
                             </button>
-                            <button type="button" class="color-btn" data-color="pink" data-product-no="${product.product_no}" title="핑크">
+                            <button type="button" class="color-btn ${metadata.colors && metadata.colors.includes('pink') ? 'selected' : ''}" data-color="pink" data-product-no="${product.product_no}" title="핑크">
                                 <span class="color-swatch" style="background-color: #ec4899"></span>
                             </button>
-                            <button type="button" class="color-btn" data-color="purple" data-product-no="${product.product_no}" title="퍼플">
+                            <button type="button" class="color-btn ${metadata.colors && metadata.colors.includes('purple') ? 'selected' : ''}" data-color="purple" data-product-no="${product.product_no}" title="퍼플">
                                 <span class="color-swatch" style="background-color: #8b5cf6"></span>
                             </button>
-                            <button type="button" class="color-btn" data-color="white" data-product-no="${product.product_no}" title="화이트">
+                            <button type="button" class="color-btn ${metadata.colors && metadata.colors.includes('white') ? 'selected' : ''}" data-color="white" data-product-no="${product.product_no}" title="화이트">
                                 <span class="color-swatch" style="background-color: #f8fafc; border: 1px solid #e2e8f0;"></span>
                             </button>
-                            <button type="button" class="color-btn" data-color="transparent" data-product-no="${product.product_no}" title="투명">
+                            <button type="button" class="color-btn ${metadata.colors && metadata.colors.includes('transparent') ? 'selected' : ''}" data-color="transparent" data-product-no="${product.product_no}" title="투명">
                                 <span class="color-swatch transparent-pattern"></span>
                             </button>
-                            <button type="button" class="color-btn" data-color="gold" data-product-no="${product.product_no}" title="골드">
+                            <button type="button" class="color-btn ${metadata.colors && metadata.colors.includes('gold') ? 'selected' : ''}" data-color="gold" data-product-no="${product.product_no}" title="골드">
                                 <span class="color-swatch" style="background-color: #ffd700"></span>
                             </button>
-                            <button type="button" class="color-btn" data-color="silver" data-product-no="${product.product_no}" title="실버">
+                            <button type="button" class="color-btn ${metadata.colors && metadata.colors.includes('silver') ? 'selected' : ''}" data-color="silver" data-product-no="${product.product_no}" title="실버">
                                 <span class="color-swatch" style="background-color: #c0c0c0"></span>
                             </button>
-                        </div>
-                        <div class="color-tags" id="color-tags-${product.product_no}">
-                            ${metadata.colors ? metadata.colors.split(',').map(color => color.trim()).filter(c => c).map(color => `
-                                <span class="color-tag" data-color="${color}">
-                                    <span class="color-dot" style="background-color: ${this.getColorHex(color)}"></span>
-                                    ${this.getColorName(color)}
-                                    <span class="remove-color" data-product-no="${product.product_no}" data-color="${color}">×</span>
-                                </span>
-                            `).join('') : ''}
                         </div>
                         <input type="hidden" class="product-colors" data-product-no="${product.product_no}" value="${metadata.colors || ''}">
                     </div>
@@ -334,13 +322,12 @@ export class ProductsPage {
                     <thead>
                         <tr>
                             <th width="8%">상품정보</th>
-                            <th width="17%">상품명</th>
-                            <th width="10%">타입</th>
-                            <th width="7%">방향</th>
-                            <th width="8%">사이즈</th>
-                            <th width="11%">색상</th>
+                            <th width="18%">상품명</th>
+                            <th width="11%">타입</th>
+                            <th width="10%">방향</th>
+                            <th width="13%">색상</th>
                             <th width="20%">키워드</th>
-                            <th width="9%">이미지</th>
+                            <th width="10%">이미지</th>
                             <th width="10%">저장</th>
                         </tr>
                     </thead>
@@ -409,20 +396,32 @@ export class ProductsPage {
             });
         });
 
-        // Color button handlers
+        // Color button handlers - toggle selection
         document.querySelectorAll('.color-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const productNo = e.currentTarget.dataset.productNo;
                 const selectedColor = e.currentTarget.dataset.color;
+                const hiddenInput = document.querySelector(`.product-colors[data-product-no="${productNo}"]`);
                 
-                if (selectedColor) {
-                    this.addColor(productNo, selectedColor);
-                    // Visual feedback - briefly highlight the button
+                if (!hiddenInput || !selectedColor) return;
+                
+                // Get current colors
+                let currentColors = hiddenInput.value ? hiddenInput.value.split(',').map(c => c.trim()).filter(c => c) : [];
+                
+                if (btn.classList.contains('selected')) {
+                    // Remove color if already selected
+                    btn.classList.remove('selected');
+                    currentColors = currentColors.filter(c => c !== selectedColor);
+                } else {
+                    // Add color if not selected
                     btn.classList.add('selected');
-                    setTimeout(() => {
-                        btn.classList.remove('selected');
-                    }, 200);
+                    if (!currentColors.includes(selectedColor)) {
+                        currentColors.push(selectedColor);
+                    }
                 }
+                
+                // Update hidden input value
+                hiddenInput.value = currentColors.join(',');
             });
         });
 
@@ -602,7 +601,6 @@ export class ProductsPage {
         // Get all input values
         const productType = productRow.querySelector('.product-type').value;
         const beadDirection = productRow.querySelector(`input[name="direction-${productNo}"]:checked`)?.value || '';
-        const productSize = productRow.querySelector('.product-size').value;
         const productColors = productRow.querySelector('.product-colors').value;
         const productKeywords = productRow.querySelector('.product-keywords').value;
         const imageFile = productRow.querySelector('.product-image').files[0];
@@ -624,7 +622,6 @@ export class ProductsPage {
                 productNo,
                 type: productType,
                 direction: beadDirection,
-                size: productSize,
                 colors: productColors,
                 keywords: productKeywords,
                 imageUrl: imageInfo ? imageInfo.url : null,

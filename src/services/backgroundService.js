@@ -6,6 +6,7 @@ import {
     getDoc, 
     getDocs, 
     deleteDoc,
+    updateDoc,
     query,
     where,
     orderBy,
@@ -76,7 +77,7 @@ class BackgroundService {
                 updatedAt: serverTimestamp()
             };
             
-            const docRef = doc(this.db, this.collectionName, backgroundId);
+            const docRef = doc(db, this.collectionName, backgroundId);
             await setDoc(docRef, metadata);
             
             console.log('Background uploaded successfully:', backgroundId);

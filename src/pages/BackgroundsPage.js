@@ -195,8 +195,8 @@ export class BackgroundsPage {
                             <input type="text" id="displayNameInput" class="form-input" placeholder="예: 핑크 키링 배경" required>
                         </div>
                         <div class="form-actions">
-                            <button type="button" class="btn btn-secondary" onclick="window.backgroundsPage.hideModal()">취소</button>
-                            <button type="submit" class="btn btn-primary">업로드</button>
+                            <button type="button" class="btn btn-secondary" style="flex: 1; width: auto;" onclick="window.backgroundsPage.hideModal()">취소</button>
+                            <button type="submit" class="btn btn-primary" style="flex: 3; width: auto;">업로드</button>
                         </div>
                     </form>
                 </div>
