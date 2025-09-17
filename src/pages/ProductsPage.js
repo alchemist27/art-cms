@@ -607,11 +607,15 @@ export class ProductsPage {
                 direction: beadDirection,
                 colors: productColors,
                 keywords: productKeywords,
-                imageUrl: imageInfo ? imageInfo.url : null,
-                imagePath: imageInfo ? imageInfo.path : null,
-                imageFileName: imageInfo ? imageInfo.fileName : null,
                 updatedAt: new Date().toISOString()
             };
+            
+            // Only add image fields if they exist
+            if (imageInfo) {
+                metadata.imageUrl = imageInfo.url;
+                metadata.imagePath = imageInfo.path;
+                metadata.imageFileName = imageInfo.fileName;
+            }
 
             await this.saveToFirebase(productNo, metadata);
 
@@ -645,13 +649,10 @@ export class ProductsPage {
 
     async saveToFirebase(productNo, metadata) {
         try {
-            // Save metadata to Firestore
+            // Save metadata to Firestore (this includes image info if present)
             const result = await productMetadataService.saveMetadata(productNo, metadata);
             
-            // If there's an image, update the image metadata
-            if (metadata.imageUrl) {
-                await productMetadataService.updateProductImage(productNo, metadata.imageUrl);
-            }
+            // No need to call updateProductImage separately - saveMetadata handles everything
             
             return result;
         } catch (error) {

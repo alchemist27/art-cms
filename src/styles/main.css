@@ -303,7 +303,8 @@ body {
     margin-bottom: 15px;
 }
 
-.product-name {
+/* Dashboard product card name - not for table */
+.dashboard-product-name {
     font-size: 16px;
     font-weight: 600;
     margin-bottom: 8px;
@@ -709,11 +710,13 @@ body {
     line-height: 1.2;
 }
 
-.product-name {
+/* Table cell product-name styling */
+.products-table .product-name {
     vertical-align: middle;
     position: relative;
     height: 48px;
-    padding: 8px !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
     box-sizing: border-box;
 }
 
