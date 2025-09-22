@@ -21,11 +21,35 @@ class Cafe24ApiService {
 
     async isAuthenticated() {
         const tokens = await this.tokenService.getTokens();
-        if (tokens && !tokens.expired) {
+        
+        if (!tokens) {
+            return false;
+        }
+        
+        // If tokens exist but are expired, try to refresh
+        if (tokens.expired && tokens.refreshToken) {
+            try {
+                console.log('Tokens expired, attempting to refresh...');
+                await this.refreshAccessToken();
+                const newTokens = await this.tokenService.getTokens();
+                if (newTokens && !newTokens.expired) {
+                    this.accessToken = newTokens.accessToken;
+                    this.refreshToken = newTokens.refreshToken;
+                    return true;
+                }
+            } catch (error) {
+                console.error('Failed to refresh token:', error);
+                return false;
+            }
+        }
+        
+        // Tokens exist and are not expired
+        if (!tokens.expired) {
             this.accessToken = tokens.accessToken;
             this.refreshToken = tokens.refreshToken;
             return true;
         }
+        
         return false;
     }
 

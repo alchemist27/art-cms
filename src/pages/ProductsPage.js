@@ -72,15 +72,19 @@ export class ProductsPage {
             return;
         }
 
-        // 이미 인증되어 있는지 확인
+        // 이미 인증되어 있는지 확인 (자동 토큰 갱신 포함)
         try {
             console.log('Checking authentication status...');
+            this.showLoadingMessage('Cafe24 인증 확인 중...');
+            
             const isAuthenticated = await cafe24Api.isAuthenticated();
             console.log('Is authenticated:', isAuthenticated);
             
             if (isAuthenticated) {
+                console.log('Authentication successful, loading products...');
                 await this.loadProducts();
             } else {
+                console.log('Not authenticated, showing auth button...');
                 this.showAuthButton();
             }
         } catch (error) {
