@@ -15,34 +15,56 @@ const db = firebase.firestore();
 // Firebase에서 제품 데이터 로드
 async function loadProductsFromFirebase() {
     try {
-        const productsSnapshot = await db.collection('products').get();
+        console.log('Firebase에서 product_metadata 컬렉션 조회 시작...');
+        
+        // product_metadata 컬렉션에서 데이터 가져오기
+        const metadataSnapshot = await db.collection('product_metadata').get();
         const products = [];
         
-        productsSnapshot.forEach(doc => {
+        console.log(`product_metadata 컬렉션에서 ${metadataSnapshot.size}개의 문서 발견`);
+        
+        metadataSnapshot.forEach(doc => {
             const data = doc.data();
-            // CORS 설정 완료 - 원본 URL 사용
-            const imageUrl = data.imageUrl;
+            console.log('문서 데이터:', doc.id, data);
             
-            products.push({
-                id: doc.id,
-                name: data.name,
-                src: imageUrl,
-                type: data.type,
-                direction: data.option || null,
-                moruType: data.option || null,
-                bunjaeType: data.option || null,
-                colors: data.colors || [],
-                size: data.size || { width_mm: 20, height_mm: 20 },
-                tags: [
-                    data.type.toLowerCase(),
-                    ...(data.option ? [data.option.toLowerCase()] : []),
-                    ...(data.colors || [])
-                ],
-                popularity: Math.floor(Math.random() * 100) // 임시 인기도
-            });
+            // 이미지가 있는 제품만 처리
+            if (data.imageUrl) {
+                const productItem = {
+                    id: doc.id,
+                    name: `상품 ${data.productNo}`,
+                    src: data.imageUrl,
+                    type: data.type || '비즈',
+                    direction: data.direction || null,
+                    moruType: null,
+                    bunjaeType: null,
+                    colors: data.colors ? data.colors.split(',').map(c => c.trim()) : [],
+                    size: { width_mm: 20, height_mm: 20 },
+                    tags: [],
+                    popularity: Math.floor(Math.random() * 100)
+                };
+                
+                // 태그 생성
+                if (data.type) {
+                    productItem.tags.push(data.type.toLowerCase());
+                }
+                if (data.direction) {
+                    productItem.tags.push(data.direction.toLowerCase());
+                }
+                if (data.colors) {
+                    const colorArray = data.colors.split(',').map(c => c.trim().toLowerCase());
+                    productItem.tags.push(...colorArray);
+                }
+                if (data.keywords) {
+                    const keywordArray = data.keywords.split(',').map(k => k.trim().toLowerCase());
+                    productItem.tags.push(...keywordArray);
+                }
+                
+                products.push(productItem);
+                console.log('제품 추가:', productItem);
+            }
         });
         
-        console.log('Firebase에서 제품 로드:', products.length, '개');
+        console.log('Firebase에서 제품 로드 완료:', products.length, '개');
         return products;
     } catch (error) {
         console.error('Firebase 제품 로드 실패:', error);
