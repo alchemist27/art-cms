@@ -625,6 +625,16 @@ body::before {
 }
 
 /* Canvas Section */
+/* Canvas Top Controls - Header와 Layer Controls 컨테이너 */
+.canvas-top-controls {
+    display: flex;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .canvas-header {
     display: flex;
     justify-content: space-between;
@@ -634,9 +644,9 @@ body::before {
     backdrop-filter: blur(10px);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-soft);
-    margin: var(--spacing-md) 0;
     border: 2px solid rgba(255, 107, 156, 0.367);
     flex-shrink: 0;
+    flex: 1;
 }
 
 
@@ -961,7 +971,64 @@ body::before {
     color: var(--gray-400);
 }
 
-/* Layer Controls */
+/* Layer Controls - Inline Version */
+.layer-section-inline {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.4));
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-soft);
+    border: 2px solid rgba(255, 107, 156, 0.367);
+    padding: var(--spacing-sm);
+}
+
+.layer-controls-inline {
+    display: flex;
+    gap: var(--spacing-xs);
+    align-items: center;
+}
+
+.layer-btn-inline {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: 2px solid rgba(255, 107, 157, 0.3);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+    color: var(--gray-600);
+    border-radius: var(--radius-lg);
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.layer-btn-inline:hover {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+    border-color: var(--primary-color);
+    color: var(--white);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-pink);
+}
+
+.layer-btn-inline.danger {
+    border-color: rgba(255, 138, 128, 0.3);
+}
+
+.layer-btn-inline.danger:hover {
+    background: linear-gradient(135deg, var(--danger-color) 0%, #ff6b6b 100%);
+    border-color: var(--danger-color);
+    color: var(--white);
+    box-shadow: 0 4px 20px rgba(255, 138, 128, 0.3);
+}
+
+.layer-btn-inline i {
+    font-size: 0.7rem;
+}
+
+/* Layer Controls - Original (Removed from right panel) */
 .layer-controls {
     padding: var(--spacing-md);
     display: flex;
@@ -1404,4 +1471,37 @@ body::before {
   outline: none;
   border-color: var(--primary-hover);
   box-shadow: 0 0 0 3px rgba(255, 107, 157, 0.2);
+}
+
+/* Filter Reset Button */
+.filter-reset-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 2px solid rgba(255, 107, 157, 0.3);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+    color: var(--gray-500);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    backdrop-filter: blur(10px);
+    padding: 0;
+}
+
+.filter-reset-btn:hover {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, rgba(255, 107, 157, 0.1) 0%, rgba(255, 107, 157, 0.05) 100%);
+    color: var(--primary-color);
+    transform: rotate(180deg) scale(1.1);
+    box-shadow: var(--shadow-sm);
+}
+
+.filter-reset-btn:active {
+    transform: rotate(180deg) scale(0.95);
+}
+
+.filter-reset-btn i {
+    font-size: 0.75rem;
 } 

@@ -151,6 +151,14 @@ class FilterManager {
                 }
             });
         }
+
+        // 색상 필터 리셋 버튼
+        const colorResetBtn = document.getElementById('colorResetBtn');
+        if (colorResetBtn) {
+            colorResetBtn.addEventListener('click', () => {
+                this.resetColorFilter();
+            });
+        }
         
         // 비즈 방향 필터
         const directionFilters = document.getElementById('directionFilters');
@@ -497,6 +505,26 @@ class FilterManager {
         }
     }
     
+    resetColorFilter() {
+        // 색상 필터만 초기화
+        this.activeFilters.color = ['all'];
+
+        const colorFilters = document.getElementById('colorFilters');
+        if (colorFilters) {
+            // 모든 색상 버튼에서 active 클래스 제거
+            colorFilters.querySelectorAll('.tag-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // '전체' 버튼에 active 클래스 추가
+            const allBtn = colorFilters.querySelector('[data-filter="all"]');
+            if (allBtn) {
+                allBtn.classList.add('active');
+            }
+        }
+
+        this.applyFilters();
+    }
+
     clearFilters() {
         this.activeFilters = {
             search: '',
