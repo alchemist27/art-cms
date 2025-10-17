@@ -26,7 +26,7 @@
                 </button>
                 <button class="btn btn-primary" id="fullscreenBtn">
                     <i class="fas fa-expand"></i>
-                    전체화면
+                    실제 사이즈 보기
                 </button>
             </div>
         </div>
@@ -43,7 +43,7 @@
                 </div>
                 <div class="search-controls">
                     <div class="search-input-wrapper">
-                        <input type="text" id="searchInput" placeholder="제품 이름 검색..." class="search-input">
+                        <input type="text" id="searchInput" placeholder="제품명, 키워드 검색.." class="search-input">
                         <i class="fas fa-search search-icon"></i>
                     </div>
                     <div class="filter-tags">
@@ -52,83 +52,153 @@
                             <div class="tag-buttons" id="typeFilters">
                                 <button class="tag-btn active" data-filter="all">전체</button>
                                 <button class="tag-btn" data-filter="비즈">비즈</button>
-                                <button class="tag-btn" data-filter="파츠">파츠</button>
+                                <button class="tag-btn" data-filter="생크림/파츠">생크림/파츠</button>
                                 <button class="tag-btn" data-filter="팬던트">팬던트</button>
                                 <button class="tag-btn" data-filter="모루공예">모루공예</button>
-                                <button class="tag-btn" data-filter="부재료">부재료</button>
+                                <button class="tag-btn" data-filter="부자재">부자재</button>
+                                <button class="tag-btn" data-filter="비녀공예">비녀공예</button>
                                 <button class="tag-btn" data-filter="끈/줄">끈/줄</button>
-                                <button class="tag-btn" data-filter="도구/정리">도구/정리</button>
+                                <button class="tag-btn" data-filter="폰악세서리">폰악세서리</button>
+                                <button class="tag-btn" data-filter="파우치/소품">파우치/소품</button>
                             </div>
                         </div>
                         <div class="filter-group" id="directionFilterGroup" style="display:none;">
-                            <label>비즈 방향</label>
+                            <label>비즈 종류</label>
                             <div class="tag-buttons" id="directionFilters">
                                 <button class="tag-btn active" data-filter="all">전체</button>
-                                <button class="tag-btn" data-filter="가로">가로</button>
-                                <button class="tag-btn" data-filter="세로">세로</button>
+                                <button class="tag-btn" data-filter="가로펀칭">가로펀칭</button>
+                                <button class="tag-btn" data-filter="세로펀칭">세로펀칭</button>
+                                <button class="tag-btn" data-filter="원형비즈">원형비즈</button>
+                                <button class="tag-btn" data-filter="시드비즈">시드비즈</button>
+                                <button class="tag-btn" data-filter="단추">단추</button>
+
+                            </div>
+                        </div>
+                        <div class="filter-group" id="creamPartFilterGroup" style="display:none;">
+                            <label>생크림/파츠 종류</label>
+                            <div class="tag-buttons" id="creamPartFilters">
+                                <button class="tag-btn active" data-filter="all">전체</button>
+                                <button class="tag-btn" data-filter="생크림">생크림</button>
+                                <button class="tag-btn" data-filter="세트상품">세트상품</button>
+                                <button class="tag-btn" data-filter="하트/별/달">하트/별/달</button>
+                                <button class="tag-btn" data-filter="꽃/리본">꽃/리본</button>
+                                <button class="tag-btn" data-filter="음식">음식</button>
+                                <button class="tag-btn" data-filter="그릇">그릇</button>
+                                <button class="tag-btn" data-filter="동물">동물</button>
+                                <button class="tag-btn" data-filter="기타">기타</button>
+                                <button class="tag-btn" data-filter="진주/큐빅">진주/큐빅</button>
                             </div>
                         </div>
                         <div class="filter-group" id="moruFilterGroup" style="display:none;">
                             <label>모루공예 타입</label>
                             <div class="tag-buttons" id="moruFilters">
                                 <button class="tag-btn active" data-filter="all">전체</button>
-                                <button class="tag-btn" data-filter="옷소품">옷소품</button>
-                                <button class="tag-btn" data-filter="눈코">눈코</button>
+                                <button class="tag-btn" data-filter="모루철사">모루철사</button>
+                                <button class="tag-btn" data-filter="눈코입">눈코입</button>
+                                <button class="tag-btn" data-filter="옷/소품">옷/소품</button>
+                                <button class="tag-btn" data-filter="리본/꾸미기">리본/꾸미기</button>
                             </div>
                         </div>
                         <div class="filter-group" id="bunjaeFilterGroup" style="display:none;">
-                            <label>부재료 타입</label>
+                            <label>부자재 타입</label>
                             <div class="tag-buttons" id="bunjaeFilters">
                                 <button class="tag-btn active" data-filter="all">전체</button>
-                                <button class="tag-btn" data-filter="키링,군번줄">키링,군번줄</button>
-                                <button class="tag-btn" data-filter="체인,O링,부속">체인,o링,부속</button>
-                                <button class="tag-btn" data-filter="마감,9핀,T핀">마감,9핀,t핀</button>
-                                <button class="tag-btn" data-filter="반지,목걸이,귀걸이">반지,목걸이,귀걸이</button>
+                                <button class="tag-btn" data-filter="키링류">키링류</button>
+                                <button class="tag-btn" data-filter="체인/o링">체인/o링</button>
+                                <button class="tag-btn" data-filter="마감,9/T핀">마감,9/T핀</button>
+                                <button class="tag-btn" data-filter="악세사리">악세사리</button>
+                                <button class="tag-btn" data-filter="책갈피/기타">책갈피/기타</button>
+                                <button class="tag-btn" data-filter="헤어장식">헤어장식</button>
+                            </div>
+                        </div>
+                        <div class="filter-group" id="hairpinFilterGroup" style="display:none;">
+                            <label>비녀공예 타입</label>
+                            <div class="tag-buttons" id="hairpinFilters">
+                                <button class="tag-btn active" data-filter="all">전체</button>
+                                <button class="tag-btn" data-filter="뒤꽃이/브로치">뒤꽃이/브로치</button>
+                                <button class="tag-btn" data-filter="자개꽃/꽃수술">자개꽃/꽃수술</button>
+                                <button class="tag-btn" data-filter="원석/자개">원석/자개</button>
+                                <button class="tag-btn" data-filter="금속,큐빅">금속,큐빅</button>
+                                <button class="tag-btn" data-filter="진주,자개구슬">진주,자개구슬</button>
+                                <button class="tag-btn" data-filter="론델/원석구슬">론델/원석구슬</button>
+                            </div>
+                        </div>
+                        <div class="filter-group" id="pendantFilterGroup" style="display:none;">
+                            <label>팬던트 모양</label>
+                            <div class="tag-buttons" id="pendantFilters">
+                                <button class="tag-btn active" data-filter="all">전체</button>
+                                <button class="tag-btn" data-filter="하트/별/달">하트/별/달</button>
+                                <button class="tag-btn" data-filter="리본/꽃">리본/꽃</button>
+                                <button class="tag-btn" data-filter="진주/자개/바다">진주/자개/바다</button>
+                                <button class="tag-btn" data-filter="동물">동물</button>
+                                <button class="tag-btn" data-filter="음식">음식</button>
+                                <button class="tag-btn" data-filter="링/기타">링/기타</button>
+                            </div>
+                        </div>
+                        <div class="filter-group" id="stringFilterGroup" style="display:none;">
+                            <label>끈/줄 타입</label>
+                            <div class="tag-buttons" id="stringFilters">
+                                <button class="tag-btn active" data-filter="all">전체</button>
+                                <button class="tag-btn" data-filter="낚싯줄">낚싯줄</button>
+                                <button class="tag-btn" data-filter="우레탄줄">우레탄줄</button>
+                                <button class="tag-btn" data-filter="폴리끈">폴리끈</button>
+                                <button class="tag-btn" data-filter="왁스끈">왁스끈</button>
+                                <button class="tag-btn" data-filter="합사">합사</button>
+                                <button class="tag-btn" data-filter="와이어">와이어</button>
+                                <button class="tag-btn" data-filter="기타">기타</button>
                             </div>
                         </div>
                         <div class="filter-group">
                             <label>색상 (중복선택가능)</label>
                             <div class="tag-buttons" id="colorFilters">
                                 <button class="tag-btn active" data-filter="all">전체</button>
-                                <button class="tag-btn color-btn" data-filter="black">
-                                    <span class="color-preview" style="background-color: #2d2d2d;"></span>
-                                    블랙
-                                </button>
-                                <button class="tag-btn color-btn" data-filter="blue">
-                                    <span class="color-preview" style="background-color: #3b82f6;"></span>
-                                    블루
-                                </button>
-                                <button class="tag-btn color-btn" data-filter="green">
-                                    <span class="color-preview" style="background-color: #10b981;"></span>
-                                    그린
-                                </button>
-                                <button class="tag-btn color-btn" data-filter="red">
-                                    <span class="color-preview" style="background-color: #ef4444;"></span>
-                                    레드
-                                </button>
-                                <button class="tag-btn color-btn" data-filter="yellow">
-                                    <span class="color-preview" style="background-color: #f59e0b;"></span>
-                                    옐로우
-                                </button>
-                                <button class="tag-btn color-btn" data-filter="orange">
-                                    <span class="color-preview" style="background-color: #f97316;"></span>
-                                    오렌지
+                                <button class="tag-btn color-btn" data-filter="transparent">
+                                    <span class="color-preview" style="background-color: transparent; border: 1px solid #e2e8f0;"></span>
+                                    투명
                                 </button>
                                 <button class="tag-btn color-btn" data-filter="pink">
                                     <span class="color-preview" style="background-color: #ec4899;"></span>
                                     핑크
                                 </button>
+                                <button class="tag-btn color-btn" data-filter="red">
+                                    <span class="color-preview" style="background-color: #ef4444;"></span>
+                                    레드
+                                </button>
+                                <button class="tag-btn color-btn" data-filter="orange">
+                                    <span class="color-preview" style="background-color: #f97316;"></span>
+                                    오렌지
+                                </button>
+                                <button class="tag-btn color-btn" data-filter="yellow">
+                                    <span class="color-preview" style="background-color: #f59e0b;"></span>
+                                    옐로우
+                                </button>
+                                <button class="tag-btn color-btn" data-filter="green">
+                                    <span class="color-preview" style="background-color: #10b981;"></span>
+                                    그린
+                                </button>
+                                <button class="tag-btn color-btn" data-filter="blue">
+                                    <span class="color-preview" style="background-color: #3b82f6;"></span>
+                                    블루
+                                </button>
                                 <button class="tag-btn color-btn" data-filter="purple">
                                     <span class="color-preview" style="background-color: #8b5cf6;"></span>
                                     퍼플
+                                </button>
+                                <button class="tag-btn color-btn" data-filter="brown">
+                                    <span class="color-preview" style="background-color: #8b4513;"></span>
+                                    브라운
+                                </button>
+                                <button class="tag-btn color-btn" data-filter="black">
+                                    <span class="color-preview" style="background-color: #2d2d2d;"></span>
+                                    블랙
                                 </button>
                                 <button class="tag-btn color-btn" data-filter="white">
                                     <span class="color-preview" style="background-color: #f8fafc; border: 1px solid #e2e8f0;"></span>
                                     화이트
                                 </button>
-                                <button class="tag-btn color-btn" data-filter="transparent">
-                                    <span class="color-preview" style="background-color: transparent; border: 1px solid #e2e8f0;"></span>
-                                    투명    
+                                <button class="tag-btn color-btn" data-filter="pearl">
+                                    <span class="color-preview" style="background-color: #f0f0f0; border: 1px solid #d0d0d0;"></span>
+                                    진주
                                 </button>
                                 <button class="tag-btn color-btn" data-filter="gold">
                                     <span class="color-preview" style="background-color: #ffd700;"></span>
@@ -192,7 +262,8 @@
                         <img src="/logo.png" alt="슈가데코 로고" class="watermark-logo">
                     </div>
                     <h3>✨ 나만의 특별한 디자인을 만들어보세요! ✨</h3>
-                    <p>�� 배경 이미지를 먼저 선택 후, 좌측에서 예쁜 비즈와 파츠를 선택하세요 💕</p>
+                    <p>💕 배경 이미지를 먼저 선택 후, 좌측에서 예쁜 비즈와 파츠를 선택하세요 💕</p>
+                    <p>PC에서 접속하셔야 더욱 편리하게 작업하실 수 있습니다</p>
                 </div>
             </div>
         </section>
@@ -202,23 +273,23 @@
             <!-- Background Selection -->
             <section class="background-section">
                 <div class="section-header">
-                    <h3><i class="fas fa-image"></i> 배경 선택</h3>
+                    <h3><i class="fas fa-image"></i>나의 배경 불러오기</h3>
                     <button class="upload-btn" id="uploadBackgroundBtn" title="로컬 이미지 업로드">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wallpaper-icon lucide-wallpaper"><circle cx="8" cy="9" r="2"/><path d="m9 17 6.1-6.1a2 2 0 0 1 2.81.01L22 15V5a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
                     </button>
                 </div>
                 <select id="backgroundCategoryDropdown" class="category-dropdown">
-                    <option value="all">전체</option>
-                    <option value="키링">키링</option>
-                    <option value="팔찌/목걸이">팔찌/목걸이</option>
-                    <option value="반지/귀걸이">반지/귀걸이</option>
-                    <option value="네일아트">네일아트</option>
-                    <option value="핸드폰기종">핸드폰기종</option>
-                    <option value="레진아트">레진아트</option>
-                    <option value="모루공예">모루공예</option>
-                    <option value="비녀공예">비녀공예</option>
-                    <option value="스위츠데코">스위츠데코</option>
-                    <option value="스마트톡/탑로더">스마트톡/탑로더</option>
+                    <option value="all">기본배경/MD추천 디자인♥</option>
+                    <option value="키링">키링(3)</option>
+                    <option value="스트랩">스트랩</option>
+                    <option value="모루인형">모루인형</option>
+                    <option value="비녀/뒤꽂이">비녀/뒤꽂이(4)</option>
+                    <option value="팔찌">팔찌</option>
+                    <option value="목걸이">목걸이</option>
+                    <option value="반지">반지</option>
+                    <option value="귀걸이">귀걸이</option>
+                    <option value="데코덴 케이스">데코덴 케이스</option>
+                    <option value="스마트톡">스마트톡</option>
                 </select>
                 <input type="file" id="backgroundFileInput" accept="image/*" style="display: none;">
                 <div class="background-grid" id="backgroundGrid">

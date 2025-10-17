@@ -10,6 +10,12 @@ class FilterManager {
             type: 'all',
             color: ['all'], // 배열로 변경하여 다중 선택 지원
             direction: 'all',
+            creamPart: 'all',
+            moru: 'all',
+            bunjae: 'all',
+            hairpin: 'all',
+            pendant: 'all',
+            string: 'all',
             sort: 'popular' // 정렬 옵션 추가
         };
         
@@ -48,6 +54,15 @@ class FilterManager {
                             directionGroup.style.display = 'none';
                         }
                     }
+                    // 생크림/파츠 타입 필터 그룹 표시/숨김 처리
+                    const creamPartGroup = document.getElementById('creamPartFilterGroup');
+                    if (creamPartGroup) {
+                        if (e.target.dataset.filter === '생크림/파츠') {
+                            creamPartGroup.style.display = '';
+                        } else {
+                            creamPartGroup.style.display = 'none';
+                        }
+                    }
                     // 모루공예 타입 필터 그룹 표시/숨김 처리
                     const moruGroup = document.getElementById('moruFilterGroup');
                     if (moruGroup) {
@@ -57,13 +72,40 @@ class FilterManager {
                             moruGroup.style.display = 'none';
                         }
                     }
-                    // 부재료 타입 필터 그룹 표시/숨김 처리
+                    // 부자재 타입 필터 그룹 표시/숨김 처리
                     const bunjaeGroup = document.getElementById('bunjaeFilterGroup');
                     if (bunjaeGroup) {
-                        if (e.target.dataset.filter === '부재료') {
+                        if (e.target.dataset.filter === '부자재') {
                             bunjaeGroup.style.display = '';
                         } else {
                             bunjaeGroup.style.display = 'none';
+                        }
+                    }
+                    // 비녀공예 타입 필터 그룹 표시/숨김 처리
+                    const hairpinGroup = document.getElementById('hairpinFilterGroup');
+                    if (hairpinGroup) {
+                        if (e.target.dataset.filter === '비녀공예') {
+                            hairpinGroup.style.display = '';
+                        } else {
+                            hairpinGroup.style.display = 'none';
+                        }
+                    }
+                    // 팬던트 모양 필터 그룹 표시/숨김 처리
+                    const pendantGroup = document.getElementById('pendantFilterGroup');
+                    if (pendantGroup) {
+                        if (e.target.dataset.filter === '팬던트') {
+                            pendantGroup.style.display = '';
+                        } else {
+                            pendantGroup.style.display = 'none';
+                        }
+                    }
+                    // 끈/줄 타입 필터 그룹 표시/숨김 처리
+                    const stringGroup = document.getElementById('stringFilterGroup');
+                    if (stringGroup) {
+                        if (e.target.dataset.filter === '끈/줄') {
+                            stringGroup.style.display = '';
+                        } else {
+                            stringGroup.style.display = 'none';
                         }
                     }
                     this.applyFilters();
@@ -121,7 +163,79 @@ class FilterManager {
                 }
             });
         }
-        
+
+        // 생크림/파츠 필터
+        const creamPartFilters = document.getElementById('creamPartFilters');
+        if (creamPartFilters) {
+            creamPartFilters.addEventListener('click', (e) => {
+                if (e.target.classList.contains('tag-btn')) {
+                    this.setActiveButton(e.target, 'creamPartFilters');
+                    this.setFilter('creamPart', e.target.dataset.filter);
+                    this.applyFilters();
+                }
+            });
+        }
+
+        // 모루공예 필터
+        const moruFilters = document.getElementById('moruFilters');
+        if (moruFilters) {
+            moruFilters.addEventListener('click', (e) => {
+                if (e.target.classList.contains('tag-btn')) {
+                    this.setActiveButton(e.target, 'moruFilters');
+                    this.setFilter('moru', e.target.dataset.filter);
+                    this.applyFilters();
+                }
+            });
+        }
+
+        // 부자재 필터
+        const bunjaeFilters = document.getElementById('bunjaeFilters');
+        if (bunjaeFilters) {
+            bunjaeFilters.addEventListener('click', (e) => {
+                if (e.target.classList.contains('tag-btn')) {
+                    this.setActiveButton(e.target, 'bunjaeFilters');
+                    this.setFilter('bunjae', e.target.dataset.filter);
+                    this.applyFilters();
+                }
+            });
+        }
+
+        // 비녀공예 필터
+        const hairpinFilters = document.getElementById('hairpinFilters');
+        if (hairpinFilters) {
+            hairpinFilters.addEventListener('click', (e) => {
+                if (e.target.classList.contains('tag-btn')) {
+                    this.setActiveButton(e.target, 'hairpinFilters');
+                    this.setFilter('hairpin', e.target.dataset.filter);
+                    this.applyFilters();
+                }
+            });
+        }
+
+        // 팬던트 필터
+        const pendantFilters = document.getElementById('pendantFilters');
+        if (pendantFilters) {
+            pendantFilters.addEventListener('click', (e) => {
+                if (e.target.classList.contains('tag-btn')) {
+                    this.setActiveButton(e.target, 'pendantFilters');
+                    this.setFilter('pendant', e.target.dataset.filter);
+                    this.applyFilters();
+                }
+            });
+        }
+
+        // 끈/줄 필터
+        const stringFilters = document.getElementById('stringFilters');
+        if (stringFilters) {
+            stringFilters.addEventListener('click', (e) => {
+                if (e.target.classList.contains('tag-btn')) {
+                    this.setActiveButton(e.target, 'stringFilters');
+                    this.setFilter('string', e.target.dataset.filter);
+                    this.applyFilters();
+                }
+            });
+        }
+
         // 정렬 탭
         const sortTabs = document.getElementById('sortTabs');
         if (sortTabs) {
@@ -170,12 +284,18 @@ class FilterManager {
             return this.matchesSearch(item) &&
                    this.matchesType(item) &&
                    this.matchesColor(item) &&
-                   this.matchesDirection(item);
+                   this.matchesDirection(item) &&
+                   this.matchesCreamPart(item) &&
+                   this.matchesMoru(item) &&
+                   this.matchesBunjae(item) &&
+                   this.matchesHairpin(item) &&
+                   this.matchesPendant(item) &&
+                   this.matchesString(item);
         });
-        
+
         // 정렬 적용
         this.sortItems();
-        
+
         this.updateItemCount();
         this.renderItems();
         this.dispatchFilterEvent();
@@ -206,11 +326,59 @@ class FilterManager {
     matchesDirection(item) {
         const directionFilter = this.activeFilters.direction;
         if (directionFilter === 'all') return true;
-        
+
         // 비즈 방향 필터링 - tags 배열에서 방향 정보 확인
         return item.tags.includes(directionFilter);
     }
-    
+
+    matchesCreamPart(item) {
+        const creamPartFilter = this.activeFilters.creamPart;
+        if (creamPartFilter === 'all') return true;
+
+        // 생크림/파츠 필터링 - tags 배열에서 확인
+        return item.tags.includes(creamPartFilter);
+    }
+
+    matchesMoru(item) {
+        const moruFilter = this.activeFilters.moru;
+        if (moruFilter === 'all') return true;
+
+        // 모루공예 필터링 - tags 배열에서 확인
+        return item.tags.includes(moruFilter);
+    }
+
+    matchesBunjae(item) {
+        const bunjaeFilter = this.activeFilters.bunjae;
+        if (bunjaeFilter === 'all') return true;
+
+        // 부자재 필터링 - tags 배열에서 확인
+        return item.tags.includes(bunjaeFilter);
+    }
+
+    matchesHairpin(item) {
+        const hairpinFilter = this.activeFilters.hairpin;
+        if (hairpinFilter === 'all') return true;
+
+        // 비녀공예 필터링 - tags 배열에서 확인
+        return item.tags.includes(hairpinFilter);
+    }
+
+    matchesPendant(item) {
+        const pendantFilter = this.activeFilters.pendant;
+        if (pendantFilter === 'all') return true;
+
+        // 팬던트 필터링 - tags 배열에서 확인
+        return item.tags.includes(pendantFilter);
+    }
+
+    matchesString(item) {
+        const stringFilter = this.activeFilters.string;
+        if (stringFilter === 'all') return true;
+
+        // 끈/줄 필터링 - tags 배열에서 확인
+        return item.tags.includes(stringFilter);
+    }
+
     sortItems() {
         const sortType = this.activeFilters.sort;
         
@@ -335,22 +503,28 @@ class FilterManager {
             type: 'all',
             color: ['all'],
             direction: 'all',
+            creamPart: 'all',
+            moru: 'all',
+            bunjae: 'all',
+            hairpin: 'all',
+            pendant: 'all',
+            string: 'all',
             sort: 'popular'
         };
-        
+
         const searchInput = document.getElementById('searchInput');
         if (searchInput) {
             searchInput.value = '';
         }
-        
+
         document.querySelectorAll('.tag-btn').forEach(btn => {
             btn.classList.remove('active');
         });
-        
+
         document.querySelectorAll('[data-filter="all"]').forEach(btn => {
             btn.classList.add('active');
         });
-        
+
         // 정렬 탭 초기화
         const sortTabs = document.getElementById('sortTabs');
         if (sortTabs) {
@@ -359,7 +533,7 @@ class FilterManager {
             });
             sortTabs.querySelector('[data-sort="popular"]').classList.add('active');
         }
-        
+
         this.applyFilters();
     }
     

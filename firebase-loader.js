@@ -35,25 +35,42 @@ async function loadProductsFromFirebase() {
                     src: data.imageUrl,
                     type: data.type || '비즈',
                     direction: data.direction || null,
-                    moruType: null,
-                    bunjaeType: null,
                     colors: data.colors ? data.colors.split(',').map(c => c.trim()) : [],
                     size: { width_mm: 20, height_mm: 20 },
                     tags: [],
                     popularity: Math.floor(Math.random() * 100)
                 };
-                
-                // 태그 생성
+
+                // 태그 생성 - type 필드를 파싱해서 적절한 태그 추가
                 if (data.type) {
-                    productItem.tags.push(data.type.toLowerCase());
+                    const typeValue = data.type.toLowerCase();
+                    productItem.tags.push(typeValue);
+
+                    // "타입-세부타입" 형태를 파싱
+                    if (typeValue.includes('-')) {
+                        const parts = typeValue.split('-');
+                        const mainType = parts[0];
+                        const subType = parts[1];
+
+                        // 메인 타입 추가 (이미 전체 값이 추가되어 있으므로 중복이지만, 필터링을 위해 추가)
+                        productItem.tags.push(mainType);
+
+                        // 세부 타입 추가
+                        if (subType) {
+                            productItem.tags.push(subType);
+                        }
+                    }
                 }
+
                 if (data.direction) {
                     productItem.tags.push(data.direction.toLowerCase());
                 }
+
                 if (data.colors) {
                     const colorArray = data.colors.split(',').map(c => c.trim().toLowerCase());
                     productItem.tags.push(...colorArray);
                 }
+
                 if (data.keywords) {
                     const keywordArray = data.keywords.split(',').map(k => k.trim().toLowerCase());
                     productItem.tags.push(...keywordArray);
