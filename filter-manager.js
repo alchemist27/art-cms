@@ -45,10 +45,23 @@ class FilterManager {
                 if (e.target.classList.contains('tag-btn')) {
                     this.setActiveButton(e.target, 'typeFilters');
                     this.setFilter('type', e.target.dataset.filter);
+
+                    const selectedType = e.target.dataset.filter;
+
+                    // 타입 선택 시 색상 그룹 자동 open (전체가 아닐 때)
+                    if (selectedType !== 'all') {
+                        this.openFilterGroup('colorFilterGroup');
+                    } else {
+                        this.closeFilterGroup('colorFilterGroup');
+                    }
+
+                    // 모든 세부 옵션 그룹 닫기
+                    this.closeAllSubGroups();
+
                     // 비즈 방향 필터 그룹 표시/숨김 처리
                     const directionGroup = document.getElementById('directionFilterGroup');
                     if (directionGroup) {
-                        if (e.target.dataset.filter === '비즈') {
+                        if (selectedType === '비즈') {
                             directionGroup.style.display = '';
                         } else {
                             directionGroup.style.display = 'none';
@@ -57,7 +70,7 @@ class FilterManager {
                     // 생크림/파츠 타입 필터 그룹 표시/숨김 처리
                     const creamPartGroup = document.getElementById('creamPartFilterGroup');
                     if (creamPartGroup) {
-                        if (e.target.dataset.filter === '생크림/파츠') {
+                        if (selectedType === '생크림/파츠') {
                             creamPartGroup.style.display = '';
                         } else {
                             creamPartGroup.style.display = 'none';
@@ -66,7 +79,7 @@ class FilterManager {
                     // 모루공예 타입 필터 그룹 표시/숨김 처리
                     const moruGroup = document.getElementById('moruFilterGroup');
                     if (moruGroup) {
-                        if (e.target.dataset.filter === '모루공예') {
+                        if (selectedType === '모루공예') {
                             moruGroup.style.display = '';
                         } else {
                             moruGroup.style.display = 'none';
@@ -75,7 +88,7 @@ class FilterManager {
                     // 부자재 타입 필터 그룹 표시/숨김 처리
                     const bunjaeGroup = document.getElementById('bunjaeFilterGroup');
                     if (bunjaeGroup) {
-                        if (e.target.dataset.filter === '부자재') {
+                        if (selectedType === '부자재') {
                             bunjaeGroup.style.display = '';
                         } else {
                             bunjaeGroup.style.display = 'none';
@@ -84,7 +97,7 @@ class FilterManager {
                     // 비녀공예 타입 필터 그룹 표시/숨김 처리
                     const hairpinGroup = document.getElementById('hairpinFilterGroup');
                     if (hairpinGroup) {
-                        if (e.target.dataset.filter === '비녀공예') {
+                        if (selectedType === '비녀공예') {
                             hairpinGroup.style.display = '';
                         } else {
                             hairpinGroup.style.display = 'none';
@@ -93,7 +106,7 @@ class FilterManager {
                     // 팬던트 모양 필터 그룹 표시/숨김 처리
                     const pendantGroup = document.getElementById('pendantFilterGroup');
                     if (pendantGroup) {
-                        if (e.target.dataset.filter === '팬던트') {
+                        if (selectedType === '팬던트') {
                             pendantGroup.style.display = '';
                         } else {
                             pendantGroup.style.display = 'none';
@@ -102,7 +115,7 @@ class FilterManager {
                     // 끈/줄 타입 필터 그룹 표시/숨김 처리
                     const stringGroup = document.getElementById('stringFilterGroup');
                     if (stringGroup) {
-                        if (e.target.dataset.filter === '끈/줄') {
+                        if (selectedType === '끈/줄') {
                             stringGroup.style.display = '';
                         } else {
                             stringGroup.style.display = 'none';
@@ -147,6 +160,27 @@ class FilterManager {
                         }
                     }
                     this.setFilter('color', selectedColors);
+
+                    // 색상 선택 시 현재 타입에 맞는 세부 옵션 그룹 자동 open
+                    if (!selectedColors.includes('all')) {
+                        const currentType = this.activeFilters.type;
+                        if (currentType === '비즈') {
+                            this.openFilterGroup('directionFilterGroup');
+                        } else if (currentType === '생크림/파츠') {
+                            this.openFilterGroup('creamPartFilterGroup');
+                        } else if (currentType === '모루공예') {
+                            this.openFilterGroup('moruFilterGroup');
+                        } else if (currentType === '부자재') {
+                            this.openFilterGroup('bunjaeFilterGroup');
+                        } else if (currentType === '비녀공예') {
+                            this.openFilterGroup('hairpinFilterGroup');
+                        } else if (currentType === '팬던트') {
+                            this.openFilterGroup('pendantFilterGroup');
+                        } else if (currentType === '끈/줄') {
+                            this.openFilterGroup('stringFilterGroup');
+                        }
+                    }
+
                     this.applyFilters();
                 }
             });
@@ -275,6 +309,36 @@ class FilterManager {
                 });
             }
         });
+    }
+
+    // 필터 그룹 열기
+    openFilterGroup(groupId) {
+        const group = document.getElementById(groupId);
+        if (group) {
+            group.classList.remove('collapsed');
+        }
+    }
+
+    // 필터 그룹 닫기
+    closeFilterGroup(groupId) {
+        const group = document.getElementById(groupId);
+        if (group) {
+            group.classList.add('collapsed');
+        }
+    }
+
+    // 모든 세부 옵션 그룹 닫기
+    closeAllSubGroups() {
+        const subGroups = [
+            'directionFilterGroup',
+            'creamPartFilterGroup',
+            'moruFilterGroup',
+            'bunjaeFilterGroup',
+            'hairpinFilterGroup',
+            'pendantFilterGroup',
+            'stringFilterGroup'
+        ];
+        subGroups.forEach(groupId => this.closeFilterGroup(groupId));
     }
     
     renderFilterUI() {
@@ -472,26 +536,84 @@ class FilterManager {
         const card = document.createElement('div');
         card.className = 'item-card fade-in';
         card.dataset.itemId = item.id;
-        
+
         const img = document.createElement('img');
         // Firebase에서 온 데이터는 src 필드, 로컬은 image 필드 사용
         img.src = item.src || `/assets/${item.image}`;
         img.alt = item.name;
         img.draggable = false;
-        
+
         const name = document.createElement('div');
         name.className = 'item-name';
         name.textContent = item.name;
-        
+
         card.appendChild(img);
         card.appendChild(name);
-        
-        card.addEventListener('click', () => {
-            this.addItemToCanvas(item);
-            this.addClickEffect(card);
-        });
-        
+
+        // 더미 데이터로 모든 아이템에 사이즈 옵션 추가
+        const sizeOptions = item.sizeOptions || ['2mm', '4mm', '6mm'];
+
+        // 사이즈 옵션이 있으면 오버레이 생성
+        if (sizeOptions && sizeOptions.length > 0) {
+            const overlay = this.createSizeOptionsOverlay(item, sizeOptions);
+            card.appendChild(overlay);
+
+            card.addEventListener('click', (e) => {
+                // 오버레이나 그 자식 요소를 클릭한 경우 무시
+                if (e.target.closest('.size-options-overlay')) {
+                    return;
+                }
+                // 오버레이 표시
+                overlay.classList.add('active');
+            });
+        } else {
+            // 사이즈 옵션이 없으면 바로 캔버스에 추가
+            card.addEventListener('click', () => {
+                this.addItemToCanvas(item);
+                this.addClickEffect(card);
+            });
+        }
+
         return card;
+    }
+
+    createSizeOptionsOverlay(item, sizeOptions) {
+        const overlay = document.createElement('div');
+        overlay.className = 'size-options-overlay';
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'size-option-close';
+        closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+        closeBtn.onclick = (e) => {
+            e.stopPropagation();
+            overlay.classList.remove('active');
+        };
+
+        const title = document.createElement('div');
+        title.className = 'size-option-title';
+        title.textContent = '사이즈 선택';
+
+        const buttonsContainer = document.createElement('div');
+        buttonsContainer.className = 'size-option-buttons';
+
+        sizeOptions.forEach(size => {
+            const btn = document.createElement('button');
+            btn.className = 'size-option-btn';
+            btn.textContent = size;
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                this.addItemToCanvas({...item, selectedSize: size});
+                overlay.classList.remove('active');
+                this.addClickEffect(overlay.parentElement);
+            };
+            buttonsContainer.appendChild(btn);
+        });
+
+        overlay.appendChild(closeBtn);
+        overlay.appendChild(title);
+        overlay.appendChild(buttonsContainer);
+
+        return overlay;
     }
     
     addItemToCanvas(item) {

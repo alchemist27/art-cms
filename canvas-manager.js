@@ -12,7 +12,11 @@ class CanvasManager {
         this.watermarkImage = null;
         this.resizeTimer = null;
         this.isLoadingState = false; // 상태 로딩 중 플래그
-        
+        this.zoomLevel = 1; // 현재 줌 레벨 (1 = 100%)
+        this.minZoom = 0.5; // 최소 줌 (50%)
+        this.maxZoom = 2; // 최대 줌 (200%)
+        this.zoomStep = 0.1; // 줌 단계 (10%)
+
         this.init();
     }
     
@@ -33,7 +37,10 @@ class CanvasManager {
         
         // 캔버스 크기 및 정렬 설정
         this.setupCanvasLayout();
-        
+
+        // Zoom 컨트롤 설정
+        this.setupZoomControls();
+
         // 초기 히스토리 저장
         this.saveState();
     }
@@ -43,7 +50,7 @@ class CanvasManager {
         fabric.Object.prototype.controls.mtr = new fabric.Control({
             x: 0,
             y: -0.5,
-            offsetY: -46,
+            offsetY: -25,
             cursorStyle: 'crosshair',
             actionHandler: fabric.controlsUtils.rotationWithSnapping,
             actionName: 'rotate',
@@ -94,14 +101,15 @@ class CanvasManager {
                 ctx.restore();
             },
             cornerSize: 16,
-            withConnection: true
+            withConnection: false
         });
 
-        // 삭제 버튼 (왼쪽)
+        // 삭제 버튼 (왼쪽 상단)
         fabric.Object.prototype.controls.deleteControl = new fabric.Control({
             x: -0.5,
-            y: 0,
-            offsetX: -24,
+            y: -0.5,
+            offsetX: -16,
+            offsetY: -16,
             cursorStyle: 'pointer',
             mouseUpHandler: (eventData, transform) => {
                 const target = transform.target;
@@ -139,11 +147,12 @@ class CanvasManager {
             cornerSize: 24
         });
 
-        // 복제 버튼 (오른쪽)
+        // 복제 버튼 (오른쪽 상단)
         fabric.Object.prototype.controls.cloneControl = new fabric.Control({
             x: 0.5,
-            y: 0,
-            offsetX: 24,
+            y: -0.5,
+            offsetX: 16,
+            offsetY: -16,
             cursorStyle: 'pointer',
             mouseUpHandler: (eventData, transform) => {
                 const target = transform.target;
@@ -450,8 +459,9 @@ class CanvasManager {
         const meta = document.createElement('div');
         meta.className = 'selected-item-meta';
         const quantityText = itemData.quantity || '1개';
-        const sizeText = itemData.size || '';
-        meta.textContent = sizeText ? `${quantityText} / ${sizeText}` : quantityText;
+        //const sizeText = itemData.size || '';
+        //meta.textContent = sizeText ? `${quantityText} / ${sizeText}` : quantityText;
+        meta.textContent = quantityText;
 
         const actions = document.createElement('div');
         actions.className = 'selected-item-actions';
@@ -593,5 +603,72 @@ class CanvasManager {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    }
+
+    setupZoomControls() {
+        const zoomInBtn = document.getElementById('zoomInBtn');
+        const zoomOutBtn = document.getElementById('zoomOutBtn');
+        const zoomResetBtn = document.getElementById('zoomResetBtn');
+
+        if (zoomInBtn) {
+            zoomInBtn.addEventListener('click', () => this.zoomIn());
+        }
+
+        if (zoomOutBtn) {
+            zoomOutBtn.addEventListener('click', () => this.zoomOut());
+        }
+
+        if (zoomResetBtn) {
+            zoomResetBtn.addEventListener('click', () => this.resetZoom());
+        }
+
+        this.updateZoomDisplay();
+    }
+
+    zoomIn() {
+        if (this.zoomLevel < this.maxZoom) {
+            this.zoomLevel = Math.min(this.zoomLevel + this.zoomStep, this.maxZoom);
+            this.applyZoom();
+        }
+    }
+
+    zoomOut() {
+        if (this.zoomLevel > this.minZoom) {
+            this.zoomLevel = Math.max(this.zoomLevel - this.zoomStep, this.minZoom);
+            this.applyZoom();
+        }
+    }
+
+    resetZoom() {
+        this.zoomLevel = 1;
+        this.applyZoom();
+    }
+
+    applyZoom() {
+        const wrapper = this.canvas.wrapperEl;
+        if (wrapper) {
+            wrapper.style.transform = `scale(${this.zoomLevel})`;
+            wrapper.style.transformOrigin = 'center center';
+        }
+        this.updateZoomDisplay();
+        this.canvas.calcOffset();
+    }
+
+    updateZoomDisplay() {
+        const display = document.getElementById('zoomLevelDisplay');
+        if (display) {
+            display.textContent = `${Math.round(this.zoomLevel * 100)}%`;
+        }
+
+        const zoomInBtn = document.getElementById('zoomInBtn');
+        const zoomOutBtn = document.getElementById('zoomOutBtn');
+
+        if (zoomInBtn) {
+            zoomInBtn.disabled = this.zoomLevel >= this.maxZoom;
+        }
+
+        if (zoomOutBtn) {
+            zoomOutBtn.disabled = this.zoomLevel <= this.minZoom;
+        }
     }
 } 
