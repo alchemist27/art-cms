@@ -255,6 +255,26 @@ class FilterManager {
                 }
             });
         }
+
+        // 아코디언 토글 기능
+        this.setupAccordion();
+    }
+
+    setupAccordion() {
+        const filterGroups = document.querySelectorAll('.filter-group');
+
+        filterGroups.forEach(group => {
+            const header = group.querySelector('.filter-group-header');
+            if (header) {
+                header.addEventListener('click', (e) => {
+                    // 리셋 버튼 클릭 시 아코디언 토글 방지
+                    if (e.target.closest('.filter-reset-btn')) {
+                        return;
+                    }
+                    group.classList.toggle('collapsed');
+                });
+            }
+        });
     }
     
     renderFilterUI() {

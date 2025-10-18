@@ -96,7 +96,100 @@ class CanvasManager {
             cornerSize: 16,
             withConnection: true
         });
-        
+
+        // 삭제 버튼 (왼쪽)
+        fabric.Object.prototype.controls.deleteControl = new fabric.Control({
+            x: -0.5,
+            y: 0,
+            offsetX: -24,
+            cursorStyle: 'pointer',
+            mouseUpHandler: (eventData, transform) => {
+                const target = transform.target;
+                const canvas = target.canvas;
+                canvas.remove(target);
+                canvas.requestRenderAll();
+                return true;
+            },
+            render: (ctx, left, top, styleOverride, fabricObject) => {
+                const size = 24;
+                ctx.save();
+                ctx.translate(left, top);
+
+                // 빨간색 원 배경
+                ctx.beginPath();
+                ctx.arc(0, 0, size / 2, 0, 2 * Math.PI);
+                ctx.fillStyle = '#ef4444';
+                ctx.fill();
+
+                // X 아이콘
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+
+                const iconSize = 10;
+                ctx.beginPath();
+                ctx.moveTo(-iconSize / 2, -iconSize / 2);
+                ctx.lineTo(iconSize / 2, iconSize / 2);
+                ctx.moveTo(iconSize / 2, -iconSize / 2);
+                ctx.lineTo(-iconSize / 2, iconSize / 2);
+                ctx.stroke();
+
+                ctx.restore();
+            },
+            cornerSize: 24
+        });
+
+        // 복제 버튼 (오른쪽)
+        fabric.Object.prototype.controls.cloneControl = new fabric.Control({
+            x: 0.5,
+            y: 0,
+            offsetX: 24,
+            cursorStyle: 'pointer',
+            mouseUpHandler: (eventData, transform) => {
+                const target = transform.target;
+                const canvas = target.canvas;
+
+                target.clone(cloned => {
+                    cloned.set({
+                        left: target.left + 20,
+                        top: target.top + 20,
+                    });
+                    canvas.add(cloned);
+                    canvas.setActiveObject(cloned);
+                    canvas.requestRenderAll();
+                });
+
+                return true;
+            },
+            render: (ctx, left, top, styleOverride, fabricObject) => {
+                const size = 24;
+                ctx.save();
+                ctx.translate(left, top);
+
+                // 초록색 원 배경
+                ctx.beginPath();
+                ctx.arc(0, 0, size / 2, 0, 2 * Math.PI);
+                ctx.fillStyle = '#10b981';
+                ctx.fill();
+
+                // + 아이콘
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+
+                const iconSize = 10;
+                ctx.beginPath();
+                ctx.moveTo(0, -iconSize / 2);
+                ctx.lineTo(0, iconSize / 2);
+                ctx.moveTo(-iconSize / 2, 0);
+                ctx.lineTo(iconSize / 2, 0);
+                ctx.stroke();
+
+                ctx.restore();
+            },
+            cornerSize: 24
+        });
+
         // 전역 컨트롤 스타일 설정
         fabric.Object.prototype.set({
             cornerStyle: 'circle',
@@ -108,9 +201,10 @@ class CanvasManager {
             rotatingPointOffset: 30,
         });
         
-        // 전역 컨트롤 가시성 설정
+        // 전역 컨트롤 가시성 설정 (크기 조절 핸들러 모두 비활성화)
         fabric.Object.prototype.setControlsVisibility({
             mt: false, mb: false, ml: false, mr: false,
+            tl: false, tr: false, bl: false, br: false, // 모서리 크기 조절 비활성화
         });
     }
     
@@ -334,22 +428,80 @@ class CanvasManager {
         const item = document.createElement('div');
         item.className = 'selected-item';
         item.dataset.objectIndex = index;
-        
+
+        // quantity 초기화 (없으면 1로 설정)
+        if (!object.itemQuantity) {
+            object.itemQuantity = 1;
+        }
+
         const img = document.createElement('img');
         // Firebase에서 온 데이터는 src 필드, 로컬은 image 필드 사용
         img.src = itemData.src || `/assets/${itemData.image}`;
         img.alt = itemData.name;
-        
+
         const info = document.createElement('div');
         info.className = 'selected-item-info';
-        
+
         const name = document.createElement('div');
         name.className = 'selected-item-name';
         name.textContent = itemData.name;
-        
+
+        // 수량/사이즈 라벨 추가
+        const meta = document.createElement('div');
+        meta.className = 'selected-item-meta';
+        const quantityText = itemData.quantity || '1개';
+        const sizeText = itemData.size || '';
+        meta.textContent = sizeText ? `${quantityText} / ${sizeText}` : quantityText;
+
         const actions = document.createElement('div');
         actions.className = 'selected-item-actions';
-        
+
+        // 수량 조절 컨트롤
+        const quantityControl = document.createElement('div');
+        quantityControl.className = 'quantity-control';
+
+        const decreaseBtn = document.createElement('button');
+        decreaseBtn.innerHTML = '<i class="fas fa-minus"></i>';
+        decreaseBtn.className = 'quantity-btn';
+        decreaseBtn.title = '수량 감소';
+        decreaseBtn.onclick = (e) => {
+            e.stopPropagation();
+            if (object.itemQuantity > 1) {
+                object.itemQuantity--;
+                quantityInput.value = object.itemQuantity;
+            }
+        };
+
+        const quantityInput = document.createElement('input');
+        quantityInput.type = 'number';
+        quantityInput.className = 'quantity-input';
+        quantityInput.value = object.itemQuantity;
+        quantityInput.min = '1';
+        quantityInput.onclick = (e) => e.stopPropagation();
+        quantityInput.onchange = (e) => {
+            const value = parseInt(e.target.value);
+            if (value >= 1) {
+                object.itemQuantity = value;
+            } else {
+                e.target.value = 1;
+                object.itemQuantity = 1;
+            }
+        };
+
+        const increaseBtn = document.createElement('button');
+        increaseBtn.innerHTML = '<i class="fas fa-plus"></i>';
+        increaseBtn.className = 'quantity-btn';
+        increaseBtn.title = '수량 증가';
+        increaseBtn.onclick = (e) => {
+            e.stopPropagation();
+            object.itemQuantity++;
+            quantityInput.value = object.itemQuantity;
+        };
+
+        quantityControl.appendChild(decreaseBtn);
+        quantityControl.appendChild(quantityInput);
+        quantityControl.appendChild(increaseBtn);
+
         const deleteBtn = document.createElement('button');
         deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
         deleteBtn.className = 'item-delete-btn';
@@ -359,20 +511,22 @@ class CanvasManager {
             this.canvas.remove(object);
             this.canvas.renderAll();
         };
-        
+
+        actions.appendChild(quantityControl);
         actions.appendChild(deleteBtn);
         info.appendChild(name);
-        
+        info.appendChild(meta);
+
         item.appendChild(img);
         item.appendChild(info);
         item.appendChild(actions);
-        
+
         // 클릭 시 해당 객체 선택
         item.onclick = () => {
             this.canvas.setActiveObject(object);
             this.canvas.renderAll();
         };
-        
+
         return item;
     }
     

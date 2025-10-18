@@ -38,9 +38,6 @@
         <aside class="left-panel">
             <!-- Search & Filter Section -->
             <section class="search-section">
-                <div class="search-header">
-                    <h3><i class="fas fa-search"></i> 제품 검색</h3>
-                </div>
                 <div class="search-controls">
                     <div class="search-input-wrapper">
                         <input type="text" id="searchInput" placeholder="제품명, 키워드 검색.." class="search-input">
@@ -48,28 +45,37 @@
                     </div>
                     <div class="filter-tags">
                         <div class="filter-group">
-                            <label>타입</label>
-                            <div class="tag-buttons" id="typeFilters">
-                                <button class="tag-btn active" data-filter="all">전체</button>
-                                <button class="tag-btn" data-filter="비즈">비즈</button>
-                                <button class="tag-btn" data-filter="생크림/파츠">생크림/파츠</button>
-                                <button class="tag-btn" data-filter="팬던트">팬던트</button>
-                                <button class="tag-btn" data-filter="모루공예">모루공예</button>
-                                <button class="tag-btn" data-filter="부자재">부자재</button>
-                                <button class="tag-btn" data-filter="비녀공예">비녀공예</button>
-                                <button class="tag-btn" data-filter="끈/줄">끈/줄</button>
-                                <button class="tag-btn" data-filter="폰악세서리">폰악세서리</button>
-                                <button class="tag-btn" data-filter="기타/소품">기타/소품</button>
+                            <div class="filter-group-header">
+                                <label>타입</label>
+                                <i class="fas fa-chevron-down accordion-icon"></i>
+                            </div>
+                            <div class="filter-group-content">
+                                <div class="tag-buttons" id="typeFilters">
+                                    <button class="tag-btn active" data-filter="all">전체</button>
+                                    <button class="tag-btn" data-filter="비즈">비즈</button>
+                                    <button class="tag-btn" data-filter="생크림/파츠">생크림/파츠</button>
+                                    <button class="tag-btn" data-filter="팬던트">팬던트</button>
+                                    <button class="tag-btn" data-filter="모루공예">모루공예</button>
+                                    <button class="tag-btn" data-filter="부자재">부자재</button>
+                                    <button class="tag-btn" data-filter="비녀공예">비녀공예</button>
+                                    <button class="tag-btn" data-filter="끈/줄">끈/줄</button>
+                                    <button class="tag-btn" data-filter="폰악세서리">폰악세서리</button>
+                                    <button class="tag-btn" data-filter="기타/소품">기타/소품</button>
+                                </div>
                             </div>
                         </div>
                         <div class="filter-group">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <label style="margin: 0;">색상 (중복선택가능)</label>
-                                <button class="filter-reset-btn" id="colorResetBtn" title="색상 필터 초기화">
-                                    <i class="fas fa-sync-alt"></i>
-                                </button>
+                            <div class="filter-group-header">
+                                <label>색상 (중복선택가능)</label>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <button class="filter-reset-btn" id="colorResetBtn" title="색상 필터 초기화">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                    <i class="fas fa-chevron-down accordion-icon"></i>
+                                </div>
                             </div>
-                            <div class="tag-buttons" id="colorFilters">
+                            <div class="filter-group-content">
+                                <div class="tag-buttons" id="colorFilters">
                                 <button class="tag-btn active" data-filter="all">전체</button>
                                 <button class="tag-btn color-btn" data-filter="transparent">
                                     <span class="color-preview" style="background-color: transparent; border: 1px solid #e2e8f0;"></span>
@@ -128,91 +134,127 @@
                                     실버
                                 </button>
                             </div>
+                            </div>
                         </div>
                         <div class="filter-group" id="directionFilterGroup" style="display:none;">
-                            <label>비즈 종류</label>
-                            <div class="tag-buttons" id="directionFilters">
-                                <button class="tag-btn active" data-filter="all">전체</button>
-                                <button class="tag-btn" data-filter="가로펀칭">가로펀칭</button>
-                                <button class="tag-btn" data-filter="세로펀칭">세로펀칭</button>
-                                <button class="tag-btn" data-filter="원형비즈">원형비즈</button>
-                                <button class="tag-btn" data-filter="시드비즈">시드비즈</button>
-                                <button class="tag-btn" data-filter="단추">단추</button>
+                            <div class="filter-group-header">
+                                <label>비즈 종류</label>
+                                <i class="fas fa-chevron-down accordion-icon"></i>
+                            </div>
+                            <div class="filter-group-content">
+                                <div class="tag-buttons" id="directionFilters">
+                                    <button class="tag-btn active" data-filter="all">전체</button>
+                                    <button class="tag-btn" data-filter="가로펀칭">가로펀칭</button>
+                                    <button class="tag-btn" data-filter="세로펀칭">세로펀칭</button>
+                                    <button class="tag-btn" data-filter="원형비즈">원형비즈</button>
+                                    <button class="tag-btn" data-filter="시드비즈">시드비즈</button>
+                                    <button class="tag-btn" data-filter="단추">단추</button>
 
+                                </div>
                             </div>
                         </div>
                         <div class="filter-group" id="creamPartFilterGroup" style="display:none;">
-                            <label>생크림/파츠 종류</label>
-                            <div class="tag-buttons" id="creamPartFilters">
-                                <button class="tag-btn active" data-filter="all">전체</button>
-                                <button class="tag-btn" data-filter="생크림">생크림</button>
-                                <button class="tag-btn" data-filter="세트상품">세트상품</button>
-                                <button class="tag-btn" data-filter="하트/별/달">하트/별/달</button>
-                                <button class="tag-btn" data-filter="꽃/리본">꽃/리본</button>
-                                <button class="tag-btn" data-filter="음식">음식</button>
-                                <button class="tag-btn" data-filter="그릇">그릇</button>
-                                <button class="tag-btn" data-filter="동물">동물</button>
-                                <button class="tag-btn" data-filter="기타">기타</button>
-                                <button class="tag-btn" data-filter="진주/큐빅">진주/큐빅</button>
+                            <div class="filter-group-header">
+                                <label>생크림/파츠 종류</label>
+                                <i class="fas fa-chevron-down accordion-icon"></i>
+                            </div>
+                            <div class="filter-group-content">
+                                <div class="tag-buttons" id="creamPartFilters">
+                                    <button class="tag-btn active" data-filter="all">전체</button>
+                                    <button class="tag-btn" data-filter="생크림">생크림</button>
+                                    <button class="tag-btn" data-filter="세트상품">세트상품</button>
+                                    <button class="tag-btn" data-filter="하트/별/달">하트/별/달</button>
+                                    <button class="tag-btn" data-filter="꽃/리본">꽃/리본</button>
+                                    <button class="tag-btn" data-filter="음식">음식</button>
+                                    <button class="tag-btn" data-filter="그릇">그릇</button>
+                                    <button class="tag-btn" data-filter="동물">동물</button>
+                                    <button class="tag-btn" data-filter="기타">기타</button>
+                                    <button class="tag-btn" data-filter="진주/큐빅">진주/큐빅</button>
+                                </div>
                             </div>
                         </div>
                         <div class="filter-group" id="moruFilterGroup" style="display:none;">
-                            <label>모루공예 타입</label>
-                            <div class="tag-buttons" id="moruFilters">
-                                <button class="tag-btn active" data-filter="all">전체</button>
-                                <button class="tag-btn" data-filter="모루철사">모루철사</button>
-                                <button class="tag-btn" data-filter="눈코입">눈코입</button>
-                                <button class="tag-btn" data-filter="옷/소품">옷/소품</button>
-                                <button class="tag-btn" data-filter="리본/꾸미기">리본/꾸미기</button>
+                            <div class="filter-group-header">
+                                <label>모루공예 타입</label>
+                                <i class="fas fa-chevron-down accordion-icon"></i>
+                            </div>
+                            <div class="filter-group-content">
+                                <div class="tag-buttons" id="moruFilters">
+                                    <button class="tag-btn active" data-filter="all">전체</button>
+                                    <button class="tag-btn" data-filter="모루철사">모루철사</button>
+                                    <button class="tag-btn" data-filter="눈코입">눈코입</button>
+                                    <button class="tag-btn" data-filter="옷/소품">옷/소품</button>
+                                    <button class="tag-btn" data-filter="리본/꾸미기">리본/꾸미기</button>
+                                </div>
                             </div>
                         </div>
                         <div class="filter-group" id="bunjaeFilterGroup" style="display:none;">
-                            <label>부자재 타입</label>
-                            <div class="tag-buttons" id="bunjaeFilters">
-                                <button class="tag-btn active" data-filter="all">전체</button>
-                                <button class="tag-btn" data-filter="키링류">키링류</button>
-                                <button class="tag-btn" data-filter="체인/o링">체인/o링</button>
-                                <button class="tag-btn" data-filter="마감,9/T핀">마감,9/T핀</button>
-                                <button class="tag-btn" data-filter="악세사리">악세사리</button>
-                                <button class="tag-btn" data-filter="책갈피/기타">책갈피/기타</button>
-                                <button class="tag-btn" data-filter="헤어장식">헤어장식</button>
+                            <div class="filter-group-header">
+                                <label>부자재 타입</label>
+                                <i class="fas fa-chevron-down accordion-icon"></i>
+                            </div>
+                            <div class="filter-group-content">
+                                <div class="tag-buttons" id="bunjaeFilters">
+                                    <button class="tag-btn active" data-filter="all">전체</button>
+                                    <button class="tag-btn" data-filter="키링류">키링류</button>
+                                    <button class="tag-btn" data-filter="체인/o링">체인/o링</button>
+                                    <button class="tag-btn" data-filter="마감,9/T핀">마감,9/T핀</button>
+                                    <button class="tag-btn" data-filter="악세사리">악세사리</button>
+                                    <button class="tag-btn" data-filter="책갈피/기타">책갈피/기타</button>
+                                    <button class="tag-btn" data-filter="헤어장식">헤어장식</button>
+                                </div>
                             </div>
                         </div>
                         <div class="filter-group" id="hairpinFilterGroup" style="display:none;">
-                            <label>비녀공예 타입</label>
-                            <div class="tag-buttons" id="hairpinFilters">
-                                <button class="tag-btn active" data-filter="all">전체</button>
-                                <button class="tag-btn" data-filter="뒤꽃이/브로치">뒤꽃이/브로치</button>
-                                <button class="tag-btn" data-filter="자개꽃/꽃수술">자개꽃/꽃수술</button>
-                                <button class="tag-btn" data-filter="원석/자개">원석/자개</button>
-                                <button class="tag-btn" data-filter="금속,큐빅">금속,큐빅</button>
-                                <button class="tag-btn" data-filter="진주,자개구슬">진주,자개구슬</button>
-                                <button class="tag-btn" data-filter="론델/원석구슬">론델/원석구슬</button>
+                            <div class="filter-group-header">
+                                <label>비녀공예 타입</label>
+                                <i class="fas fa-chevron-down accordion-icon"></i>
+                            </div>
+                            <div class="filter-group-content">
+                                <div class="tag-buttons" id="hairpinFilters">
+                                    <button class="tag-btn active" data-filter="all">전체</button>
+                                    <button class="tag-btn" data-filter="뒤꽃이/브로치">뒤꽃이/브로치</button>
+                                    <button class="tag-btn" data-filter="자개꽃/꽃수술">자개꽃/꽃수술</button>
+                                    <button class="tag-btn" data-filter="원석/자개">원석/자개</button>
+                                    <button class="tag-btn" data-filter="금속,큐빅">금속,큐빅</button>
+                                    <button class="tag-btn" data-filter="진주,자개구슬">진주,자개구슬</button>
+                                    <button class="tag-btn" data-filter="론델/원석구슬">론델/원석구슬</button>
+                                </div>
                             </div>
                         </div>
                         <div class="filter-group" id="pendantFilterGroup" style="display:none;">
-                            <label>팬던트 모양</label>
-                            <div class="tag-buttons" id="pendantFilters">
-                                <button class="tag-btn active" data-filter="all">전체</button>
-                                <button class="tag-btn" data-filter="하트/별/달">하트/별/달</button>
-                                <button class="tag-btn" data-filter="리본/꽃">리본/꽃</button>
-                                <button class="tag-btn" data-filter="진주/자개/바다">진주/자개/바다</button>
-                                <button class="tag-btn" data-filter="동물">동물</button>
-                                <button class="tag-btn" data-filter="음식">음식</button>
-                                <button class="tag-btn" data-filter="링/기타">링/기타</button>
+                            <div class="filter-group-header">
+                                <label>팬던트 모양</label>
+                                <i class="fas fa-chevron-down accordion-icon"></i>
+                            </div>
+                            <div class="filter-group-content">
+                                <div class="tag-buttons" id="pendantFilters">
+                                    <button class="tag-btn active" data-filter="all">전체</button>
+                                    <button class="tag-btn" data-filter="하트/별/달">하트/별/달</button>
+                                    <button class="tag-btn" data-filter="리본/꽃">리본/꽃</button>
+                                    <button class="tag-btn" data-filter="진주/자개/바다">진주/자개/바다</button>
+                                    <button class="tag-btn" data-filter="동물">동물</button>
+                                    <button class="tag-btn" data-filter="음식">음식</button>
+                                    <button class="tag-btn" data-filter="링/기타">링/기타</button>
+                                </div>
                             </div>
                         </div>
                         <div class="filter-group" id="stringFilterGroup" style="display:none;">
-                            <label>끈/줄 타입</label>
-                            <div class="tag-buttons" id="stringFilters">
-                                <button class="tag-btn active" data-filter="all">전체</button>
-                                <button class="tag-btn" data-filter="낚싯줄">낚싯줄</button>
-                                <button class="tag-btn" data-filter="우레탄줄">우레탄줄</button>
-                                <button class="tag-btn" data-filter="폴리끈">폴리끈</button>
-                                <button class="tag-btn" data-filter="왁스끈">왁스끈</button>
-                                <button class="tag-btn" data-filter="합사">합사</button>
-                                <button class="tag-btn" data-filter="와이어">와이어</button>
-                                <button class="tag-btn" data-filter="기타">기타</button>
+                            <div class="filter-group-header">
+                                <label>끈/줄 타입</label>
+                                <i class="fas fa-chevron-down accordion-icon"></i>
+                            </div>
+                            <div class="filter-group-content">
+                                <div class="tag-buttons" id="stringFilters">
+                                    <button class="tag-btn active" data-filter="all">전체</button>
+                                    <button class="tag-btn" data-filter="낚싯줄">낚싯줄</button>
+                                    <button class="tag-btn" data-filter="우레탄줄">우레탄줄</button>
+                                    <button class="tag-btn" data-filter="폴리끈">폴리끈</button>
+                                    <button class="tag-btn" data-filter="왁스끈">왁스끈</button>
+                                    <button class="tag-btn" data-filter="합사">합사</button>
+                                    <button class="tag-btn" data-filter="와이어">와이어</button>
+                                    <button class="tag-btn" data-filter="기타">기타</button>
+                                </div>
                             </div>
                         </div>
                     </div>
