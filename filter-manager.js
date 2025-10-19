@@ -18,7 +18,8 @@ class FilterManager {
             string: 'all',
             sort: 'popular' // 정렬 옵션 추가
         };
-        
+        this.currentPopup = null; // 현재 열린 사이즈 옵션 팝업
+
         this.init();
     }
     
@@ -521,12 +522,8 @@ class FilterManager {
             <div class="empty-state-grid">
                 <div class="empty-state">
                     <i class="fas fa-search"></i>
-                    <h4>검색 결과가 없습니다</h4>
-                    <p>다른 검색어나 필터를 시도해보세요</p>
-                    <button class="btn btn-secondary" onclick="filterManager.clearFilters()">
-                        <i class="fas fa-refresh"></i>
-                        필터 초기화
-                    </button>
+                    <h4>검색된 제품이 없습니다</h4>
+                    <p>다른 필터로 시도해보세요</p>
                 </div>
             </div>
         `;
@@ -553,18 +550,10 @@ class FilterManager {
         // 더미 데이터로 모든 아이템에 사이즈 옵션 추가
         const sizeOptions = item.sizeOptions || ['2mm', '4mm', '6mm'];
 
-        // 사이즈 옵션이 있으면 오버레이 생성
+        // 사이즈 옵션이 있으면 클릭 시 팝업 표시
         if (sizeOptions && sizeOptions.length > 0) {
-            const overlay = this.createSizeOptionsOverlay(item, sizeOptions);
-            card.appendChild(overlay);
-
             card.addEventListener('click', (e) => {
-                // 오버레이나 그 자식 요소를 클릭한 경우 무시
-                if (e.target.closest('.size-options-overlay')) {
-                    return;
-                }
-                // 오버레이 표시
-                overlay.classList.add('active');
+                this.showSizeOptionsPopup(card, item, sizeOptions);
             });
         } else {
             // 사이즈 옵션이 없으면 바로 캔버스에 추가
@@ -577,6 +566,60 @@ class FilterManager {
         return card;
     }
 
+    showSizeOptionsPopup(card, item, sizeOptions) {
+        // 기존 팝업 제거
+        this.closeSizeOptionsPopup();
+
+        // 새 팝업 생성
+        const overlay = this.createSizeOptionsOverlay(item, sizeOptions);
+        document.body.appendChild(overlay);
+
+        // 위치 계산
+        const rect = card.getBoundingClientRect();
+        const popupWidth = 120;
+        const gap = 8;
+
+        // 카드 오른쪽에 표시
+        let left = rect.right + gap;
+        let top = rect.top;
+
+        // 화면 밖으로 나가면 왼쪽에 표시
+        if (left + popupWidth > window.innerWidth) {
+            left = rect.left - popupWidth - gap;
+        }
+
+        // 아래로 너무 내려가면 위로 올림
+        if (top + overlay.offsetHeight > window.innerHeight) {
+            top = window.innerHeight - overlay.offsetHeight - gap;
+        }
+
+        overlay.style.left = `${left}px`;
+        overlay.style.top = `${top}px`;
+        overlay.classList.add('active');
+
+        // 외부 클릭 시 닫기
+        setTimeout(() => {
+            document.addEventListener('click', this.handleOutsideClick);
+        }, 0);
+
+        // 현재 팝업 저장
+        this.currentPopup = overlay;
+    }
+
+    closeSizeOptionsPopup() {
+        if (this.currentPopup) {
+            this.currentPopup.remove();
+            this.currentPopup = null;
+            document.removeEventListener('click', this.handleOutsideClick);
+        }
+    }
+
+    handleOutsideClick = (e) => {
+        if (this.currentPopup && !this.currentPopup.contains(e.target) && !e.target.closest('.item-card')) {
+            this.closeSizeOptionsPopup();
+        }
+    }
+
     createSizeOptionsOverlay(item, sizeOptions) {
         const overlay = document.createElement('div');
         overlay.className = 'size-options-overlay';
@@ -586,7 +629,7 @@ class FilterManager {
         closeBtn.innerHTML = '<i class="fas fa-times"></i>';
         closeBtn.onclick = (e) => {
             e.stopPropagation();
-            overlay.classList.remove('active');
+            this.closeSizeOptionsPopup();
         };
 
         const title = document.createElement('div');
@@ -603,8 +646,7 @@ class FilterManager {
             btn.onclick = (e) => {
                 e.stopPropagation();
                 this.addItemToCanvas({...item, selectedSize: size});
-                overlay.classList.remove('active');
-                this.addClickEffect(overlay.parentElement);
+                this.closeSizeOptionsPopup();
             };
             buttonsContainer.appendChild(btn);
         });

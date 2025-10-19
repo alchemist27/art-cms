@@ -608,7 +608,6 @@ class CanvasManager {
     setupZoomControls() {
         const zoomInBtn = document.getElementById('zoomInBtn');
         const zoomOutBtn = document.getElementById('zoomOutBtn');
-        const zoomResetBtn = document.getElementById('zoomResetBtn');
 
         if (zoomInBtn) {
             zoomInBtn.addEventListener('click', () => this.zoomIn());
@@ -616,10 +615,6 @@ class CanvasManager {
 
         if (zoomOutBtn) {
             zoomOutBtn.addEventListener('click', () => this.zoomOut());
-        }
-
-        if (zoomResetBtn) {
-            zoomResetBtn.addEventListener('click', () => this.resetZoom());
         }
 
         this.updateZoomDisplay();
@@ -637,11 +632,6 @@ class CanvasManager {
             this.zoomLevel = Math.max(this.zoomLevel - this.zoomStep, this.minZoom);
             this.applyZoom();
         }
-    }
-
-    resetZoom() {
-        this.zoomLevel = 1;
-        this.applyZoom();
     }
 
     applyZoom() {
