@@ -64,6 +64,7 @@ class FilterManager {
                     if (directionGroup) {
                         if (selectedType === '비즈') {
                             directionGroup.style.display = '';
+                            this.openFilterGroup('directionFilterGroup');
                         } else {
                             directionGroup.style.display = 'none';
                         }
@@ -73,6 +74,7 @@ class FilterManager {
                     if (creamPartGroup) {
                         if (selectedType === '생크림/파츠') {
                             creamPartGroup.style.display = '';
+                            this.openFilterGroup('creamPartFilterGroup');
                         } else {
                             creamPartGroup.style.display = 'none';
                         }
@@ -82,6 +84,7 @@ class FilterManager {
                     if (moruGroup) {
                         if (selectedType === '모루공예') {
                             moruGroup.style.display = '';
+                            this.openFilterGroup('moruFilterGroup');
                         } else {
                             moruGroup.style.display = 'none';
                         }
@@ -91,6 +94,7 @@ class FilterManager {
                     if (bunjaeGroup) {
                         if (selectedType === '부자재') {
                             bunjaeGroup.style.display = '';
+                            this.openFilterGroup('bunjaeFilterGroup');
                         } else {
                             bunjaeGroup.style.display = 'none';
                         }
@@ -100,6 +104,7 @@ class FilterManager {
                     if (hairpinGroup) {
                         if (selectedType === '비녀공예') {
                             hairpinGroup.style.display = '';
+                            this.openFilterGroup('hairpinFilterGroup');
                         } else {
                             hairpinGroup.style.display = 'none';
                         }
@@ -109,6 +114,7 @@ class FilterManager {
                     if (pendantGroup) {
                         if (selectedType === '팬던트') {
                             pendantGroup.style.display = '';
+                            this.openFilterGroup('pendantFilterGroup');
                         } else {
                             pendantGroup.style.display = 'none';
                         }
@@ -118,6 +124,7 @@ class FilterManager {
                     if (stringGroup) {
                         if (selectedType === '끈/줄') {
                             stringGroup.style.display = '';
+                            this.openFilterGroup('stringFilterGroup');
                         } else {
                             stringGroup.style.display = 'none';
                         }
