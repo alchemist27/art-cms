@@ -661,4 +661,52 @@ class CanvasManager {
             zoomOutBtn.disabled = this.zoomLevel <= this.minZoom;
         }
     }
+
+    // 실제 크기 테스트 (2mm x 2mm)
+    testActualSize() {
+        const imagePath = '/assets/items/2mm.png';
+
+        fabric.Image.fromURL(imagePath, (img) => {
+            if (!img || !img.width) {
+                console.error('이미지 로드 실패:', imagePath);
+                alert('이미지를 로드할 수 없습니다.');
+                return;
+            }
+
+            // 2mm를 픽셀로 변환
+            // 1 inch = 25.4mm
+            // 일반적인 화면 DPI = 96
+            // 2mm = (2 / 25.4) * 96 ≈ 7.56 pixels
+            const DPI = 96;
+            const MM_PER_INCH = 25.4;
+            const sizeInMM = 2;
+            const sizeInPixels = (sizeInMM / MM_PER_INCH) * DPI;
+
+            // 이미지의 원본 크기에 대한 스케일 계산
+            const scaleX = sizeInPixels / img.width;
+            const scaleY = sizeInPixels / img.height;
+
+            img.set({
+                left: this.canvas.width / 2,
+                top: this.canvas.height / 2,
+                scaleX: scaleX,
+                scaleY: scaleY,
+                originX: 'center',
+                originY: 'center',
+            });
+
+            // 임시 itemData 설정 (캔버스에서 추적하기 위해)
+            img.itemData = {
+                name: '2mm 테스트 이미지',
+                src: imagePath
+            };
+
+            this.canvas.add(img).setActiveObject(img);
+            this.hideWelcomeOverlay();
+
+            // 정보 알림
+            const actualSizePx = Math.round(sizeInPixels * 10) / 10;
+            alert(`실제 2mm x 2mm 크기로 표시되었습니다.\n(화면에서 약 ${actualSizePx}px × ${actualSizePx}px)\n\n※ 화면 DPI: ${DPI}\n※ 실제 크기는 모니터 설정에 따라 다를 수 있습니다.`);
+        }, { crossOrigin: 'anonymous' });
+    }
 } 

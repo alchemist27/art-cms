@@ -116,7 +116,12 @@ function initializeEventListeners() {
     if (captureBtn) {
         captureBtn.addEventListener('click', () => canvasManager.downloadImage());
     }
-    
+
+    const testSizeBtn = document.getElementById('testSizeBtn');
+    if (testSizeBtn) {
+        testSizeBtn.addEventListener('click', () => canvasManager.testActualSize());
+    }
+
     // Layer controls
     const bringToFrontBtn = document.getElementById('bringToFrontBtn');
     if (bringToFrontBtn) {
