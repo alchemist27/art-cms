@@ -154,20 +154,13 @@ export class ProductsPage {
                 // We'll need to load metadata for filtering
                 const productNumbers = products.map(p => p.product_no);
                 const existingMetadata = await productMetadataService.loadMetadataForProducts(productNumbers);
-                
+
                 products = products.filter(product => {
                     const metadata = existingMetadata[product.product_no];
-                    if (!metadata || !metadata.type) return false;
-                    
-                    // Check if the type matches or starts with the category
-                    const productType = metadata.type;
-                    if (this.searchCategory === '모루공예') {
-                        return productType === '모루공예-옷소품' || productType === '모루공예-눈코';
-                    } else if (this.searchCategory === '부재료') {
-                        return productType.startsWith('부재료-');
-                    } else {
-                        return productType === this.searchCategory;
-                    }
+                    if (!metadata || !metadata.category1) return false;
+
+                    // Check if the category1 matches
+                    return metadata.category1 === this.searchCategory;
                 });
             }
             
@@ -203,7 +196,7 @@ export class ProductsPage {
         const productNumbers = this.products.map(p => p.product_no);
         const existingMetadata = await productMetadataService.loadMetadataForProducts(productNumbers);
 
-        const productsHTML = this.products.map((product, index) => {
+        const productsHTML = this.products.map((product) => {
             const metadata = existingMetadata[product.product_no] || {};
             return `
             <tr class="product-row" data-product-id="${product.product_no}">
@@ -215,24 +208,156 @@ export class ProductsPage {
                     <span class="name-text" title="${product.product_name}">${product.product_name}</span>
                 </td>
                 <td class="product-input">
-                    <select class="input-select product-type" data-product-no="${product.product_no}">
-                        <option value="">타입 선택</option>
-                        <option value="비즈" ${metadata.type === '비즈' ? 'selected' : ''}>비즈</option>
-                        <option value="파츠" ${metadata.type === '파츠' ? 'selected' : ''}>파츠</option>
-                        <option value="팬던트" ${metadata.type === '팬던트' ? 'selected' : ''}>팬던트</option>
+                    <select class="input-select category1" data-product-no="${product.product_no}">
+                        <option value="">카테1 선택</option>
+                        <optgroup label="비즈">
+                            <option value="비즈" ${metadata.category1 === '비즈' ? 'selected' : ''}>비즈</option>
+                            <option value="비즈-가로펀칭" ${metadata.category1 === '비즈-가로펀칭' ? 'selected' : ''}>비즈-가로펀칭</option>
+                            <option value="비즈-세로펀칭" ${metadata.category1 === '비즈-세로펀칭' ? 'selected' : ''}>비즈-세로펀칭</option>
+                            <option value="비즈-원형비즈" ${metadata.category1 === '비즈-원형비즈' ? 'selected' : ''}>비즈-원형비즈</option>
+                            <option value="비즈-시드비즈" ${metadata.category1 === '비즈-시드비즈' ? 'selected' : ''}>비즈-시드비즈</option>
+                            <option value="비즈-단추" ${metadata.category1 === '비즈-단추' ? 'selected' : ''}>비즈-단추</option>
+                        </optgroup>
+                        <optgroup label="생크림/파츠">
+                            <option value="생크림/파츠" ${metadata.category1 === '생크림/파츠' ? 'selected' : ''}>생크림/파츠</option>
+                            <option value="생크림/파츠-생크림" ${metadata.category1 === '생크림/파츠-생크림' ? 'selected' : ''}>생크림/파츠-생크림</option>
+                            <option value="생크림/파츠-세트상품" ${metadata.category1 === '생크림/파츠-세트상품' ? 'selected' : ''}>생크림/파츠-세트상품</option>
+                            <option value="생크림/파츠-하트/별/달" ${metadata.category1 === '생크림/파츠-하트/별/달' ? 'selected' : ''}>생크림/파츠-하트/별/달</option>
+                            <option value="생크림/파츠-꽃/리본" ${metadata.category1 === '생크림/파츠-꽃/리본' ? 'selected' : ''}>생크림/파츠-꽃/리본</option>
+                            <option value="생크림/파츠-음식" ${metadata.category1 === '생크림/파츠-음식' ? 'selected' : ''}>생크림/파츠-음식</option>
+                            <option value="생크림/파츠-그릇" ${metadata.category1 === '생크림/파츠-그릇' ? 'selected' : ''}>생크림/파츠-그릇</option>
+                            <option value="생크림/파츠-동물" ${metadata.category1 === '생크림/파츠-동물' ? 'selected' : ''}>생크림/파츠-동물</option>
+                            <option value="생크림/파츠-기타" ${metadata.category1 === '생크림/파츠-기타' ? 'selected' : ''}>생크림/파츠-기타</option>
+                            <option value="생크림/파츠-진주/큐빅" ${metadata.category1 === '생크림/파츠-진주/큐빅' ? 'selected' : ''}>생크림/파츠-진주/큐빅</option>
+                        </optgroup>
+                        <optgroup label="팬던트">
+                            <option value="팬던트" ${metadata.category1 === '팬던트' ? 'selected' : ''}>팬던트</option>
+                            <option value="팬던트-하트/별/달" ${metadata.category1 === '팬던트-하트/별/달' ? 'selected' : ''}>팬던트-하트/별/달</option>
+                            <option value="팬던트-리본/꽃" ${metadata.category1 === '팬던트-리본/꽃' ? 'selected' : ''}>팬던트-리본/꽃</option>
+                            <option value="팬던트-진주/자개/바다" ${metadata.category1 === '팬던트-진주/자개/바다' ? 'selected' : ''}>팬던트-진주/자개/바다</option>
+                            <option value="팬던트-동물" ${metadata.category1 === '팬던트-동물' ? 'selected' : ''}>팬던트-동물</option>
+                            <option value="팬던트-음식" ${metadata.category1 === '팬던트-음식' ? 'selected' : ''}>팬던트-음식</option>
+                            <option value="팬던트-링/기타" ${metadata.category1 === '팬던트-링/기타' ? 'selected' : ''}>팬던트-링/기타</option>
+                        </optgroup>
                         <optgroup label="모루공예">
-                            <option value="모루공예-옷소품" ${metadata.type === '모루공예-옷소품' ? 'selected' : ''}>모루공예-옷소품</option>
-                            <option value="모루공예-눈코" ${metadata.type === '모루공예-눈코' ? 'selected' : ''}>모루공예-눈코</option>
+                            <option value="모루공예" ${metadata.category1 === '모루공예' ? 'selected' : ''}>모루공예</option>
+                            <option value="모루공예-모루철사" ${metadata.category1 === '모루공예-모루철사' ? 'selected' : ''}>모루공예-모루철사</option>
+                            <option value="모루공예-눈코입" ${metadata.category1 === '모루공예-눈코입' ? 'selected' : ''}>모루공예-눈코입</option>
+                            <option value="모루공예-옷/소품" ${metadata.category1 === '모루공예-옷/소품' ? 'selected' : ''}>모루공예-옷/소품</option>
+                            <option value="모루공예-리본/꾸미기" ${metadata.category1 === '모루공예-리본/꾸미기' ? 'selected' : ''}>모루공예-리본/꾸미기</option>
                         </optgroup>
-                        <optgroup label="부재료">
-                            <option value="부재료-키링,군번줄" ${metadata.type === '부재료-키링,군번줄' ? 'selected' : ''}>부재료-키링,군번줄</option>
-                            <option value="부재료-체인,O링,부속" ${metadata.type === '부재료-체인,O링,부속' ? 'selected' : ''}>부재료-체인,O링,부속</option>
-                            <option value="부재료-마감,9핀,T핀" ${metadata.type === '부재료-마감,9핀,T핀' ? 'selected' : ''}>부재료-마감,9핀,T핀</option>
-                            <option value="부재료-반지,목걸이,귀걸이" ${metadata.type === '부재료-반지,목걸이,귀걸이' ? 'selected' : ''}>부재료-반지,목걸이,귀걸이</option>
+                        <optgroup label="부자재">
+                            <option value="부자재" ${metadata.category1 === '부자재' ? 'selected' : ''}>부자재</option>
+                            <option value="부자재-키링류" ${metadata.category1 === '부자재-키링류' ? 'selected' : ''}>부자재-키링류</option>
+                            <option value="부자재-체인/o링" ${metadata.category1 === '부자재-체인/o링' ? 'selected' : ''}>부자재-체인/o링</option>
+                            <option value="부자재-마감,9/T핀" ${metadata.category1 === '부자재-마감,9/T핀' ? 'selected' : ''}>부자재-마감,9/T핀</option>
+                            <option value="부자재-악세사리" ${metadata.category1 === '부자재-악세사리' ? 'selected' : ''}>부자재-악세사리</option>
+                            <option value="부자재-책갈피/기타" ${metadata.category1 === '부자재-책갈피/기타' ? 'selected' : ''}>부자재-책갈피/기타</option>
+                            <option value="부자재-헤어장식" ${metadata.category1 === '부자재-헤어장식' ? 'selected' : ''}>부자재-헤어장식</option>
                         </optgroup>
-                        <option value="끈/줄" ${metadata.type === '끈/줄' ? 'selected' : ''}>끈/줄</option>
-                        <option value="도구/정리" ${metadata.type === '도구/정리' ? 'selected' : ''}>도구/정리</option>
+                        <optgroup label="비녀공예">
+                            <option value="비녀공예" ${metadata.category1 === '비녀공예' ? 'selected' : ''}>비녀공예</option>
+                            <option value="비녀공예-뒤꽃이/브로치" ${metadata.category1 === '비녀공예-뒤꽃이/브로치' ? 'selected' : ''}>비녀공예-뒤꽃이/브로치</option>
+                            <option value="비녀공예-자개꽃/꽃수술" ${metadata.category1 === '비녀공예-자개꽃/꽃수술' ? 'selected' : ''}>비녀공예-자개꽃/꽃수술</option>
+                            <option value="비녀공예-원석/자개" ${metadata.category1 === '비녀공예-원석/자개' ? 'selected' : ''}>비녀공예-원석/자개</option>
+                            <option value="비녀공예-금속,큐빅" ${metadata.category1 === '비녀공예-금속,큐빅' ? 'selected' : ''}>비녀공예-금속,큐빅</option>
+                            <option value="비녀공예-진주,자개구슬" ${metadata.category1 === '비녀공예-진주,자개구슬' ? 'selected' : ''}>비녀공예-진주,자개구슬</option>
+                            <option value="비녀공예-론델/원석구슬" ${metadata.category1 === '비녀공예-론델/원석구슬' ? 'selected' : ''}>비녀공예-론델/원석구슬</option>
+                        </optgroup>
+                        <optgroup label="끈/줄">
+                            <option value="끈/줄" ${metadata.category1 === '끈/줄' ? 'selected' : ''}>끈/줄</option>
+                            <option value="끈/줄-낚싯줄" ${metadata.category1 === '끈/줄-낚싯줄' ? 'selected' : ''}>끈/줄-낚싯줄</option>
+                            <option value="끈/줄-우레탄줄" ${metadata.category1 === '끈/줄-우레탄줄' ? 'selected' : ''}>끈/줄-우레탄줄</option>
+                            <option value="끈/줄-폴리끈" ${metadata.category1 === '끈/줄-폴리끈' ? 'selected' : ''}>끈/줄-폴리끈</option>
+                            <option value="끈/줄-왁스끈" ${metadata.category1 === '끈/줄-왁스끈' ? 'selected' : ''}>끈/줄-왁스끈</option>
+                            <option value="끈/줄-합사" ${metadata.category1 === '끈/줄-합사' ? 'selected' : ''}>끈/줄-합사</option>
+                            <option value="끈/줄-와이어" ${metadata.category1 === '끈/줄-와이어' ? 'selected' : ''}>끈/줄-와이어</option>
+                            <option value="끈/줄-기타" ${metadata.category1 === '끈/줄-기타' ? 'selected' : ''}>끈/줄-기타</option>
+                        </optgroup>
+                        <optgroup label="기타">
+                            <option value="폰악세서리" ${metadata.category1 === '폰악세서리' ? 'selected' : ''}>폰악세서리</option>
+                            <option value="기타/소품" ${metadata.category1 === '기타/소품' ? 'selected' : ''}>기타/소품</option>
+                        </optgroup>
                     </select>
+                </td>
+                <td class="product-input">
+                    <select class="input-select category2" data-product-no="${product.product_no}">
+                        <option value="">카테2 선택</option>
+                        <optgroup label="비즈">
+                            <option value="비즈" ${metadata.category2 === '비즈' ? 'selected' : ''}>비즈</option>
+                            <option value="비즈-가로펀칭" ${metadata.category2 === '비즈-가로펀칭' ? 'selected' : ''}>비즈-가로펀칭</option>
+                            <option value="비즈-세로펀칭" ${metadata.category2 === '비즈-세로펀칭' ? 'selected' : ''}>비즈-세로펀칭</option>
+                            <option value="비즈-원형비즈" ${metadata.category2 === '비즈-원형비즈' ? 'selected' : ''}>비즈-원형비즈</option>
+                            <option value="비즈-시드비즈" ${metadata.category2 === '비즈-시드비즈' ? 'selected' : ''}>비즈-시드비즈</option>
+                            <option value="비즈-단추" ${metadata.category2 === '비즈-단추' ? 'selected' : ''}>비즈-단추</option>
+                        </optgroup>
+                        <optgroup label="생크림/파츠">
+                            <option value="생크림/파츠" ${metadata.category2 === '생크림/파츠' ? 'selected' : ''}>생크림/파츠</option>
+                            <option value="생크림/파츠-생크림" ${metadata.category2 === '생크림/파츠-생크림' ? 'selected' : ''}>생크림/파츠-생크림</option>
+                            <option value="생크림/파츠-세트상품" ${metadata.category2 === '생크림/파츠-세트상품' ? 'selected' : ''}>생크림/파츠-세트상품</option>
+                            <option value="생크림/파츠-하트/별/달" ${metadata.category2 === '생크림/파츠-하트/별/달' ? 'selected' : ''}>생크림/파츠-하트/별/달</option>
+                            <option value="생크림/파츠-꽃/리본" ${metadata.category2 === '생크림/파츠-꽃/리본' ? 'selected' : ''}>생크림/파츠-꽃/리본</option>
+                            <option value="생크림/파츠-음식" ${metadata.category2 === '생크림/파츠-음식' ? 'selected' : ''}>생크림/파츠-음식</option>
+                            <option value="생크림/파츠-그릇" ${metadata.category2 === '생크림/파츠-그릇' ? 'selected' : ''}>생크림/파츠-그릇</option>
+                            <option value="생크림/파츠-동물" ${metadata.category2 === '생크림/파츠-동물' ? 'selected' : ''}>생크림/파츠-동물</option>
+                            <option value="생크림/파츠-기타" ${metadata.category2 === '생크림/파츠-기타' ? 'selected' : ''}>생크림/파츠-기타</option>
+                            <option value="생크림/파츠-진주/큐빅" ${metadata.category2 === '생크림/파츠-진주/큐빅' ? 'selected' : ''}>생크림/파츠-진주/큐빅</option>
+                        </optgroup>
+                        <optgroup label="팬던트">
+                            <option value="팬던트" ${metadata.category2 === '팬던트' ? 'selected' : ''}>팬던트</option>
+                            <option value="팬던트-하트/별/달" ${metadata.category2 === '팬던트-하트/별/달' ? 'selected' : ''}>팬던트-하트/별/달</option>
+                            <option value="팬던트-리본/꽃" ${metadata.category2 === '팬던트-리본/꽃' ? 'selected' : ''}>팬던트-리본/꽃</option>
+                            <option value="팬던트-진주/자개/바다" ${metadata.category2 === '팬던트-진주/자개/바다' ? 'selected' : ''}>팬던트-진주/자개/바다</option>
+                            <option value="팬던트-동물" ${metadata.category2 === '팬던트-동물' ? 'selected' : ''}>팬던트-동물</option>
+                            <option value="팬던트-음식" ${metadata.category2 === '팬던트-음식' ? 'selected' : ''}>팬던트-음식</option>
+                            <option value="팬던트-링/기타" ${metadata.category2 === '팬던트-링/기타' ? 'selected' : ''}>팬던트-링/기타</option>
+                        </optgroup>
+                        <optgroup label="모루공예">
+                            <option value="모루공예" ${metadata.category2 === '모루공예' ? 'selected' : ''}>모루공예</option>
+                            <option value="모루공예-모루철사" ${metadata.category2 === '모루공예-모루철사' ? 'selected' : ''}>모루공예-모루철사</option>
+                            <option value="모루공예-눈코입" ${metadata.category2 === '모루공예-눈코입' ? 'selected' : ''}>모루공예-눈코입</option>
+                            <option value="모루공예-옷/소품" ${metadata.category2 === '모루공예-옷/소품' ? 'selected' : ''}>모루공예-옷/소품</option>
+                            <option value="모루공예-리본/꾸미기" ${metadata.category2 === '모루공예-리본/꾸미기' ? 'selected' : ''}>모루공예-리본/꾸미기</option>
+                        </optgroup>
+                        <optgroup label="부자재">
+                            <option value="부자재" ${metadata.category2 === '부자재' ? 'selected' : ''}>부자재</option>
+                            <option value="부자재-키링류" ${metadata.category2 === '부자재-키링류' ? 'selected' : ''}>부자재-키링류</option>
+                            <option value="부자재-체인/o링" ${metadata.category2 === '부자재-체인/o링' ? 'selected' : ''}>부자재-체인/o링</option>
+                            <option value="부자재-마감,9/T핀" ${metadata.category2 === '부자재-마감,9/T핀' ? 'selected' : ''}>부자재-마감,9/T핀</option>
+                            <option value="부자재-악세사리" ${metadata.category2 === '부자재-악세사리' ? 'selected' : ''}>부자재-악세사리</option>
+                            <option value="부자재-책갈피/기타" ${metadata.category2 === '부자재-책갈피/기타' ? 'selected' : ''}>부자재-책갈피/기타</option>
+                            <option value="부자재-헤어장식" ${metadata.category2 === '부자재-헤어장식' ? 'selected' : ''}>부자재-헤어장식</option>
+                        </optgroup>
+                        <optgroup label="비녀공예">
+                            <option value="비녀공예" ${metadata.category2 === '비녀공예' ? 'selected' : ''}>비녀공예</option>
+                            <option value="비녀공예-뒤꽃이/브로치" ${metadata.category2 === '비녀공예-뒤꽃이/브로치' ? 'selected' : ''}>비녀공예-뒤꽃이/브로치</option>
+                            <option value="비녀공예-자개꽃/꽃수술" ${metadata.category2 === '비녀공예-자개꽃/꽃수술' ? 'selected' : ''}>비녀공예-자개꽃/꽃수술</option>
+                            <option value="비녀공예-원석/자개" ${metadata.category2 === '비녀공예-원석/자개' ? 'selected' : ''}>비녀공예-원석/자개</option>
+                            <option value="비녀공예-금속,큐빅" ${metadata.category2 === '비녀공예-금속,큐빅' ? 'selected' : ''}>비녀공예-금속,큐빅</option>
+                            <option value="비녀공예-진주,자개구슬" ${metadata.category2 === '비녀공예-진주,자개구슬' ? 'selected' : ''}>비녀공예-진주,자개구슬</option>
+                            <option value="비녀공예-론델/원석구슬" ${metadata.category2 === '비녀공예-론델/원석구슬' ? 'selected' : ''}>비녀공예-론델/원석구슬</option>
+                        </optgroup>
+                        <optgroup label="끈/줄">
+                            <option value="끈/줄" ${metadata.category2 === '끈/줄' ? 'selected' : ''}>끈/줄</option>
+                            <option value="끈/줄-낚싯줄" ${metadata.category2 === '끈/줄-낚싯줄' ? 'selected' : ''}>끈/줄-낚싯줄</option>
+                            <option value="끈/줄-우레탄줄" ${metadata.category2 === '끈/줄-우레탄줄' ? 'selected' : ''}>끈/줄-우레탄줄</option>
+                            <option value="끈/줄-폴리끈" ${metadata.category2 === '끈/줄-폴리끈' ? 'selected' : ''}>끈/줄-폴리끈</option>
+                            <option value="끈/줄-왁스끈" ${metadata.category2 === '끈/줄-왁스끈' ? 'selected' : ''}>끈/줄-왁스끈</option>
+                            <option value="끈/줄-합사" ${metadata.category2 === '끈/줄-합사' ? 'selected' : ''}>끈/줄-합사</option>
+                            <option value="끈/줄-와이어" ${metadata.category2 === '끈/줄-와이어' ? 'selected' : ''}>끈/줄-와이어</option>
+                            <option value="끈/줄-기타" ${metadata.category2 === '끈/줄-기타' ? 'selected' : ''}>끈/줄-기타</option>
+                        </optgroup>
+                        <optgroup label="기타">
+                            <option value="폰악세서리" ${metadata.category2 === '폰악세서리' ? 'selected' : ''}>폰악세서리</option>
+                            <option value="기타/소품" ${metadata.category2 === '기타/소품' ? 'selected' : ''}>기타/소품</option>
+                        </optgroup>
+                    </select>
+                </td>
+                <td class="product-input">
+                    <input type="text" class="input-text quantity" data-product-no="${product.product_no}" value="${metadata.quantity || ''}" placeholder="수량">
+                </td>
+                <td class="product-input">
+                    <input type="text" class="input-text size" data-product-no="${product.product_no}" value="${metadata.size || ''}" placeholder="사이즈">
                 </td>
                 <td class="product-input">
                     <div class="direction-toggle" data-product-no="${product.product_no}">
@@ -305,11 +430,20 @@ export class ProductsPage {
                 </td>
                 <td class="product-input">
                     <div class="file-upload-wrapper">
-                        <input type="file" id="image-${product.product_no}" class="input-file product-image" data-product-no="${product.product_no}" accept="image/*" style="display:none;">
-                        <label for="image-${product.product_no}" class="file-upload-btn">
-                            <i class="fas fa-upload"></i> ${metadata.imageFileName ? '재업로드' : '업로드'}
+                        <input type="file" id="thumbnail-${product.product_no}" class="input-file product-thumbnail" data-product-no="${product.product_no}" accept="image/*" style="display:none;">
+                        <label for="thumbnail-${product.product_no}" class="file-upload-btn">
+                            <i class="fas fa-upload"></i> ${metadata.thumbnailFileName ? '재업로드' : '업로드'}
                         </label>
-                        <span class="file-name" id="filename-${product.product_no}">${metadata.imageFileName || ''}</span>
+                        <span class="file-name" id="thumbnail-filename-${product.product_no}">${metadata.thumbnailFileName || ''}</span>
+                    </div>
+                </td>
+                <td class="product-input">
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="image-${product.product_no}" class="input-file product-image" data-product-no="${product.product_no}" accept="image/*" multiple style="display:none;">
+                        <label for="image-${product.product_no}" class="file-upload-btn">
+                            <i class="fas fa-upload"></i> ${metadata.images && metadata.images.length > 0 ? '재업로드' : '업로드'}
+                        </label>
+                        <span class="file-name" id="filename-${product.product_no}">${metadata.images && metadata.images.length > 0 ? `${metadata.images.length}개 파일` : ''}</span>
                     </div>
                 </td>
                 <td class="product-action">
@@ -324,14 +458,18 @@ export class ProductsPage {
                 <table class="products-table">
                     <thead>
                         <tr>
-                            <th width="8%">상품정보</th>
-                            <th width="18%">상품명</th>
-                            <th width="11%">타입</th>
-                            <th width="10%">방향</th>
-                            <th width="13%">색상</th>
-                            <th width="20%">키워드</th>
-                            <th width="10%">이미지</th>
-                            <th width="10%">저장</th>
+                            <th width="7%">상품정보</th>
+                            <th width="12%">상품명</th>
+                            <th width="8%">카테1</th>
+                            <th width="8%">카테2</th>
+                            <th width="6%">수량</th>
+                            <th width="6%">사이즈</th>
+                            <th width="7%">방향</th>
+                            <th width="10%">색상</th>
+                            <th width="14%">키워드</th>
+                            <th width="7%">썸네일</th>
+                            <th width="7%">이미지</th>
+                            <th width="8%">저장</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -445,9 +583,8 @@ export class ProductsPage {
 
         // Direction toggle handlers
         document.querySelectorAll('.direction-toggle .radio-option').forEach(label => {
-            label.addEventListener('click', (e) => {
+            label.addEventListener('click', () => {
                 const toggle = label.parentElement;
-                const productNo = toggle.dataset.productNo;
                 const input = label.querySelector('input[type="radio"]');
                 
                 // Remove active class from all options in this toggle
@@ -465,15 +602,29 @@ export class ProductsPage {
             });
         });
 
-        // File upload handlers
-        document.querySelectorAll('.product-image').forEach(input => {
+        // Thumbnail upload handlers
+        document.querySelectorAll('.product-thumbnail').forEach(input => {
             input.addEventListener('change', (e) => {
                 const productNo = e.target.dataset.productNo;
                 const file = e.target.files[0];
                 if (file) {
-                    const filenameSpan = document.getElementById(`filename-${productNo}`);
+                    const filenameSpan = document.getElementById(`thumbnail-filename-${productNo}`);
                     if (filenameSpan) {
                         filenameSpan.textContent = file.name;
+                    }
+                }
+            });
+        });
+
+        // File upload handlers (multiple images)
+        document.querySelectorAll('.product-image').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const productNo = e.target.dataset.productNo;
+                const files = e.target.files;
+                if (files && files.length > 0) {
+                    const filenameSpan = document.getElementById(`filename-${productNo}`);
+                    if (filenameSpan) {
+                        filenameSpan.textContent = `${files.length}개 파일`;
                     }
                 }
             });
@@ -582,43 +733,61 @@ export class ProductsPage {
     async saveProductMetadata(productNo) {
         const saveBtn = document.querySelector(`.btn-save[data-product-no="${productNo}"]`);
         const productRow = document.querySelector(`.product-row[data-product-id="${productNo}"]`);
-        
+
         if (!saveBtn || !productRow) return;
 
         // Get all input values
-        const productType = productRow.querySelector('.product-type').value;
+        const category1 = productRow.querySelector('.category1').value;
+        const category2 = productRow.querySelector('.category2').value;
+        const quantity = productRow.querySelector('.quantity').value;
+        const size = productRow.querySelector('.size').value;
         const beadDirection = productRow.querySelector(`input[name="direction-${productNo}"]:checked`)?.value || '';
         const productColors = productRow.querySelector('.product-colors').value;
         const productKeywords = productRow.querySelector('.product-keywords').value;
-        const imageFile = productRow.querySelector('.product-image').files[0];
+        const thumbnailFile = productRow.querySelector('.product-thumbnail').files[0];
+        const imageFiles = productRow.querySelector('.product-image').files;
 
         // Show loading state
         saveBtn.classList.add('saving');
         saveBtn.disabled = true;
 
         try {
-            let imageInfo = null;
-            
-            // Upload image if selected
-            if (imageFile) {
-                imageInfo = await this.uploadProductImage(productNo, imageFile);
+            let thumbnailInfo = null;
+            let imagesInfo = [];
+
+            // Upload thumbnail if selected
+            if (thumbnailFile) {
+                thumbnailInfo = await this.uploadProductThumbnail(productNo, thumbnailFile);
+            }
+
+            // Upload multiple images if selected
+            if (imageFiles && imageFiles.length > 0) {
+                imagesInfo = await this.uploadProductImages(productNo, imageFiles);
             }
 
             // Save metadata to Firebase
             const metadata = {
                 productNo,
-                type: productType,
+                category1,
+                category2,
+                quantity,
+                size,
                 direction: beadDirection,
                 colors: productColors,
                 keywords: productKeywords,
                 updatedAt: new Date().toISOString()
             };
-            
-            // Only add image fields if they exist
-            if (imageInfo) {
-                metadata.imageUrl = imageInfo.url;
-                metadata.imagePath = imageInfo.path;
-                metadata.imageFileName = imageInfo.fileName;
+
+            // Only add thumbnail fields if they exist
+            if (thumbnailInfo) {
+                metadata.thumbnailUrl = thumbnailInfo.url;
+                metadata.thumbnailPath = thumbnailInfo.path;
+                metadata.thumbnailFileName = thumbnailInfo.fileName;
+            }
+
+            // Only add images array if they exist
+            if (imagesInfo && imagesInfo.length > 0) {
+                metadata.images = imagesInfo;
             }
 
             await this.saveToFirebase(productNo, metadata);
@@ -641,12 +810,32 @@ export class ProductsPage {
         }
     }
 
+    async uploadProductThumbnail(productNo, file) {
+        try {
+            const thumbnailInfo = await productMetadataService.uploadThumbnail(productNo, file);
+            return thumbnailInfo;
+        } catch (error) {
+            console.error('Error uploading thumbnail:', error);
+            throw error;
+        }
+    }
+
     async uploadProductImage(productNo, file) {
         try {
             const imageInfo = await productMetadataService.uploadImage(productNo, file);
             return imageInfo;
         } catch (error) {
             console.error('Error uploading image:', error);
+            throw error;
+        }
+    }
+
+    async uploadProductImages(productNo, files) {
+        try {
+            const imagesInfo = await productMetadataService.uploadMultipleImages(productNo, files);
+            return imagesInfo;
+        } catch (error) {
+            console.error('Error uploading images:', error);
             throw error;
         }
     }
@@ -827,18 +1016,20 @@ export class ProductsPage {
                                 <select id="categorySelect" class="filter-input">
                                     <option value="">전체</option>
                                     <option value="비즈">비즈</option>
-                                    <option value="파츠">파츠</option>
+                                    <option value="생크림/파츠">생크림/파츠</option>
                                     <option value="팬던트">팬던트</option>
                                     <option value="모루공예">모루공예</option>
-                                    <option value="부재료">부재료</option>
+                                    <option value="부자재">부자재</option>
+                                    <option value="비녀공예">비녀공예</option>
                                     <option value="끈/줄">끈/줄</option>
-                                    <option value="도구/정리">도구/정리</option>
+                                    <option value="폰악세서리">폰악세서리</option>
+                                    <option value="기타/소품">기타/소품</option>
                                 </select>
                             </div>
                             <div class="filter-group">
                                 <label class="filter-label">상품번호</label>
                                 <input 
-                                    type="text" 
+                                    type="text" s
                                     id="productNoInput" 
                                     placeholder="상품번호로 검색..."
                                     class="filter-input"

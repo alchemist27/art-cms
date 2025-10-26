@@ -85,6 +85,52 @@ class ProductMetadataService {
     }
 
     /**
+     * Upload product thumbnail to Firebase Storage
+     */
+    async uploadThumbnail(productNo, file) {
+        try {
+            // Validate file
+            if (!file || !file.type.startsWith('image/')) {
+                throw new Error('Invalid file type. Please upload an image.');
+            }
+
+            // Create a unique filename
+            const timestamp = Date.now();
+            const fileName = `thumbnail_${productNo}_${timestamp}_${file.name}`;
+            const filePath = `products/${productNo}/thumbnail/${fileName}`;
+
+            // Create storage reference
+            const storageRef = ref(this.storage, filePath);
+
+            // Upload file
+            const snapshot = await uploadBytes(storageRef, file, {
+                contentType: file.type,
+                customMetadata: {
+                    productNo: productNo.toString(),
+                    originalName: file.name,
+                    uploadedAt: new Date().toISOString(),
+                    type: 'thumbnail'
+                }
+            });
+
+            // Get download URL
+            const downloadURL = await getDownloadURL(snapshot.ref);
+
+            console.log('Thumbnail uploaded successfully:', downloadURL);
+            return {
+                url: downloadURL,
+                path: filePath,
+                fileName: fileName,
+                size: file.size,
+                type: file.type
+            };
+        } catch (error) {
+            console.error('Error uploading thumbnail:', error);
+            throw error;
+        }
+    }
+
+    /**
      * Upload product image to Firebase Storage
      */
     async uploadImage(productNo, file) {
@@ -97,11 +143,11 @@ class ProductMetadataService {
             // Create a unique filename
             const timestamp = Date.now();
             const fileName = `${productNo}_${timestamp}_${file.name}`;
-            const filePath = `products/${productNo}/${fileName}`;
-            
+            const filePath = `products/${productNo}/images/${fileName}`;
+
             // Create storage reference
             const storageRef = ref(this.storage, filePath);
-            
+
             // Upload file
             const snapshot = await uploadBytes(storageRef, file, {
                 contentType: file.type,
@@ -111,10 +157,10 @@ class ProductMetadataService {
                     uploadedAt: new Date().toISOString()
                 }
             });
-            
+
             // Get download URL
             const downloadURL = await getDownloadURL(snapshot.ref);
-            
+
             console.log('Image uploaded successfully:', downloadURL);
             return {
                 url: downloadURL,
@@ -125,6 +171,28 @@ class ProductMetadataService {
             };
         } catch (error) {
             console.error('Error uploading image:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Upload multiple product images to Firebase Storage
+     */
+    async uploadMultipleImages(productNo, files) {
+        try {
+            if (!files || files.length === 0) {
+                return [];
+            }
+
+            const uploadPromises = Array.from(files).map(file =>
+                this.uploadImage(productNo, file)
+            );
+
+            const results = await Promise.all(uploadPromises);
+            console.log(`${results.length} images uploaded successfully`);
+            return results;
+        } catch (error) {
+            console.error('Error uploading multiple images:', error);
             throw error;
         }
     }

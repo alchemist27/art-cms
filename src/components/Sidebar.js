@@ -8,8 +8,8 @@ export class Sidebar {
                 <div class="sidebar-header">
                     <div class="sidebar-logo">슈가데코 CMS</div>
                 </div>
-                
-                <nav>
+
+                <nav class="sidebar-nav">
                     <ul class="nav-menu">
                         <li class="nav-item">
                             <a href="/dashboard" class="nav-link ${activePage === 'dashboard' ? 'active' : ''}" data-route="/dashboard">
@@ -26,13 +26,14 @@ export class Sidebar {
                                 배경 이미지
                             </a>
                         </li>
-                        <li class="nav-item" style="margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-color);">
-                            <a href="#" class="nav-link" id="logoutBtn">
-                                로그아웃
-                            </a>
-                        </li>
                     </ul>
                 </nav>
+
+                <div class="sidebar-actions">
+                    <a href="#" class="nav-link" id="logoutBtn">
+                        로그아웃
+                    </a>
+                </div>
             </aside>
         `;
     }

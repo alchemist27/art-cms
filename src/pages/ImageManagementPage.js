@@ -133,9 +133,8 @@ export class ImageManagementPage {
                 <option value="파츠">파츠</option>
                 <option value="팬던트">팬던트</option>
                 <option value="모루공예">모루공예</option>
-                <option value="부재료">부재료</option>
+                <option value="부자재">부자재</option>
                 <option value="끈/줄">끈/줄</option>
-                <option value="도구/정리">도구/정리</option>
             `;
             
             typeFilter.innerHTML = `
@@ -144,9 +143,8 @@ export class ImageManagementPage {
                 <option value="파츠">파츠</option>
                 <option value="팬던트">팬던트</option>
                 <option value="모루공예">모루공예</option>
-                <option value="부재료">부재료</option>
+                <option value="부자재">부자재</option>
                 <option value="끈/줄">끈/줄</option>
-                <option value="도구/정리">도구/정리</option>
             `;
         } else {
             typeSelect.innerHTML = `
