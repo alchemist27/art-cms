@@ -7,14 +7,15 @@ export class ProductsPage {
     constructor(container) {
         this.container = container;
         this.products = [];
+        this.categories = [];
         this.currentPage = 1;
-        this.itemsPerPage = 100;
+        this.itemsPerPage = 20;
         this.isLoading = false;
         this.searchCategory = '';
         this.searchKeyword = '';
         this.searchProductCode = '';
         this.searchProductNo = '';
-        
+
         this.render();
         this.checkAuthAndLoadProducts();
     }
@@ -81,8 +82,9 @@ export class ProductsPage {
             console.log('Is authenticated:', isAuthenticated);
             
             if (isAuthenticated) {
-                console.log('Authentication successful, loading products...');
-                await this.loadProducts();
+                console.log('Authentication successful, loading categories...');
+                await this.loadCategories();
+                this.showInitialMessage();
             } else {
                 console.log('Not authenticated, showing auth button...');
                 this.showAuthButton();
@@ -90,6 +92,17 @@ export class ProductsPage {
         } catch (error) {
             console.error('Auth check failed:', error);
             this.showAuthButton();
+        }
+    }
+
+    showInitialMessage() {
+        const productsContainer = document.getElementById('productsContainer');
+        if (productsContainer) {
+            productsContainer.innerHTML = `
+                <div class="empty-state">
+                    <p>카테고리를 선택하고 검색 버튼을 눌러주세요.</p>
+                </div>
+            `;
         }
     }
 
@@ -122,48 +135,72 @@ export class ProductsPage {
         }
     }
 
+    async loadCategories() {
+        try {
+            const categories = await cafe24Api.getCategories();
+            this.categories = categories;
+            this.renderCategorySelect();
+        } catch (error) {
+            console.error('Failed to load categories:', error);
+        }
+    }
+
+    renderCategorySelect() {
+        const categorySelect = document.getElementById('categorySelect');
+        if (!categorySelect) return;
+
+        // 기본 "전체" 옵션 유지
+        const defaultOption = categorySelect.querySelector('option[value=""]');
+        categorySelect.innerHTML = '';
+        if (defaultOption) {
+            categorySelect.appendChild(defaultOption);
+        } else {
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = '전체';
+            categorySelect.appendChild(option);
+        }
+
+        // Cafe24 카테고리 추가
+        this.categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.category_no;
+            option.textContent = category.category_name;
+            categorySelect.appendChild(option);
+        });
+    }
+
     async loadProducts() {
         if (this.isLoading) return;
-        
+
         this.isLoading = true;
         this.updateLoadingState(true);
 
         try {
-            const offset = (this.currentPage - 1) * this.itemsPerPage;
-            const params = {
-                limit: this.itemsPerPage,
-                offset: offset
-            };
+            let products = [];
 
-            if (this.searchKeyword) {
-                params.product_name = this.searchKeyword;
-            }
-            
-            if (this.searchProductCode) {
-                params.product_code = this.searchProductCode;
-            }
-            
-            if (this.searchProductNo) {
-                params.product_no = this.searchProductNo;
-            }
-
-            let products = await cafe24Api.getProducts(params);
-            
-            // Filter by category if selected (client-side filtering since API might not support it)
+            // 카테고리가 선택되어 있으면 카테고리별 상품 조회
             if (this.searchCategory) {
-                // We'll need to load metadata for filtering
-                const productNumbers = products.map(p => p.product_no);
-                const existingMetadata = await productMetadataService.loadMetadataForProducts(productNumbers);
+                products = await cafe24Api.getProductsByCategory(this.searchCategory);
+            } else {
+                // 일반 상품 조회
+                const offset = (this.currentPage - 1) * this.itemsPerPage;
+                const params = {
+                    limit: this.itemsPerPage,
+                    offset: offset
+                };
 
-                products = products.filter(product => {
-                    const metadata = existingMetadata[product.product_no];
-                    if (!metadata || !metadata.category1) return false;
+                if (this.searchKeyword) {
+                    params.product_name = this.searchKeyword;
+                }
 
-                    // Check if the category1 matches
-                    return metadata.category1 === this.searchCategory;
-                });
+                if (this.searchProductCode) {
+                    params.product_code = this.searchProductCode;
+                }
+
+                products = await cafe24Api.getProducts(params);
             }
-            
+
             this.products = products;
             this.displayProducts();
         } catch (error) {
@@ -354,10 +391,10 @@ export class ProductsPage {
                     </select>
                 </td>
                 <td class="product-input">
-                    <input type="text" class="input-text quantity" data-product-no="${product.product_no}" value="${metadata.quantity || ''}" placeholder="수량">
+                    <input type="number" class="input-text size-in-mm" data-product-no="${product.product_no}" value="${metadata.sizeInMM || ''}" placeholder="가로 길이(mm)" min="1" step="0.1">
                 </td>
                 <td class="product-input">
-                    <input type="text" class="input-text size" data-product-no="${product.product_no}" value="${metadata.size || ''}" placeholder="사이즈">
+                    <input type="text" class="input-text display-info" data-product-no="${product.product_no}" value="${metadata.displayInfo || ''}" placeholder="표시할 정보 입력">
                 </td>
                 <td class="product-input">
                     <div class="direction-toggle" data-product-no="${product.product_no}">
@@ -462,8 +499,8 @@ export class ProductsPage {
                             <th width="12%">상품명</th>
                             <th width="8%">카테1</th>
                             <th width="8%">카테2</th>
-                            <th width="6%">수량</th>
                             <th width="6%">사이즈</th>
+                            <th width="10%">표시정보</th>
                             <th width="7%">방향</th>
                             <th width="10%">색상</th>
                             <th width="14%">키워드</th>
@@ -739,8 +776,8 @@ export class ProductsPage {
         // Get all input values
         const category1 = productRow.querySelector('.category1').value;
         const category2 = productRow.querySelector('.category2').value;
-        const quantity = productRow.querySelector('.quantity').value;
-        const size = productRow.querySelector('.size').value;
+        const sizeInMM = productRow.querySelector('.size-in-mm').value;
+        const displayInfo = productRow.querySelector('.display-info').value;
         const beadDirection = productRow.querySelector(`input[name="direction-${productNo}"]:checked`)?.value || '';
         const productColors = productRow.querySelector('.product-colors').value;
         const productKeywords = productRow.querySelector('.product-keywords').value;
@@ -770,8 +807,8 @@ export class ProductsPage {
                 productNo,
                 category1,
                 category2,
-                quantity,
-                size,
+                sizeInMM: sizeInMM ? parseFloat(sizeInMM) : null,
+                displayInfo,
                 direction: beadDirection,
                 colors: productColors,
                 keywords: productKeywords,
@@ -977,11 +1014,10 @@ export class ProductsPage {
         }
     }
 
-    async handleSearch(category, keyword, productCode, productNo) {
+    async handleSearch(category, keyword, productCode) {
         this.searchCategory = category || '';
         this.searchKeyword = keyword || '';
         this.searchProductCode = productCode || '';
-        this.searchProductNo = productNo || '';
         this.currentPage = 1;
         await this.loadProducts();
     }
@@ -1015,25 +1051,8 @@ export class ProductsPage {
                                 <label class="filter-label">카테고리</label>
                                 <select id="categorySelect" class="filter-input">
                                     <option value="">전체</option>
-                                    <option value="비즈">비즈</option>
-                                    <option value="생크림/파츠">생크림/파츠</option>
-                                    <option value="팬던트">팬던트</option>
-                                    <option value="모루공예">모루공예</option>
-                                    <option value="부자재">부자재</option>
-                                    <option value="비녀공예">비녀공예</option>
-                                    <option value="끈/줄">끈/줄</option>
-                                    <option value="폰악세서리">폰악세서리</option>
-                                    <option value="기타/소품">기타/소품</option>
+                                    <!-- 카테고리 옵션은 동적으로 로드됩니다 -->
                                 </select>
-                            </div>
-                            <div class="filter-group">
-                                <label class="filter-label">상품번호</label>
-                                <input 
-                                    type="text" s
-                                    id="productNoInput" 
-                                    placeholder="상품번호로 검색..."
-                                    class="filter-input"
-                                >
                             </div>
                             <div class="filter-group">
                                 <label class="filter-label">상품코드</label>
@@ -1093,45 +1112,24 @@ export class ProductsPage {
             const category = document.getElementById('categorySelect').value;
             const productName = document.getElementById('productNameInput').value;
             const productCode = document.getElementById('productCodeInput').value;
-            const productNo = document.getElementById('productNoInput').value;
-            this.handleSearch(category, productName, productCode, productNo);
+            this.handleSearch(category, productName, productCode);
         });
-        
-        document.getElementById('categorySelect')?.addEventListener('change', () => {
-            const category = document.getElementById('categorySelect').value;
-            const productName = document.getElementById('productNameInput').value;
-            const productCode = document.getElementById('productCodeInput').value;
-            const productNo = document.getElementById('productNoInput').value;
-            this.handleSearch(category, productName, productCode, productNo);
-        });
-        
+
         document.getElementById('productNameInput')?.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const category = document.getElementById('categorySelect').value;
                 const productName = e.target.value;
                 const productCode = document.getElementById('productCodeInput').value;
-                const productNo = document.getElementById('productNoInput').value;
-                this.handleSearch(category, productName, productCode, productNo);
+                this.handleSearch(category, productName, productCode);
             }
         });
-        
+
         document.getElementById('productCodeInput')?.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const category = document.getElementById('categorySelect').value;
                 const productCode = e.target.value;
                 const productName = document.getElementById('productNameInput').value;
-                const productNo = document.getElementById('productNoInput').value;
-                this.handleSearch(category, productName, productCode, productNo);
-            }
-        });
-        
-        document.getElementById('productNoInput')?.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                const category = document.getElementById('categorySelect').value;
-                const productNo = e.target.value;
-                const productName = document.getElementById('productNameInput').value;
-                const productCode = document.getElementById('productCodeInput').value;
-                this.handleSearch(category, productName, productCode, productNo);
+                this.handleSearch(category, productName, productCode);
             }
         });
         

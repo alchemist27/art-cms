@@ -402,11 +402,32 @@ class Cafe24ApiService {
         return await this.getProducts(params);
     }
 
+    async getCategoryProducts(categoryNo) {
+        const endpoint = `/admin/categories/${categoryNo}/products?display_group=1`;
+        const response = await this.makeApiRequest(endpoint);
+        return response.products || [];
+    }
+
     async getProductsByCategory(categoryNo) {
-        const params = {
-            category: categoryNo
-        };
-        return await this.getProducts(params);
+        // 1. 카테고리에 속한 상품 번호 목록 조회
+        const categoryProducts = await this.getCategoryProducts(categoryNo);
+
+        if (categoryProducts.length === 0) {
+            return [];
+        }
+
+        // 2. 각 상품의 상세 정보를 병렬로 조회
+        const productDetailsPromises = categoryProducts.map(item =>
+            this.getProduct(item.product_no).catch(err => {
+                console.error(`Failed to fetch product ${item.product_no}:`, err);
+                return null;
+            })
+        );
+
+        const productDetails = await Promise.all(productDetailsPromises);
+
+        // null 제거 (조회 실패한 상품)
+        return productDetails.filter(p => p !== null);
     }
 }
 
