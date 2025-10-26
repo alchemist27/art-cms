@@ -662,8 +662,8 @@ class CanvasManager {
         }
     }
 
-    // 실제 크기 테스트 (2mm x 2mm)
-    testActualSize() {
+    // 실제 크기 테스트
+    testActualSize(sizeInMM = 2) {
         const imagePath = '/assets/items/2mm.png';
 
         fabric.Image.fromURL(imagePath, (img) => {
@@ -673,31 +673,30 @@ class CanvasManager {
                 return;
             }
 
-            // 2mm를 픽셀로 변환
+            // mm를 픽셀로 변환
             // 1 inch = 25.4mm
             // 일반적인 화면 DPI = 96
-            // 2mm = (2 / 25.4) * 96 ≈ 7.56 pixels
             const DPI = 96;
             const MM_PER_INCH = 25.4;
-            const sizeInMM = 2;
             const sizeInPixels = (sizeInMM / MM_PER_INCH) * DPI;
 
-            // 이미지의 원본 크기에 대한 스케일 계산
-            const scaleX = sizeInPixels / img.width;
-            const scaleY = sizeInPixels / img.height;
+            // 이미지의 원본 비율을 유지하면서 크기 조정
+            // 더 긴 쪽을 기준으로 스케일 계산 (정사각형이므로 동일)
+            const maxDimension = Math.max(img.width, img.height);
+            const scale = sizeInPixels / maxDimension;
 
             img.set({
                 left: this.canvas.width / 2,
                 top: this.canvas.height / 2,
-                scaleX: scaleX,
-                scaleY: scaleY,
+                scaleX: scale,
+                scaleY: scale,
                 originX: 'center',
                 originY: 'center',
             });
 
             // 임시 itemData 설정 (캔버스에서 추적하기 위해)
             img.itemData = {
-                name: '2mm 테스트 이미지',
+                name: `${sizeInMM}mm 테스트 이미지`,
                 src: imagePath
             };
 
@@ -706,7 +705,18 @@ class CanvasManager {
 
             // 정보 알림
             const actualSizePx = Math.round(sizeInPixels * 10) / 10;
-            alert(`실제 2mm x 2mm 크기로 표시되었습니다.\n(화면에서 약 ${actualSizePx}px × ${actualSizePx}px)\n\n※ 화면 DPI: ${DPI}\n※ 실제 크기는 모니터 설정에 따라 다를 수 있습니다.`);
+            const displayWidth = Math.round(img.width * scale * 10) / 10;
+            const displayHeight = Math.round(img.height * scale * 10) / 10;
+
+            alert(
+                `실제 ${sizeInMM}mm × ${sizeInMM}mm 크기로 표시되었습니다.\n\n` +
+                `화면 표시 크기: ${displayWidth}px × ${displayHeight}px\n` +
+                `목표 크기: ${actualSizePx}px × ${actualSizePx}px\n` +
+                `이미지 원본: ${img.width}px × ${img.height}px\n` +
+                `스케일 비율: ${Math.round(scale * 1000) / 10}%\n\n` +
+                `※ 화면 DPI: ${DPI}\n` +
+                `※ 실제 크기는 모니터 설정에 따라 다를 수 있습니다.`
+            );
         }, { crossOrigin: 'anonymous' });
     }
 } 

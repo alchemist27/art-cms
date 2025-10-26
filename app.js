@@ -118,8 +118,12 @@ function initializeEventListeners() {
     }
 
     const testSizeBtn = document.getElementById('testSizeBtn');
-    if (testSizeBtn) {
-        testSizeBtn.addEventListener('click', () => canvasManager.testActualSize());
+    const testSizeSelect = document.getElementById('testSizeSelect');
+    if (testSizeBtn && testSizeSelect) {
+        testSizeBtn.addEventListener('click', () => {
+            const selectedSize = parseInt(testSizeSelect.value);
+            canvasManager.testActualSize(selectedSize);
+        });
     }
 
     // Layer controls
