@@ -16,6 +16,7 @@ class FilterManager {
             hairpin: 'all',
             pendant: 'all',
             string: 'all',
+            phoneAccessory: 'all',
             sort: 'popular' // 정렬 옵션 추가
         };
         this.currentPopup = null; // 현재 열린 사이즈 옵션 팝업
@@ -49,8 +50,8 @@ class FilterManager {
 
                     const selectedType = e.target.dataset.filter;
 
-                    // 타입 선택 시 색상 그룹 자동 open (전체가 아닐 때)
-                    if (selectedType !== 'all') {
+                    // 타입 선택 시 색상 그룹 자동 open (전체가 아닐 때, 폰악세서리가 아닐 때)
+                    if (selectedType !== 'all' && selectedType !== '폰악세서리') {
                         this.openFilterGroup('colorFilterGroup');
                     } else {
                         this.closeFilterGroup('colorFilterGroup');
@@ -127,6 +128,16 @@ class FilterManager {
                             this.openFilterGroup('stringFilterGroup');
                         } else {
                             stringGroup.style.display = 'none';
+                        }
+                    }
+                    // 폰악세서리 타입 필터 그룹 표시/숨김 처리
+                    const phoneAccessoryGroup = document.getElementById('phoneAccessoryFilterGroup');
+                    if (phoneAccessoryGroup) {
+                        if (selectedType === '폰악세서리') {
+                            phoneAccessoryGroup.style.display = '';
+                            this.openFilterGroup('phoneAccessoryFilterGroup');
+                        } else {
+                            phoneAccessoryGroup.style.display = 'none';
                         }
                     }
                     this.applyFilters();
@@ -286,6 +297,18 @@ class FilterManager {
             });
         }
 
+        // 폰악세서리 필터
+        const phoneAccessoryFilters = document.getElementById('phoneAccessoryFilters');
+        if (phoneAccessoryFilters) {
+            phoneAccessoryFilters.addEventListener('click', (e) => {
+                if (e.target.classList.contains('tag-btn')) {
+                    this.setActiveButton(e.target, 'phoneAccessoryFilters');
+                    this.setFilter('phoneAccessory', e.target.dataset.filter);
+                    this.applyFilters();
+                }
+            });
+        }
+
         // 정렬 탭
         const sortTabs = document.getElementById('sortTabs');
         if (sortTabs) {
@@ -344,7 +367,8 @@ class FilterManager {
             'bunjaeFilterGroup',
             'hairpinFilterGroup',
             'pendantFilterGroup',
-            'stringFilterGroup'
+            'stringFilterGroup',
+            'phoneAccessoryFilterGroup'
         ];
         subGroups.forEach(groupId => this.closeFilterGroup(groupId));
     }
@@ -390,7 +414,8 @@ class FilterManager {
                    this.matchesBunjae(item) &&
                    this.matchesHairpin(item) &&
                    this.matchesPendant(item) &&
-                   this.matchesString(item);
+                   this.matchesString(item) &&
+                   this.matchesPhoneAccessory(item);
         });
 
         // 정렬 적용
@@ -477,6 +502,14 @@ class FilterManager {
 
         // 끈/줄 필터링 - tags 배열에서 확인
         return item.tags.includes(stringFilter);
+    }
+
+    matchesPhoneAccessory(item) {
+        const phoneAccessoryFilter = this.activeFilters.phoneAccessory;
+        if (phoneAccessoryFilter === 'all') return true;
+
+        // 폰악세서리 필터링 - tags 배열에서 확인
+        return item.tags.includes(phoneAccessoryFilter);
     }
 
     sortItems() {

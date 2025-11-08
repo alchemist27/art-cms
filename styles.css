@@ -257,6 +257,8 @@ body::before {
     flex-direction: column;
     position: relative;
     align-items: center;
+    flex: 1;
+    min-width: 0;
 }
 
 .canvas-wrapper {
@@ -267,6 +269,7 @@ body::before {
     justify-content: center;
     position: relative;
     width: 100%;
+    min-height: 600px;
 }
 
 .canvas-wrapper::-webkit-scrollbar {
@@ -347,7 +350,7 @@ body::before {
 }
 
 .selected-section-header {
-    background: rgb(241, 241, 241);
+    background: rgb(228, 228, 228);
 }
 
 .search-header h3,
@@ -951,14 +954,16 @@ body::before {
     box-shadow: var(--shadow-lg), 10px 10px 25px rgba(168, 230, 207, 0.2);
 } */
 .canvas-section .canvas-container {
-    margin: auto 0 !important;
+    margin: 0 auto !important;
     width: 800px !important;
+    height: 600px !important;
     position: relative !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-lg), 10px 10px 25px rgba(168, 230, 207, 0.2);
+    flex-shrink: 0 !important;
 }
 
 /* Lower canvas (배경용) 고정 */
@@ -1190,8 +1195,8 @@ body::before {
 /* Cart Action */
 .cart-action {
     padding: var(--spacing-md);
-    border-top: 1px solid rgba(255, 107, 157, 0.1);
-    background: linear-gradient(135deg, rgba(255, 107, 157, 0.05) 0%, rgba(168, 230, 207, 0.05) 100%);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgb(236, 236, 236);
 }
 
 .cart-btn {
@@ -1835,21 +1840,12 @@ body::before {
 
 /* Canvas Button Guide */
 .canvas-button-guide {
-    margin-top: 16px;
-    padding: 16px;
+    margin: 8px 0;
+    padding: 10px;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(250, 250, 250, 0.5) 100%);
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.246);
     border-radius: var(--radius-lg);
     backdrop-filter: blur(10px);
-}
-
-.canvas-button-guide .guide-title {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--gray-600);
-    margin-bottom: 12px;
-    text-align: center;
-    letter-spacing: 0.3px;
 }
 
 .canvas-button-guide .guide-content {
@@ -1908,11 +1904,13 @@ body::before {
 
 .canvas-button-guide .guide-icon.green-circle {
     background-color: #10b981;
+    color:white;
 }
 
 .canvas-button-guide .guide-icon.red-circle {
     background-color: #ef4444;
     font-size: 18px;
+    color:white;
 }
 
 /* Responsive adjustments for button guide */

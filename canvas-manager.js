@@ -605,11 +605,69 @@ class CanvasManager {
         const actions = document.createElement('div');
         actions.className = 'selected-item-actions';
 
-        // 수량 표시 (읽기 전용)
-        const quantityDisplay = document.createElement('div');
-        quantityDisplay.className = 'quantity-display';
-        quantityDisplay.textContent = `수량: ${quantity}`;
-        quantityDisplay.style.cssText = 'font-size: 0.75rem; color: var(--gray-600); font-weight: 600; padding: 4px 8px; background: rgba(99, 102, 241, 0.1); border-radius: 6px;';
+        // 수량 조절 컨트롤
+        const quantityControl = document.createElement('div');
+        quantityControl.className = 'quantity-control';
+
+        const decreaseBtn = document.createElement('button');
+        decreaseBtn.innerHTML = '<i class="fas fa-minus"></i>';
+        decreaseBtn.className = 'quantity-btn';
+        decreaseBtn.title = '수량 감소';
+        decreaseBtn.onclick = (e) => {
+            e.stopPropagation();
+            if (groupObjects.length > 1) {
+                // 마지막 객체 제거
+                const lastObj = groupObjects[groupObjects.length - 1];
+                this.canvas.remove(lastObj);
+                this.canvas.renderAll();
+            }
+        };
+
+        const quantityInput = document.createElement('input');
+        quantityInput.type = 'number';
+        quantityInput.className = 'quantity-input';
+        quantityInput.value = quantity;
+        quantityInput.min = '1';
+        quantityInput.onclick = (e) => e.stopPropagation();
+        quantityInput.onchange = (e) => {
+            e.stopPropagation();
+            const newQuantity = parseInt(e.target.value);
+            const currentQuantity = groupObjects.length;
+
+            if (newQuantity >= 1) {
+                if (newQuantity > currentQuantity) {
+                    // 수량 증가: 새 객체 추가
+                    const diff = newQuantity - currentQuantity;
+                    for (let i = 0; i < diff; i++) {
+                        this.addItem(itemData);
+                    }
+                } else if (newQuantity < currentQuantity) {
+                    // 수량 감소: 객체 제거
+                    const diff = currentQuantity - newQuantity;
+                    for (let i = 0; i < diff; i++) {
+                        const lastObj = groupObjects[groupObjects.length - 1 - i];
+                        this.canvas.remove(lastObj);
+                    }
+                    this.canvas.renderAll();
+                }
+            } else {
+                e.target.value = 1;
+            }
+        };
+
+        const increaseBtn = document.createElement('button');
+        increaseBtn.innerHTML = '<i class="fas fa-plus"></i>';
+        increaseBtn.className = 'quantity-btn';
+        increaseBtn.title = '수량 증가';
+        increaseBtn.onclick = (e) => {
+            e.stopPropagation();
+            // 동일한 아이템 추가
+            this.addItem(itemData);
+        };
+
+        quantityControl.appendChild(decreaseBtn);
+        quantityControl.appendChild(quantityInput);
+        quantityControl.appendChild(increaseBtn);
 
         const deleteBtn = document.createElement('button');
         deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
@@ -624,7 +682,7 @@ class CanvasManager {
             this.canvas.renderAll();
         };
 
-        actions.appendChild(quantityDisplay);
+        actions.appendChild(quantityControl);
         actions.appendChild(deleteBtn);
         info.appendChild(name);
         info.appendChild(meta);
