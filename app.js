@@ -441,7 +441,7 @@ function handleResetItems() {
     }
 
     // 확인 메시지
-    if (!confirm(`캔버스에 있는 ${items.length}개의 아이템을 모두 삭제하시겠습니까?`)) {
+    if (!confirm(`캔버스에 있는 모든 아이템을 삭제하시겠습니까?`)) {
         return;
     }
 

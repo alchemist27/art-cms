@@ -269,28 +269,6 @@ class CanvasManager {
     // 아이템을 캔버스에 추가
     addItem(itemData) {
         return new Promise((resolve, reject) => {
-            // 동일한 아이템이 이미 캔버스에 있는지 확인
-            const existingObject = this.findExistingItem(itemData);
-
-            if (existingObject) {
-                // 이미 존재하면 수량만 증가
-                if (!existingObject.itemQuantity) {
-                    existingObject.itemQuantity = 1;
-                }
-                existingObject.itemQuantity++;
-
-                // UI 업데이트
-                this.updateUI();
-
-                // 해당 객체를 선택하고 하이라이트
-                this.canvas.setActiveObject(existingObject);
-                this.canvas.renderAll();
-
-                console.log(`${itemData.name} 수량 증가: ${existingObject.itemQuantity}`);
-                resolve(existingObject);
-                return;
-            }
-
             // Firebase에서 온 데이터는 src 필드, 로컬은 image 필드 사용
             const imagePath = itemData.src || `/assets/${itemData.image}`;
 
@@ -335,27 +313,6 @@ class CanvasManager {
                 this.hideWelcomeOverlay();
                 resolve(img);
             }, { crossOrigin: 'anonymous' });
-        });
-    }
-
-    // 동일한 아이템이 캔버스에 이미 있는지 확인
-    findExistingItem(itemData) {
-        const objects = this.canvas.getObjects().filter(obj => obj.itemData);
-
-        return objects.find(obj => {
-            const existingData = obj.itemData;
-            // id가 있으면 id로 비교, 없으면 name과 image/src로 비교
-            if (itemData.id && existingData.id) {
-                return itemData.id === existingData.id &&
-                       itemData.selectedSize === existingData.selectedSize;
-            }
-
-            const imagePath1 = itemData.src || itemData.image;
-            const imagePath2 = existingData.src || existingData.image;
-
-            return existingData.name === itemData.name &&
-                   imagePath1 === imagePath2 &&
-                   itemData.selectedSize === existingData.selectedSize;
         });
     }
 
@@ -486,14 +443,16 @@ class CanvasManager {
             return;
         }
 
+        // 동일한 아이템들을 그룹화
+        const groupedItems = this.groupItemsByType(objects);
+
         selectedItemsContainer.innerHTML = '';
+
         // 역순으로 추가하여 최신 아이템이 맨 위에 오도록 함
-        for (let i = objects.length - 1; i >= 0; i--) {
-            const obj = objects[i];
-            if (obj.itemData) {
-                const selectedItem = this.createSelectedItemElement(obj, i);
-                selectedItemsContainer.appendChild(selectedItem);
-            }
+        for (let i = groupedItems.length - 1; i >= 0; i--) {
+            const group = groupedItems[i];
+            const selectedItem = this.createSelectedItemElement(group, i);
+            selectedItemsContainer.appendChild(selectedItem);
         }
 
         // 현재 선택된 객체가 있으면 하이라이트
@@ -501,6 +460,56 @@ class CanvasManager {
         if (activeObject && activeObject.itemData) {
             this.highlightSelectedItemInList(activeObject);
         }
+    }
+
+    // 동일한 아이템들을 그룹화하여 수량 계산
+    groupItemsByType(objects) {
+        const groups = [];
+        const processedIndices = new Set();
+
+        objects.forEach((obj, index) => {
+            if (processedIndices.has(index)) return;
+
+            const itemData = obj.itemData;
+            const similarObjects = [obj];
+            processedIndices.add(index);
+
+            // 동일한 아이템 찾기
+            for (let i = index + 1; i < objects.length; i++) {
+                if (processedIndices.has(i)) continue;
+
+                const otherData = objects[i].itemData;
+                if (this.isSameItem(itemData, otherData)) {
+                    similarObjects.push(objects[i]);
+                    processedIndices.add(i);
+                }
+            }
+
+            groups.push({
+                representative: obj, // 대표 객체
+                quantity: similarObjects.length,
+                objects: similarObjects // 동일한 아이템들의 배열
+            });
+        });
+
+        return groups;
+    }
+
+    // 두 아이템이 동일한지 비교
+    isSameItem(itemData1, itemData2) {
+        // id가 있으면 id로 비교
+        if (itemData1.id && itemData2.id) {
+            return itemData1.id === itemData2.id &&
+                   itemData1.selectedSize === itemData2.selectedSize;
+        }
+
+        // id가 없으면 name과 image/src로 비교
+        const imagePath1 = itemData1.src || itemData1.image;
+        const imagePath2 = itemData2.src || itemData2.image;
+
+        return itemData1.name === itemData2.name &&
+               imagePath1 === imagePath2 &&
+               itemData1.selectedSize === itemData2.selectedSize;
     }
 
     highlightSelectedItemInList(canvasObject) {
@@ -513,14 +522,21 @@ class CanvasManager {
         const allItems = selectedItemsContainer.querySelectorAll('.selected-item');
         allItems.forEach(item => item.classList.remove('active'));
 
-        // 캔버스의 모든 객체 중에서 선택된 객체의 인덱스 찾기
-        const objects = this.canvas.getObjects().filter(obj => obj.itemData);
-        const objectIndex = objects.indexOf(canvasObject);
+        // 선택된 캔버스 객체의 인덱스 찾기
+        const canvasObjectIndex = this.canvas.getObjects().indexOf(canvasObject);
 
-        if (objectIndex !== -1 && objectIndex < allItems.length) {
-            const targetItem = allItems[objectIndex];
+        // DOM에서 해당 객체를 포함하는 그룹 찾기
+        let targetItem = null;
+        for (const item of allItems) {
+            const objectIds = item.dataset.objectIds.split(',').map(id => parseInt(id));
+            if (objectIds.includes(canvasObjectIndex)) {
+                targetItem = item;
+                break;
+            }
+        }
+
+        if (targetItem) {
             targetItem.classList.add('active');
-
             // 스크롤하여 가운데로 이동
             this.scrollItemToCenter(targetItem, selectedItemsContainer);
         }
@@ -554,16 +570,19 @@ class CanvasManager {
         });
     }
     
-    createSelectedItemElement(object, index) {
+    createSelectedItemElement(group, groupIndex) {
+        const object = group.representative;
+        const groupObjects = group.objects;
+        const quantity = group.quantity;
         const itemData = object.itemData;
+
         const item = document.createElement('div');
         item.className = 'selected-item';
-        item.dataset.objectIndex = index;
+        item.dataset.groupIndex = groupIndex; // 원본 그룹 인덱스 저장
 
-        // quantity 초기화 (없으면 1로 설정)
-        if (!object.itemQuantity) {
-            object.itemQuantity = 1;
-        }
+        // 그룹에 속한 모든 객체의 인덱스를 저장
+        const objectIds = groupObjects.map(obj => this.canvas.getObjects().indexOf(obj)).join(',');
+        item.dataset.objectIds = objectIds;
 
         const img = document.createElement('img');
         // Firebase에서 온 데이터는 src 필드, 로컬은 image 필드 사용
@@ -586,63 +605,26 @@ class CanvasManager {
         const actions = document.createElement('div');
         actions.className = 'selected-item-actions';
 
-        // 수량 조절 컨트롤
-        const quantityControl = document.createElement('div');
-        quantityControl.className = 'quantity-control';
-
-        const decreaseBtn = document.createElement('button');
-        decreaseBtn.innerHTML = '<i class="fas fa-minus"></i>';
-        decreaseBtn.className = 'quantity-btn';
-        decreaseBtn.title = '수량 감소';
-        decreaseBtn.onclick = (e) => {
-            e.stopPropagation();
-            if (object.itemQuantity > 1) {
-                object.itemQuantity--;
-                quantityInput.value = object.itemQuantity;
-            }
-        };
-
-        const quantityInput = document.createElement('input');
-        quantityInput.type = 'number';
-        quantityInput.className = 'quantity-input';
-        quantityInput.value = object.itemQuantity;
-        quantityInput.min = '1';
-        quantityInput.onclick = (e) => e.stopPropagation();
-        quantityInput.onchange = (e) => {
-            const value = parseInt(e.target.value);
-            if (value >= 1) {
-                object.itemQuantity = value;
-            } else {
-                e.target.value = 1;
-                object.itemQuantity = 1;
-            }
-        };
-
-        const increaseBtn = document.createElement('button');
-        increaseBtn.innerHTML = '<i class="fas fa-plus"></i>';
-        increaseBtn.className = 'quantity-btn';
-        increaseBtn.title = '수량 증가';
-        increaseBtn.onclick = (e) => {
-            e.stopPropagation();
-            object.itemQuantity++;
-            quantityInput.value = object.itemQuantity;
-        };
-
-        quantityControl.appendChild(decreaseBtn);
-        quantityControl.appendChild(quantityInput);
-        quantityControl.appendChild(increaseBtn);
+        // 수량 표시 (읽기 전용)
+        const quantityDisplay = document.createElement('div');
+        quantityDisplay.className = 'quantity-display';
+        quantityDisplay.textContent = `수량: ${quantity}`;
+        quantityDisplay.style.cssText = 'font-size: 0.75rem; color: var(--gray-600); font-weight: 600; padding: 4px 8px; background: rgba(99, 102, 241, 0.1); border-radius: 6px;';
 
         const deleteBtn = document.createElement('button');
         deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
         deleteBtn.className = 'item-delete-btn';
-        deleteBtn.title = '삭제';
+        deleteBtn.title = '모두 삭제';
         deleteBtn.onclick = (e) => {
             e.stopPropagation();
-            this.canvas.remove(object);
+            // 그룹의 모든 객체 삭제
+            groupObjects.forEach(obj => {
+                this.canvas.remove(obj);
+            });
             this.canvas.renderAll();
         };
 
-        actions.appendChild(quantityControl);
+        actions.appendChild(quantityDisplay);
         actions.appendChild(deleteBtn);
         info.appendChild(name);
         info.appendChild(meta);
@@ -651,9 +633,9 @@ class CanvasManager {
         item.appendChild(info);
         item.appendChild(actions);
 
-        // 클릭 시 해당 객체 선택
+        // 클릭 시 첫 번째 객체 선택
         item.onclick = () => {
-            this.canvas.setActiveObject(object);
+            this.canvas.setActiveObject(groupObjects[0]);
             this.canvas.renderAll();
         };
 

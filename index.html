@@ -19,16 +19,6 @@
                     <span class="brand-subtitle">✨ DIY 공예 디자인 스튜디오 ✨</span>
                 </div>
             </div>
-            <div class="header-actions">
-                <button class="btn btn-secondary" id="resetBtn">
-                    <i class="fas fa-refresh"></i>
-                    초기화
-                </button>
-                <button class="btn btn-primary" id="fullscreenBtn">
-                    <i class="fas fa-expand"></i>
-                    실제 사이즈 보기
-                </button>
-            </div>
         </div>
     </header>
 
@@ -301,7 +291,7 @@
                         <button class="control-btn" id="captureBtn" title="캡처">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-scissors-icon lucide-square-scissors"><rect width="20" height="20" x="2" y="2" rx="2"/><circle cx="8" cy="8" r="2"/><path d="M9.414 9.414 12 12"/><path d="M14.8 14.8 18 18"/><circle cx="8" cy="16" r="2"/><path d="m18 6-8.586 8.586"/></svg>
                         </button>
-                        <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="display: none; align-items: center; gap: 8px;">
                             <label for="testSizeSelect" style="font-size: 12px; color: #64748b;">테스트 크기:</label>
                             <select id="testSizeSelect" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 12px; cursor: pointer;">
                                 <option value="2">2mm</option>
@@ -341,6 +331,20 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- Action Controls -->
+                <div class="action-section-inline">
+                    <div class="action-controls-inline">
+                        <button class="layer-btn-inline" id="resetBtn">
+                            <i class="fas fa-refresh"></i>
+                            초기화
+                        </button>
+                        <button class="layer-btn-inline" id="fullscreenBtn">
+                            <i class="fas fa-expand"></i>
+                            실제 사이즈 보기
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="canvas-wrapper" id="canvasWrapper">
                 <canvas id="designCanvas" width="800" height="600"></canvas>
@@ -367,11 +371,18 @@
 
             <!-- Canvas Button Guide -->
             <div class="canvas-button-guide">
-                <h4 class="guide-title">💡 제품 이미지 버튼 가이드</h4>
                 <div class="guide-content">
                     <div class="guide-item">
+                        <span class="guide-icon red-circle">×</span>
+                        <span><strong>개별 삭제 버튼<br></strong>선택한 제품 삭제</span>
+                    </div>
+                    <div class="guide-item">
+                        <i class="fas fa-times-circle"></i>
+                        <span><strong>동시 삭제 버튼<br></strong>Shift키 누른 상태로 선택한 제품 한번에 삭제</span>
+                    </div>
+                    <div class="guide-item">
                         <span class="guide-icon green-circle">+</span>
-                        <span><strong>복제 버튼 (우측상단):</strong> 선택한 제품 복사하기</span>
+                        <span><strong>복제 버튼<br></strong>선택한 제품 복사하기</span>
                     </div>
                     <div class="guide-item">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -380,15 +391,7 @@
                             <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
                             <path d="M16 16h5v5"/>
                         </svg>
-                        <span><strong>회전 버튼 (상단):</strong> 드래그하여 자유롭게 회전</span>
-                    </div>
-                    <div class="guide-item">
-                        <span class="guide-icon red-circle">×</span>
-                        <span><strong>삭제 버튼 (좌측상단):</strong> 선택한 제품 삭제</span>
-                    </div>
-                    <div class="guide-item">
-                        <i class="fas fa-times-circle"></i>
-                        <span><strong>목록에서 삭제:</strong> 우측 선택된 아이템 목록에서 × 클릭</span>
+                        <span><strong>회전 버튼<br></strong>드래그하여 자유롭게 회전</span>
                     </div>
                 </div>
             </div>
@@ -434,15 +437,14 @@
                     </button>
                 </div>
                 <div class="selected-items" id="selectedItems">
-                <div class="quantity-guide-container">
-                    <p>제품 수량을 조절해주세요.</p>
-                </div>
+                    <div class="quantity-guide-container">
+                        <p>제품 수량을 조절해주세요.</p>
+                    </div>
                     <div class="empty-state">
                         <i class="fas fa-heart"></i>
                         <p>예쁜 아이템을 선택해주세요</p>
                     </div>
                 </div>
-             
                 <div class="cart-action">
                     <button class="btn btn-primary cart-btn" id="addToCartBtn">
                         <i class="fas fa-shopping-cart"></i>
