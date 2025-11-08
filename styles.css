@@ -591,6 +591,7 @@ body::before {
 .filter-group-content {
     max-height: 1000px;
     overflow: hidden;
+    padding: 5px 0;
     transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
     opacity: 1;
 }

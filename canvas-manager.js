@@ -311,6 +311,10 @@ class CanvasManager {
                 this.canvas.add(img).setActiveObject(img);
 
                 this.hideWelcomeOverlay();
+
+                // 아이템 추가 후 캔버스 오프셋 재계산
+                this.canvas.calcOffset();
+
                 resolve(img);
             }, { crossOrigin: 'anonymous' });
         });
@@ -343,6 +347,13 @@ class CanvasManager {
                 });
                 this.currentBackground = backgroundData;
                 this.hideWelcomeOverlay();
+
+                // 배경 설정 후 캔버스 오프셋 재계산
+                setTimeout(() => {
+                    this.canvas.calcOffset();
+                    this.canvas.renderAll();
+                }, 100);
+
                 resolve(img);
             }, { crossOrigin: 'anonymous' });
         });
@@ -710,7 +721,10 @@ class CanvasManager {
     
     hideWelcomeOverlay() {
         const overlay = document.getElementById('canvasOverlay');
-        if (overlay) overlay.style.display = 'none';
+        if (overlay) {
+            overlay.classList.add('hidden');
+            overlay.style.display = 'none';
+        }
     }
 
     showWatermark() {
