@@ -967,24 +967,24 @@ body::before {
     flex-shrink: 0 !important;
 }
 
-/* Lower canvas (배경용) 고정 */
+/* Lower canvas (배경용) - 전체 캔버스 크기 */
 .canvas-container .lower-canvas {
     position: absolute !important;
     left: 0 !important;
     top: 0 !important;
-    width: 800px !important;
-    height: 600px !important;
+    width: 1400px !important;
+    height: 1000px !important;
     margin: 0 !important;
     border-radius: var(--radius-xl);
 }
 
-/* Upper canvas (상호작용용) 고정 */
+/* Upper canvas (상호작용용) - 전체 캔버스 크기 */
 .canvas-container .upper-canvas {
     position: absolute !important;
     left: 0 !important;
     top: 0 !important;
-    width: 800px !important;
-    height: 600px !important;
+    width: 1400px !important;
+    height: 1000px !important;
     margin: 0 !important;
     border-radius: var(--radius-xl);
 }
