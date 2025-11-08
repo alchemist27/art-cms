@@ -21,10 +21,10 @@ class CanvasManager {
     }
     
     init() {
-        // Fabric.js 캔버스 초기화
+        // Fabric.js 캔버스 초기화 - 더 큰 작업 영역
         this.canvas = new fabric.Canvas(this.canvasId, {
-            width: 800,
-            height: 600,
+            width: 1400,
+            height: 1000,
             backgroundColor: '#ffffff',
             preserveObjectStacking: true,
         });
@@ -328,10 +328,18 @@ class CanvasManager {
                     console.error('배경 이미지 로드 실패:', imagePath);
                     return reject(new Error('배경 이미지 로드 실패'));
                 }
-                
+
+                // 배경 이미지는 800x600 크기로 캔버스 중앙에 배치
+                const bgWidth = 800;
+                const bgHeight = 600;
+
                 this.canvas.setBackgroundImage(img, this.canvas.renderAll.bind(this.canvas), {
-                    scaleX: this.canvas.width / img.width,
-                    scaleY: this.canvas.height / img.height
+                    scaleX: bgWidth / img.width,
+                    scaleY: bgHeight / img.height,
+                    left: this.canvas.width / 2,
+                    top: this.canvas.height / 2,
+                    originX: 'center',
+                    originY: 'center'
                 });
                 this.currentBackground = backgroundData;
                 this.hideWelcomeOverlay();

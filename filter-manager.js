@@ -50,11 +50,21 @@ class FilterManager {
 
                     const selectedType = e.target.dataset.filter;
 
-                    // 타입 선택 시 색상 그룹 자동 open (전체가 아닐 때, 폰악세서리가 아닐 때)
-                    if (selectedType !== 'all' && selectedType !== '폰악세서리') {
-                        this.openFilterGroup('colorFilterGroup');
-                    } else {
-                        this.closeFilterGroup('colorFilterGroup');
+                    // 색상 필터 그룹 표시/숨김 처리
+                    const colorFilterGroup = document.getElementById('colorFilterGroup');
+                    if (colorFilterGroup) {
+                        if (selectedType === '폰악세서리') {
+                            // 폰악세서리 선택 시 색상 그룹 완전히 숨김
+                            colorFilterGroup.style.display = 'none';
+                        } else {
+                            // 다른 타입 선택 시 색상 그룹 표시
+                            colorFilterGroup.style.display = '';
+                            if (selectedType !== 'all') {
+                                this.openFilterGroup('colorFilterGroup');
+                            } else {
+                                this.closeFilterGroup('colorFilterGroup');
+                            }
+                        }
                     }
 
                     // 모든 세부 옵션 그룹 닫기
