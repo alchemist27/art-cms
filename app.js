@@ -157,6 +157,12 @@ function initializeEventListeners() {
     if (addToCartBtn) {
         addToCartBtn.addEventListener('click', handleAddToCart);
     }
+
+    // Reset items button
+    const resetItemsBtn = document.getElementById('resetItemsBtn');
+    if (resetItemsBtn) {
+        resetItemsBtn.addEventListener('click', handleResetItems);
+    }
     
     // Background upload functionality
     const uploadBackgroundBtn = document.getElementById('uploadBackgroundBtn');
@@ -394,15 +400,15 @@ function setCustomCanvasBackground(customBackground) {
 // Cart functionality
 function handleAddToCart() {
     if (!canvasManager) return;
-    
+
     const objects = canvasManager.canvas.getObjects();
     const items = objects.filter(obj => obj.itemData);
-    
+
     if (items.length === 0) {
         showNotification('캔버스에 추가된 아이템이 없습니다.', 'info');
         return;
     }
-    
+
     // 아이템 정보 수집
     const cartItems = items.map(obj => ({
         id: obj.itemData.id,
@@ -411,15 +417,41 @@ function handleAddToCart() {
         size: `${obj.itemData.width}×${obj.itemData.height}px`,
         type: obj.itemData.type || '파츠'
     }));
-    
+
     // 장바구니 담기 시뮬레이션
     console.log('장바구니에 담을 아이템들:', cartItems);
-    
+
     // 성공 메시지 표시
     showNotification(`${items.length}개 아이템이 장바구니에 담겼습니다!`, 'success');
-    
+
     // 실제 구현에서는 여기서 서버로 데이터를 전송하거나
     // 로컬 스토리지에 저장하는 로직을 추가할 수 있습니다.
+}
+
+// Reset items functionality
+function handleResetItems() {
+    if (!canvasManager) return;
+
+    const objects = canvasManager.canvas.getObjects();
+    const items = objects.filter(obj => obj.itemData);
+
+    if (items.length === 0) {
+        showNotification('삭제할 아이템이 없습니다.', 'info');
+        return;
+    }
+
+    // 확인 메시지
+    if (!confirm(`캔버스에 있는 ${items.length}개의 아이템을 모두 삭제하시겠습니까?`)) {
+        return;
+    }
+
+    // 모든 아이템 삭제 (배경은 유지)
+    items.forEach(obj => {
+        canvasManager.canvas.remove(obj);
+    });
+
+    canvasManager.canvas.renderAll();
+    showNotification('모든 아이템이 삭제되었습니다.', 'success');
 }
 
 function showNotification(message, type = 'info') {

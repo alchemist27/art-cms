@@ -346,6 +346,10 @@ body::before {
     z-index: 1;
 }
 
+.selected-section-header {
+    background: lightgray;
+}
+
 .search-header h3,
 .items-header h3,
 .canvas-header h3,
@@ -427,6 +431,37 @@ body::before {
     border-radius: var(--radius-lg);
     font-weight: 600;
     border: 1px solid rgba(255, 107, 157, 0.2);
+}
+
+.reset-items-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: var(--radius-lg);
+    color: var(--danger-color);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.reset-items-btn:hover {
+    background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+    border-color: var(--danger-color);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.reset-items-btn:active {
+    transform: translateY(0);
+}
+
+.reset-items-btn i {
+    font-size: 0.7rem;
 }
 
 /* Sort Tabs */
@@ -1130,6 +1165,22 @@ body::before {
     padding: var(--spacing-md);
     flex: 1;
     overflow-y: auto;
+    background: rgb(236, 236, 236);
+}
+
+/* Quantity Guide Container */
+.quantity-guide-container {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: rgba(255, 107, 157, 0.1);
+    border-top: 1px solid rgba(255, 107, 157, 0.2);
+    text-align: center;
+}
+
+.quantity-guide-container p {
+    margin: 0;
+    color: gray;
+    font-size: 0.875rem;
+    font-weight: 500;
 }
 
 /* Cart Action */
@@ -1522,6 +1573,12 @@ body::before {
     transform: translateY(-1px);
 }
 
+.selected-item.active {
+    border: 3px solid var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 107, 157, 0.2), var(--shadow-md);
+    background: linear-gradient(135deg, rgba(255, 107, 157, 0.1) 0%, rgba(255, 107, 157, 0.05) 100%);
+}
+
 .selected-item img {
     width: 40px;
     height: 40px;
@@ -1753,4 +1810,102 @@ body::before {
 
 .filter-reset-btn i {
     font-size: 0.75rem;
-} 
+}
+
+/* Canvas Button Guide */
+.canvas-button-guide {
+    margin-top: 16px;
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(250, 250, 250, 0.5) 100%);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(10px);
+}
+
+.canvas-button-guide .guide-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--gray-600);
+    margin-bottom: 12px;
+    text-align: center;
+    letter-spacing: 0.3px;
+}
+
+.canvas-button-guide .guide-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.canvas-button-guide .guide-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.canvas-button-guide .guide-item:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.canvas-button-guide .guide-item i,
+.canvas-button-guide .guide-item svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: var(--gray-500);
+}
+
+.canvas-button-guide .guide-item svg {
+    stroke: var(--gray-500);
+}
+
+.canvas-button-guide .guide-item span {
+    font-size: 0.8rem;
+    color: var(--gray-600);
+    line-height: 1.4;
+}
+
+.canvas-button-guide .guide-item strong {
+    color: var(--gray-700);
+    font-weight: 600;
+}
+
+.canvas-button-guide .guide-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    flex-shrink: 0;
+}
+
+.canvas-button-guide .guide-icon.green-circle {
+    background-color: #10b981;
+}
+
+.canvas-button-guide .guide-icon.red-circle {
+    background-color: #ef4444;
+    font-size: 18px;
+}
+
+/* Responsive adjustments for button guide */
+@media (max-width: 1200px) {
+    .canvas-button-guide {
+        padding: 12px;
+    }
+
+    .canvas-button-guide .guide-title {
+        font-size: 0.85rem;
+    }
+
+    .canvas-button-guide .guide-item span {
+        font-size: 0.75rem;
+    }
+}

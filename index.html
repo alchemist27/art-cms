@@ -364,6 +364,34 @@
                     <i class="fas fa-search-plus"></i>
                 </button>
             </div>
+
+            <!-- Canvas Button Guide -->
+            <div class="canvas-button-guide">
+                <h4 class="guide-title">💡 제품 이미지 버튼 가이드</h4>
+                <div class="guide-content">
+                    <div class="guide-item">
+                        <span class="guide-icon green-circle">+</span>
+                        <span><strong>복제 버튼 (우측상단):</strong> 선택한 제품 복사하기</span>
+                    </div>
+                    <div class="guide-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                            <path d="M3 3v5h5"/>
+                            <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+                            <path d="M16 16h5v5"/>
+                        </svg>
+                        <span><strong>회전 버튼 (상단):</strong> 드래그하여 자유롭게 회전</span>
+                    </div>
+                    <div class="guide-item">
+                        <span class="guide-icon red-circle">×</span>
+                        <span><strong>삭제 버튼 (좌측상단):</strong> 선택한 제품 삭제</span>
+                    </div>
+                    <div class="guide-item">
+                        <i class="fas fa-times-circle"></i>
+                        <span><strong>목록에서 삭제:</strong> 우측 선택된 아이템 목록에서 × 클릭</span>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- Right Panel - Background & Options -->
@@ -377,7 +405,8 @@
                     </button>
                 </div>
                 <select id="backgroundCategoryDropdown" class="category-dropdown">
-                    <option value="all">기본 배경 이미지</option>
+                    <option value="" disabled selected>기본배경 / MD추천디자인💕</option>
+                    <option value="기본배경">기본 배경 이미지</option>
                     <option value="키링">키링(3)</option>
                     <option value="스트랩">스트랩</option>
                     <option value="모루인형">모루인형</option>
@@ -397,16 +426,23 @@
 
             <!-- Selected Items -->
             <section class="selected-section">
-                <div class="section-header">
-                    <h3><i class="fas fa-list"></i> 선택된 아이템</h3>
-                    <span class="selected-count" id="selectedCount">0개</span>
+                <div class="section-header selected-section-header">
+                    <h3><i class="fas fa-list"></i>구매 예정 아이템</h3>
+                    <button class="reset-items-btn" id="resetItemsBtn" title="모든 아이템 초기화">
+                        <i class="fas fa-trash-alt"></i>
+                        초기화
+                    </button>
                 </div>
                 <div class="selected-items" id="selectedItems">
+                <div class="quantity-guide-container">
+                    <p>제품 수량을 조절해주세요.</p>
+                </div>
                     <div class="empty-state">
                         <i class="fas fa-heart"></i>
                         <p>예쁜 아이템을 선택해주세요</p>
                     </div>
                 </div>
+             
                 <div class="cart-action">
                     <button class="btn btn-primary cart-btn" id="addToCartBtn">
                         <i class="fas fa-shopping-cart"></i>
