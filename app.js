@@ -409,23 +409,93 @@ function handleAddToCart() {
         return;
     }
 
-    // 아이템 정보 수집
-    const cartItems = items.map(obj => ({
-        id: obj.itemData.id,
-        name: obj.itemData.name,
-        image: obj.itemData.image,
-        size: `${obj.itemData.width}×${obj.itemData.height}px`,
-        type: obj.itemData.type || '파츠'
-    }));
+    // 아이템별 수량 집계 (productCode 기준)
+    const itemQuantityMap = new Map();
 
-    // 장바구니 담기 시뮬레이션
+    items.forEach(obj => {
+        const itemData = obj.itemData;
+        const productCode = itemData.productCode;
+
+        // productCode가 없으면 스킵
+        if (!productCode) {
+            console.warn('상품코드가 없는 아이템:', itemData);
+            return;
+        }
+
+        // 수량 카운트
+        if (itemQuantityMap.has(productCode)) {
+            itemQuantityMap.set(productCode, itemQuantityMap.get(productCode) + 1);
+        } else {
+            itemQuantityMap.set(productCode, 1);
+        }
+    });
+
+    // Cafe24 장바구니 형식으로 변환
+    const cartItems = Array.from(itemQuantityMap.entries()).map(([productCode, quantity]) => {
+        // 원본 아이템 데이터 찾기
+        const originalItem = items.find(obj => obj.itemData.productCode === productCode);
+        const itemData = originalItem.itemData;
+
+        return {
+            productCode: productCode,
+            productName: itemData.productName || itemData.name,
+            quantity: quantity,
+            // 추가 정보 (디버깅용)
+            id: itemData.id,
+            displayInfo: itemData.displayInfo
+        };
+    });
+
     console.log('장바구니에 담을 아이템들:', cartItems);
 
-    // 성공 메시지 표시
-    showNotification(`${items.length}개 아이템이 장바구니에 담겼습니다!`, 'success');
+    // Cafe24 장바구니 API 호출
+    if (cartItems.length > 0) {
+        addToCart(cartItems);
+    } else {
+        showNotification('상품코드가 등록된 아이템이 없습니다.', 'warning');
+    }
+}
 
-    // 실제 구현에서는 여기서 서버로 데이터를 전송하거나
-    // 로컬 스토리지에 저장하는 로직을 추가할 수 있습니다.
+// Cafe24 장바구니 API 호출
+async function addToCart(cartItems) {
+    try {
+        // Cafe24 Shop ID (환경변수나 설정 파일에서 가져오기)
+        const CAFE24_SHOP_ID = window.CAFE24_SHOP_ID || 'sugardeco';
+
+        // Cafe24 장바구니 추가 URL
+        const baseUrl = `https://${CAFE24_SHOP_ID}.cafe24.com/exec/front/order/basket/`;
+
+        // 각 상품을 장바구니에 추가
+        const addPromises = cartItems.map((item, index) => {
+            const params = new URLSearchParams({
+                product_code: item.productCode,
+                quantity: item.quantity,
+                opt_value: '',  // 옵션이 있다면 추가
+            });
+
+            // 여러 상품을 한번에 담기 위해 배열 형식으로 전송
+            return fetch(`${baseUrl}?${params.toString()}`, {
+                method: 'GET',
+                mode: 'no-cors'  // CORS 제한 우회
+            });
+        });
+
+        await Promise.all(addPromises);
+
+        // 성공 메시지 표시
+        showNotification(`${cartItems.length}종 총 ${cartItems.reduce((sum, item) => sum + item.quantity, 0)}개 아이템이 장바구니에 담겼습니다!`, 'success');
+
+        // 장바구니 페이지로 이동 여부 확인
+        setTimeout(() => {
+            if (confirm('장바구니로 이동하시겠습니까?')) {
+                window.open(`https://${CAFE24_SHOP_ID}.cafe24.com/order/basket.html`, '_blank');
+            }
+        }, 500);
+
+    } catch (error) {
+        console.error('장바구니 추가 실패:', error);
+        showNotification('장바구니 추가 중 오류가 발생했습니다.', 'error');
+    }
 }
 
 // Reset items functionality

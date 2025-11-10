@@ -236,7 +236,7 @@ class Cafe24ApiService {
             limit: params.limit || 100,
             offset: params.offset || 0
         });
-        
+
         // 추가 파라미터 처리
         if (params.product_name) {
             queryParams.append('product_name', params.product_name);
@@ -249,7 +249,22 @@ class Cafe24ApiService {
         }
 
         const endpoint = `/admin/products?${queryParams.toString()}`;
+        console.log('[Cafe24 API] Requesting products with endpoint:', endpoint);
+        console.log('[Cafe24 API] Request params:', params);
+
         const response = await this.makeApiRequest(endpoint);
+
+        console.log('[Cafe24 API] Products response:', {
+            totalCount: response.products ? response.products.length : 0,
+            hasProducts: !!response.products,
+            responseKeys: Object.keys(response)
+        });
+
+        if (response.products && response.products.length > 0) {
+            console.log('[Cafe24 API] Sample product (first):', response.products[0]);
+            console.log('[Cafe24 API] Product numbers:', response.products.map(p => p.product_no));
+        }
+
         return response.products || [];
     }
 
@@ -273,7 +288,24 @@ class Cafe24ApiService {
 
     async getCategories() {
         const endpoint = '/admin/categories';
+        console.log('[Cafe24 API] Requesting categories');
+
         const response = await this.makeApiRequest(endpoint);
+
+        console.log('[Cafe24 API] Categories response:', {
+            totalCount: response.categories ? response.categories.length : 0,
+            hasCategories: !!response.categories,
+            responseKeys: Object.keys(response)
+        });
+
+        if (response.categories && response.categories.length > 0) {
+            console.log('[Cafe24 API] Categories list:', response.categories.map(c => ({
+                no: c.category_no,
+                name: c.category_name,
+                depth: c.category_depth
+            })));
+        }
+
         return response.categories || [];
     }
 
@@ -409,17 +441,24 @@ class Cafe24ApiService {
     }
 
     async getProductsByCategory(categoryNo) {
+        console.log('[Cafe24 API] Fetching products for category:', categoryNo);
+
         // 1. 카테고리에 속한 상품 번호 목록 조회
         const categoryProducts = await this.getCategoryProducts(categoryNo);
 
+        console.log('[Cafe24 API] Category products count:', categoryProducts.length);
+        console.log('[Cafe24 API] Category product numbers:', categoryProducts.map(p => p.product_no));
+
         if (categoryProducts.length === 0) {
+            console.log('[Cafe24 API] No products found in category:', categoryNo);
             return [];
         }
 
         // 2. 각 상품의 상세 정보를 병렬로 조회
+        console.log('[Cafe24 API] Fetching detailed info for', categoryProducts.length, 'products...');
         const productDetailsPromises = categoryProducts.map(item =>
             this.getProduct(item.product_no).catch(err => {
-                console.error(`Failed to fetch product ${item.product_no}:`, err);
+                console.error(`[Cafe24 API] Failed to fetch product ${item.product_no}:`, err);
                 return null;
             })
         );
@@ -427,7 +466,16 @@ class Cafe24ApiService {
         const productDetails = await Promise.all(productDetailsPromises);
 
         // null 제거 (조회 실패한 상품)
-        return productDetails.filter(p => p !== null);
+        const validProducts = productDetails.filter(p => p !== null);
+        const failedCount = productDetails.length - validProducts.length;
+
+        if (failedCount > 0) {
+            console.warn(`[Cafe24 API] ${failedCount} products failed to load`);
+        }
+
+        console.log('[Cafe24 API] Successfully loaded', validProducts.length, 'products');
+
+        return validProducts;
     }
 }
 

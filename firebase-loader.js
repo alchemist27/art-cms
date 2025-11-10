@@ -27,58 +27,102 @@ async function loadProductsFromFirebase() {
         metadataSnapshot.forEach(doc => {
             const data = doc.data();
             console.log('문서 데이터:', doc.id, data);
-            
-            // 이미지가 있는 제품만 처리
-            if (data.imageUrl) {
+
+            // 썸네일과 이미지 분리 처리
+            const thumbnailUrl = data.thumbnailUrl;  // 왼쪽 패널 표시용
+            const images = data.images || [];  // 캔버스에 추가할 이미지들
+
+            // 썸네일이나 이미지가 하나라도 있어야 표시
+            if (thumbnailUrl || images.length > 0) {
+                // categories 배열 생성 (카테고리1 필수, 카테고리2 선택)
+                const categories = [];
+
+                if (data.category1) {
+                    categories.push(data.category1);
+                }
+                if (data.category2) {
+                    categories.push(data.category2);
+                }
+
+                // keywords 배열 생성 (CMS에서 입력한 키워드만)
+                const keywords = data.keywords
+                    ? data.keywords.split(',').map(k => k.trim()).filter(k => k)
+                    : [];
+
+                // tags 배열 생성 (필터링용 - 모든 카테고리 값 파싱)
+                const tags = [];
+
+                // 카테고리 파싱하여 tags에 추가
+                categories.forEach(category => {
+                    tags.push(category.toLowerCase());  // 전체 값 (예: "비즈-가로펀칭")
+
+                    if (category.includes('-')) {
+                        const parts = category.split('-');
+                        tags.push(parts[0].toLowerCase());  // 대분류 (예: "비즈")
+                        if (parts[1]) {
+                            tags.push(parts[1].toLowerCase());  // 세부분류 (예: "가로펀칭")
+                        }
+                    } else {
+                        tags.push(category.toLowerCase());
+                    }
+                });
+
+                // 방향 태그 추가
+                if (data.direction) {
+                    tags.push(data.direction.toLowerCase());
+                }
+
+                // 색상 태그 추가
+                if (data.colors) {
+                    const colorArray = data.colors.split(',').map(c => c.trim().toLowerCase()).filter(c => c);
+                    tags.push(...colorArray);
+                }
+
+                // 키워드도 tags에 추가 (검색용)
+                keywords.forEach(keyword => {
+                    tags.push(keyword.toLowerCase());
+                });
+
+                // 중복 제거
+                const uniqueTags = [...new Set(tags)];
+
+                // type은 category1의 대분류 (하위 호환성)
+                let mainType = '비즈';  // 기본값
+                if (data.category1) {
+                    mainType = data.category1.includes('-')
+                        ? data.category1.split('-')[0]
+                        : data.category1;
+                }
+
                 const productItem = {
                     id: doc.id,
-                    name: `상품 ${data.productNo}`,
-                    src: data.imageUrl,
-                    type: data.type || '비즈',
+                    name: data.productName || `상품 ${data.productNo}`,  // Cafe24 상품명
+                    productName: data.productName || '',  // Cafe24 상품명 (원본)
+                    productCode: data.productCode || '',  // Cafe24 상품코드
+                    displayInfo: data.displayInfo || '',  // 선택된 아이템 메타정보 (예: "20개입")
+
+                    // 이미지 구분
+                    thumbnail: thumbnailUrl,  // 왼쪽 패널 표시용 썸네일
+                    src: images.length > 0 ? images[0].url : thumbnailUrl,  // 캔버스 기본 이미지
+                    images: images,  // 캔버스에 추가 가능한 전체 이미지 배열
+
+                    type: mainType,  // 하위 호환성 유지
+                    categories: categories,  // 카테고리 배열 (1~2개)
+                    keywords: keywords,  // 키워드 배열 (CMS 입력값)
                     direction: data.direction || null,
-                    colors: data.colors ? data.colors.split(',').map(c => c.trim()) : [],
-                    size: { width_mm: 20, height_mm: 20 },
-                    tags: [],
+                    color: data.colors ? data.colors.split(',')[0].trim() : null,
+                    size: {
+                        width_mm: data.sizeInMM || 20,
+                        height_mm: data.sizeInMM || 20
+                    },
+                    tags: uniqueTags,  // 필터링용 통합 태그
                     popularity: Math.floor(Math.random() * 100)
                 };
 
-                // 태그 생성 - type 필드를 파싱해서 적절한 태그 추가
-                if (data.type) {
-                    const typeValue = data.type.toLowerCase();
-                    productItem.tags.push(typeValue);
-
-                    // "타입-세부타입" 형태를 파싱
-                    if (typeValue.includes('-')) {
-                        const parts = typeValue.split('-');
-                        const mainType = parts[0];
-                        const subType = parts[1];
-
-                        // 메인 타입 추가 (이미 전체 값이 추가되어 있으므로 중복이지만, 필터링을 위해 추가)
-                        productItem.tags.push(mainType);
-
-                        // 세부 타입 추가
-                        if (subType) {
-                            productItem.tags.push(subType);
-                        }
-                    }
-                }
-
-                if (data.direction) {
-                    productItem.tags.push(data.direction.toLowerCase());
-                }
-
-                if (data.colors) {
-                    const colorArray = data.colors.split(',').map(c => c.trim().toLowerCase());
-                    productItem.tags.push(...colorArray);
-                }
-
-                if (data.keywords) {
-                    const keywordArray = data.keywords.split(',').map(k => k.trim().toLowerCase());
-                    productItem.tags.push(...keywordArray);
-                }
-                
                 products.push(productItem);
                 console.log('제품 추가:', productItem);
+            } else {
+                console.log('이미지 없는 제품 스킵:', doc.id);
             }
         });
         

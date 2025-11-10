@@ -439,15 +439,43 @@ class FilterManager {
     matchesSearch(item) {
         const searchTerm = this.activeFilters.search.toLowerCase();
         if (!searchTerm) return true;
-        
-        return item.name.toLowerCase().includes(searchTerm) ||
-               item.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+
+        // 상품명 검색 (Cafe24 상품명)
+        if (item.productName && item.productName.toLowerCase().includes(searchTerm)) {
+            return true;
+        }
+
+        // name 필드 검색 (하위 호환성)
+        if (item.name && item.name.toLowerCase().includes(searchTerm)) {
+            return true;
+        }
+
+        // CMS에서 입력한 키워드 검색
+        if (item.keywords && Array.isArray(item.keywords)) {
+            if (item.keywords.some(keyword => keyword.toLowerCase().includes(searchTerm))) {
+                return true;
+            }
+        }
+
+        return false;
     }
     
     matchesType(item) {
         const typeFilter = this.activeFilters.type;
         if (typeFilter === 'all') return true;
-        
+
+        // categories 배열이 있으면 우선 확인 (새 구조)
+        if (item.categories && Array.isArray(item.categories)) {
+            // categories 배열의 각 값을 파싱하여 대분류 확인
+            for (const category of item.categories) {
+                const mainType = category.includes('-') ? category.split('-')[0] : category;
+                if (mainType === typeFilter) {
+                    return true;
+                }
+            }
+        }
+
+        // 하위 호환성: 기존 방식도 지원
         return item.type === typeFilter || item.tags.includes(typeFilter);
     }
     
@@ -585,8 +613,8 @@ class FilterManager {
         card.dataset.itemId = item.id;
 
         const img = document.createElement('img');
-        // Firebase에서 온 데이터는 src 필드, 로컬은 image 필드 사용
-        img.src = item.src || `/assets/${item.image}`;
+        // 왼쪽 패널에는 썸네일 표시 (thumbnail 우선, 없으면 src, 없으면 로컬 image)
+        img.src = item.thumbnail || item.src || `/assets/${item.image}`;
         img.alt = item.name;
         img.draggable = false;
 
@@ -597,16 +625,13 @@ class FilterManager {
         card.appendChild(img);
         card.appendChild(name);
 
-        // 더미 데이터로 모든 아이템에 사이즈 옵션 추가
-        const sizeOptions = item.sizeOptions || ['2mm', '4mm', '6mm'];
-
-        // 사이즈 옵션이 있으면 클릭 시 팝업 표시
-        if (sizeOptions && sizeOptions.length > 0) {
+        // 여러 이미지가 있으면 선택 팝업 표시
+        if (item.images && item.images.length > 1) {
             card.addEventListener('click', (e) => {
-                this.showSizeOptionsPopup(card, item, sizeOptions);
+                this.showImageSelectPopup(card, item);
             });
         } else {
-            // 사이즈 옵션이 없으면 바로 캔버스에 추가
+            // 이미지가 1개이거나 없으면 바로 캔버스에 추가
             card.addEventListener('click', () => {
                 this.addItemToCanvas(item);
                 this.addClickEffect(card);
@@ -614,6 +639,46 @@ class FilterManager {
         }
 
         return card;
+    }
+
+    showImageSelectPopup(card, item) {
+        // 기존 팝업 제거
+        this.closeSizeOptionsPopup();
+
+        // 새 팝업 생성
+        const overlay = this.createImageSelectOverlay(item);
+        document.body.appendChild(overlay);
+
+        // 위치 계산
+        const rect = card.getBoundingClientRect();
+        const popupWidth = 250;  // 이미지 미리보기용으로 더 넓게
+        const gap = 8;
+
+        // 카드 오른쪽에 표시
+        let left = rect.right + gap;
+        let top = rect.top;
+
+        // 화면 밖으로 나가면 왼쪽에 표시
+        if (left + popupWidth > window.innerWidth) {
+            left = rect.left - popupWidth - gap;
+        }
+
+        // 아래로 너무 내려가면 위로 올림
+        if (top + overlay.offsetHeight > window.innerHeight) {
+            top = window.innerHeight - overlay.offsetHeight - gap;
+        }
+
+        overlay.style.left = `${left}px`;
+        overlay.style.top = `${top}px`;
+        overlay.classList.add('active');
+
+        // 외부 클릭 시 닫기
+        setTimeout(() => {
+            document.addEventListener('click', this.handleOutsideClick);
+        }, 0);
+
+        // 현재 팝업 저장
+        this.currentPopup = overlay;
     }
 
     showSizeOptionsPopup(card, item, sizeOptions) {
@@ -668,6 +733,50 @@ class FilterManager {
         if (this.currentPopup && !this.currentPopup.contains(e.target) && !e.target.closest('.item-card')) {
             this.closeSizeOptionsPopup();
         }
+    }
+
+    createImageSelectOverlay(item) {
+        const overlay = document.createElement('div');
+        overlay.className = 'size-options-overlay image-select-overlay';
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'size-option-close';
+        closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+        closeBtn.onclick = (e) => {
+            e.stopPropagation();
+            this.closeSizeOptionsPopup();
+        };
+
+        const title = document.createElement('div');
+        title.className = 'size-option-title';
+        title.textContent = '이미지 선택';
+
+        const imagesContainer = document.createElement('div');
+        imagesContainer.className = 'image-select-buttons';
+
+        item.images.forEach((imageInfo, index) => {
+            const imageBtn = document.createElement('div');
+            imageBtn.className = 'image-option-btn';
+
+            const img = document.createElement('img');
+            img.src = imageInfo.url;
+            img.alt = `이미지 ${index + 1}`;
+
+            imageBtn.appendChild(img);
+            imageBtn.onclick = (e) => {
+                e.stopPropagation();
+                // 선택한 이미지로 src 변경하여 캔버스에 추가
+                this.addItemToCanvas({...item, src: imageInfo.url, selectedImage: imageInfo});
+                this.closeSizeOptionsPopup();
+            };
+            imagesContainer.appendChild(imageBtn);
+        });
+
+        overlay.appendChild(closeBtn);
+        overlay.appendChild(title);
+        overlay.appendChild(imagesContainer);
+
+        return overlay;
     }
 
     createSizeOptionsOverlay(item, sizeOptions) {

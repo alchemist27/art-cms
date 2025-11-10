@@ -137,11 +137,16 @@ export class ProductsPage {
 
     async loadCategories() {
         try {
+            console.log('[ProductsPage] Loading categories...');
             const categories = await cafe24Api.getCategories();
+            console.log('[ProductsPage] Categories loaded:', {
+                count: categories.length,
+                categories: categories.map(c => ({ no: c.category_no, name: c.category_name }))
+            });
             this.categories = categories;
             this.renderCategorySelect();
         } catch (error) {
-            console.error('Failed to load categories:', error);
+            console.error('[ProductsPage] Failed to load categories:', error);
         }
     }
 
@@ -179,8 +184,16 @@ export class ProductsPage {
         try {
             let products = [];
 
+            console.log('[ProductsPage] Loading products with filters:', {
+                category: this.searchCategory,
+                keyword: this.searchKeyword,
+                productCode: this.searchProductCode,
+                page: this.currentPage
+            });
+
             // 카테고리가 선택되어 있으면 카테고리별 상품 조회
             if (this.searchCategory) {
+                console.log('[ProductsPage] Loading products by category:', this.searchCategory);
                 products = await cafe24Api.getProductsByCategory(this.searchCategory);
             } else {
                 // 일반 상품 조회
@@ -198,15 +211,22 @@ export class ProductsPage {
                     params.product_code = this.searchProductCode;
                 }
 
+                console.log('[ProductsPage] Loading products with params:', params);
                 products = await cafe24Api.getProducts(params);
             }
+
+            console.log('[ProductsPage] Loaded products:', {
+                count: products.length,
+                productNos: products.map(p => p.product_no),
+                productNames: products.map(p => p.product_name)
+            });
 
             this.products = products;
             this.displayProducts();
         } catch (error) {
-            console.error('Failed to load products:', error);
+            console.error('[ProductsPage] Failed to load products:', error);
             this.showError('상품을 불러오는데 실패했습니다.');
-            
+
             if (error.message.includes('Not authenticated')) {
                 this.showAuthButton();
             }
@@ -311,8 +331,14 @@ export class ProductsPage {
                             <option value="끈/줄-와이어" ${metadata.category1 === '끈/줄-와이어' ? 'selected' : ''}>끈/줄-와이어</option>
                             <option value="끈/줄-기타" ${metadata.category1 === '끈/줄-기타' ? 'selected' : ''}>끈/줄-기타</option>
                         </optgroup>
-                        <optgroup label="기타">
+                        <optgroup label="폰악세서리">
                             <option value="폰악세서리" ${metadata.category1 === '폰악세서리' ? 'selected' : ''}>폰악세서리</option>
+                            <option value="폰악세서리-맥세이프" ${metadata.category1 === '폰악세서리-맥세이프' ? 'selected' : ''}>폰악세서리-맥세이프</option>
+                            <option value="폰악세서리-스마트톡" ${metadata.category1 === '폰악세서리-스마트톡' ? 'selected' : ''}>폰악세서리-스마트톡</option>
+                            <option value="폰악세서리-폰케이스" ${metadata.category1 === '폰악세서리-폰케이스' ? 'selected' : ''}>폰악세서리-폰케이스</option>
+                            <option value="폰악세서리-기타" ${metadata.category1 === '폰악세서리-기타' ? 'selected' : ''}>폰악세서리-기타</option>
+                        </optgroup>
+                        <optgroup label="기타">
                             <option value="기타/소품" ${metadata.category1 === '기타/소품' ? 'selected' : ''}>기타/소품</option>
                         </optgroup>
                     </select>
@@ -384,8 +410,14 @@ export class ProductsPage {
                             <option value="끈/줄-와이어" ${metadata.category2 === '끈/줄-와이어' ? 'selected' : ''}>끈/줄-와이어</option>
                             <option value="끈/줄-기타" ${metadata.category2 === '끈/줄-기타' ? 'selected' : ''}>끈/줄-기타</option>
                         </optgroup>
-                        <optgroup label="기타">
+                        <optgroup label="폰악세서리">
                             <option value="폰악세서리" ${metadata.category2 === '폰악세서리' ? 'selected' : ''}>폰악세서리</option>
+                            <option value="폰악세서리-맥세이프" ${metadata.category2 === '폰악세서리-맥세이프' ? 'selected' : ''}>폰악세서리-맥세이프</option>
+                            <option value="폰악세서리-스마트톡" ${metadata.category2 === '폰악세서리-스마트톡' ? 'selected' : ''}>폰악세서리-스마트톡</option>
+                            <option value="폰악세서리-폰케이스" ${metadata.category2 === '폰악세서리-폰케이스' ? 'selected' : ''}>폰악세서리-폰케이스</option>
+                            <option value="폰악세서리-기타" ${metadata.category2 === '폰악세서리-기타' ? 'selected' : ''}>폰악세서리-기타</option>
+                        </optgroup>
+                        <optgroup label="기타">
                             <option value="기타/소품" ${metadata.category2 === '기타/소품' ? 'selected' : ''}>기타/소품</option>
                         </optgroup>
                     </select>
@@ -773,6 +805,11 @@ export class ProductsPage {
 
         if (!saveBtn || !productRow) return;
 
+        // Find product info from this.products array
+        const product = this.products.find(p => p.product_no === productNo);
+        const productName = product ? product.product_name : '';
+        const productCode = product ? product.product_code : '';
+
         // Get all input values
         const category1 = productRow.querySelector('.category1').value;
         const category2 = productRow.querySelector('.category2').value;
@@ -805,6 +842,8 @@ export class ProductsPage {
             // Save metadata to Firebase
             const metadata = {
                 productNo,
+                productName,  // Cafe24 상품명
+                productCode,  // Cafe24 상품코드
                 category1,
                 category2,
                 sizeInMM: sizeInMM ? parseFloat(sizeInMM) : null,
@@ -1046,6 +1085,7 @@ export class ProductsPage {
                     </div>
                     
                     <div class="filter-section">
+                        <h2 class="filter-section-header">카페24 쇼핑몰 상품목록 기준</h2>
                         <div class="filter-row">
                             <div class="filter-group">
                                 <label class="filter-label">카테고리</label>
