@@ -1,0 +1,36 @@
+{
+  "hosting": {
+    "public": "dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/api/auth/cafe24/token",
+        "function": "exchangeCafe24Token"
+      },
+      {
+        "source": "/api/auth/cafe24/refresh",
+        "function": "refreshCafe24Token"
+      },
+      {
+        "source": "/api/cafe24/**",
+        "function": "cafe24ApiProxy"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "functions": {
+    "source": "functions",
+    "predeploy": []
+  },
+  "firestore": {
+    "rules": "firestore-cafe24.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}
