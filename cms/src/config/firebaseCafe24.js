@@ -3,14 +3,20 @@ import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 // Cafe24 토큰 전용 Firebase 앱 설정
+// SECURITY: NEVER commit actual API keys! Always use environment variables.
 const firebaseCafe24Config = {
-    apiKey: "AIzaSyDrH6VBNRx6H-nESOKSqWH7cdXwSQ4jTos",
-    authDomain: "art-token-9bcd9.firebaseapp.com",
-    projectId: "art-token-9bcd9",
-    storageBucket: "art-token-9bcd9.firebasestorage.app",
-    messagingSenderId: "546735038745",
-    appId: "1:546735038745:web:909bcc3955a25cc1cda588"
+    apiKey: import.meta.env.VITE_CAFE24_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_CAFE24_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_CAFE24_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_CAFE24_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_CAFE24_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_CAFE24_FIREBASE_APP_ID
 };
+
+// Validate configuration
+if (!firebaseCafe24Config.apiKey) {
+    console.error('Cafe24 Firebase configuration missing! Please set environment variables.');
+}
 
 // Cafe24 전용 Firebase 앱 초기화 (기존 CMS 앱과 분리)
 const cafe24App = initializeApp(firebaseCafe24Config, 'cafe24-app');

@@ -1,11 +1,12 @@
-// Firebase configuration
+// Firebase configuration - NEVER commit actual keys to Git!
+// These values should be set in your environment or build configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyBecYQreosMseOCA9D3sYkO3bbunuV2CpU",
-    authDomain: "artstudio-cms.firebaseapp.com",
-    projectId: "artstudio-cms",
-    storageBucket: "artstudio-cms.firebasestorage.app",
-    messagingSenderId: "427483351068",
-    appId: "1:427483351068:web:fd2a545ba03b906b0f37d9"
+    apiKey: window.FIREBASE_API_KEY || "YOUR_API_KEY_HERE",
+    authDomain: window.FIREBASE_AUTH_DOMAIN || "artstudio-cms.firebaseapp.com",
+    projectId: window.FIREBASE_PROJECT_ID || "artstudio-cms",
+    storageBucket: window.FIREBASE_STORAGE_BUCKET || "artstudio-cms.firebasestorage.app",
+    messagingSenderId: window.FIREBASE_MESSAGING_SENDER_ID || "YOUR_SENDER_ID_HERE",
+    appId: window.FIREBASE_APP_ID || "YOUR_APP_ID_HERE"
 };
 
 // Initialize Firebase
